@@ -19,9 +19,9 @@ SPMS/
 
 ---
 
-##  2. Microservice-Ready Backend Architecture
+##  2. Monolithic Backend Architecture
 
-While starting as a monolithic Spring Boot app, we apply **Domain-Driven Design (DDD)**. Each core module can be extracted into its own service later with minimal effort.
+We build a cohesive monolithic Spring Boot application with clear modular boundaries and clean architecture. This approach reduces operational complexity for MVP while preserving ability to evolve to a microservices model later.
 
 - **Presentation Layer**: Controllers handling HTTP requests.
 - **Service Layer**: Business logic (transactional boundaries).
