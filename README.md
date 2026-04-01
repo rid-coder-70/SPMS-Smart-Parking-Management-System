@@ -1,16 +1,16 @@
-# 🚗 Smart Parking Management System (SPMS)
+#  Smart Parking Management System (SPMS)
 
 A full-stack Smart Parking Management System built using:
 
-- ⚡ Next.js (Frontend)
-- 🎨 Tailwind CSS
-- ☕ Spring Boot (Backend)
-- 🗄 MySQL Database
-- 🔐 JWT Authentication + RBAC
+-  Next.js (Frontend)
+-  Tailwind CSS
+-  Spring Boot (Backend)
+-  MySQL Database
+-  JWT Authentication + RBAC
 
 ---
 
-## 📌 Project Overview
+##  Project Overview
 
 SPMS is a full-stack parking reservation and management platform that allows:
 
@@ -21,7 +21,7 @@ SPMS is a full-stack parking reservation and management platform that allows:
 
 ---
 
-## 🏗 Architecture
+##  Architecture
 
 Frontend (Next.js)
         ↓ REST API
@@ -31,19 +31,19 @@ MySQL Database
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 SPMS/
-│
-├── frontend/ # Next.js App
-├── backend/ # Spring Boot API
-├── database/ # SQL scripts
-├── docs/ # SRS, UML diagrams
-└── README.md
+
+ frontend/ # Next.js App
+ backend/ # Spring Boot API
+ database/ # SQL scripts
+ docs/ # SRS, UML diagrams
+ README.md
 
 ---
 
-## 👥 Team Members & Responsibilities
+##  Team Members & Responsibilities
 
 | Name | Role | Responsibility |
 |------|------|----------------|
@@ -55,7 +55,7 @@ SPMS/
 
 ---
 
-## 🌿 Branch Strategy
+##  Branch Strategy
 
 We follow **Feature Branch Workflow**
 
@@ -76,7 +76,7 @@ We follow **Feature Branch Workflow**
 
 ---
 
-## 🔀 How to Create New Branch
+##  How to Create New Branch
 
 ```bash
 git checkout develop
@@ -97,7 +97,7 @@ Then create Pull Request → Merge into `develop`
 
 ---
 
-## 🔐 Security Features
+##  Security Features
 
 - JWT Authentication
 - Role-Based Access Control (USER, ADMIN)
@@ -107,7 +107,7 @@ Then create Pull Request → Merge into `develop`
 
 ---
 
-## 📊 Core Features
+##  Core Features
 
 - User Authentication
 - Parking Slot Management
@@ -118,7 +118,7 @@ Then create Pull Request → Merge into `develop`
 
 ---
 
-## 🚀 Future Improvements
+##  Future Improvements
 
 - Dockerization
 - CI/CD Pipeline
@@ -127,7 +127,7 @@ Then create Pull Request → Merge into `develop`
 
 ---
 
-## 📄 Documentation
+##  Documentation
 
 - [SPMS Architectural Strategy & Roadmap](docs/architecture_and_strategies.md)
 - [Frontend README](frontend/README.md)
@@ -138,6 +138,6 @@ Then create Pull Request → Merge into `develop`
 
 ---
 
-## 📜 License
+##  License
 
 MIT License

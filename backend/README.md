@@ -7,30 +7,30 @@ Built with:
 - MySQL
 - RESTful APIs
 
-## 📂 Architecture (Microservice-Ready)
+##  Architecture (Microservice-Ready)
 
 Even as a monolith, we follow a domain-driven, layered approach to make it microservice-ready:
 
 ```
 src/main/java/com/spms/api/
-│
-├── core/
-│   ├── security/        # JWT, Role management, BCrypt
-│   ├── config/          # Bean, DB, CORS, Swagger configs
-│   ├── exceptions/      # Global handler, Custom exceptions
-│   └── util/            # Helpers, Constants
-│
-├── modules/ (Feature-Based Modules)
-│   ├── auth/            # Controllers, Services, Repos
-│   ├── reservation/     # Entities, Billing logic
-│   ├── parking/         # Slot tracking logic
-│   └── billing/         # Revenue & payment processing
-│
-├── dto/                 # Data Transfer Objects
-└── mapper/              # Object mapping logic
+
+ core/
+    security/        # JWT, Role management, BCrypt
+    config/          # Bean, DB, CORS, Swagger configs
+    exceptions/      # Global handler, Custom exceptions
+    util/            # Helpers, Constants
+
+ modules/ (Feature-Based Modules)
+    auth/            # Controllers, Services, Repos
+    reservation/     # Entities, Billing logic
+    parking/         # Slot tracking logic
+    billing/         # Revenue & payment processing
+
+ dto/                 # Data Transfer Objects
+ mapper/              # Object mapping logic
 ```
 
-## 🚀 Run Application
+##  Run Application
 
 ```bash
 ./mvnw spring-boot:run
@@ -39,13 +39,13 @@ src/main/java/com/spms/api/
 Runs on:
 [http://localhost:8080](http://localhost:8080)
 
-## 🔌 API Base URL
+##  API Base URL
 
 `/api/v1/`
 
-## 📊 Core Modules
+##  Core Modules
 
-- 🔐 Authentication & RBAC Module
-- 🅿️ Parking Reservation & Billing
-- 📈 Admin Reporting & Analytics
-- 🛠 User & Profile management
+-  Authentication & RBAC Module
+-  Parking Reservation & Billing
+-  Admin Reporting & Analytics
+-  User & Profile management

@@ -1,25 +1,25 @@
-# 🏛 SPMS Architectural Strategy & Roadmap
+#  SPMS Architectural Strategy & Roadmap
 
 As a senior software architect, I've outlined the following strategies for the Smart Parking Management System (SPMS). These follow industry-level clean architecture and SOLID principles.
 
 ---
-## 📂 1. Professional Full-Stack Folder Structure
+##  1. Professional Full-Stack Folder Structure
 
 We organize the project as a monorepo for easier management during the MVP phase while keeping frontend and backend decoupled for independent deployment.
 
 ```
 SPMS/
-├── backend/                # Spring Boot (API)
-├── frontend/               # Next.js (Client)
-├── database/               # SQL & Liquibase/Flyway migrations
-├── docs/                   # Diagrams, SRS, and API Docs
-├── infrastructure/         # Docker, CI/CD, Nginx configs
-└── README.md
+ backend/                # Spring Boot (API)
+ frontend/               # Next.js (Client)
+ database/               # SQL & Liquibase/Flyway migrations
+ docs/                   # Diagrams, SRS, and API Docs
+ infrastructure/         # Docker, CI/CD, Nginx configs
+ README.md
 ```
 
 ---
 
-## 🏗 2. Microservice-Ready Backend Architecture
+##  2. Microservice-Ready Backend Architecture
 
 While starting as a monolithic Spring Boot app, we apply **Domain-Driven Design (DDD)**. Each core module can be extracted into its own service later with minimal effort.
 
@@ -30,46 +30,46 @@ While starting as a monolithic Spring Boot app, we apply **Domain-Driven Design 
 
 ---
 
-## 🎨 3. Frontend Feature-Based Architecture
+##  3. Frontend Feature-Based Architecture
 
 We follow a modular **Feature-First** approach in Next.js to ensure components are scoped correctly.
 
 ```
 frontend/src/features/
-├── auth/            # Login, Signup, Role-based route guards
-├── reservation/     # Booking slot, viewing calendars
-├── slots/           # Real-time slot status, maps
-└── admin-panel/     # User/Slot management, Reporting
+ auth/            # Login, Signup, Role-based route guards
+ reservation/     # Booking slot, viewing calendars
+ slots/           # Real-time slot status, maps
+ admin-panel/     # User/Slot management, Reporting
 ```
 
 ---
 
-## 🔌 4. REST API Endpoint Structure (v1)
+##  4. REST API Endpoint Structure (v1)
 
 We use standardized RESTful naming and versioning for longevity.
 
-### 🔐 Authentication
+###  Authentication
 - `POST /api/v1/auth/register`
 - `POST /api/v1/auth/login`
 - `GET /api/v1/auth/me` (Profile)
 
-### 🅿️ Parking Slots
+###  Parking Slots
 - `GET /api/v1/slots` (List all)
 - `GET /api/v1/slots/{id}/status`
 - `PATCH /api/v1/slots/{id}` (Admin only)
 
-### 📅 Reservations
+###  Reservations
 - `POST /api/v1/reservations` (Create)
 - `GET /api/v1/reservations/{id}`
 - `DELETE /api/v1/reservations/{id}` (Cancel)
 
-### 📊 Billing & Reports
+###  Billing & Reports
 - `POST /api/v1/billing/pay`
 - `GET /api/v1/reports/revenue` (Admin only)
 
 ---
 
-## 👥 5. Team Task Distribution (Role-Based)
+##  5. Team Task Distribution (Role-Based)
 
 - **Backend Lead (Ridoy)**: Core security (JWT/RBAC), Framework setup, Exception handling.
 - **Backend Dev (Priom)**: Reservation logic, Slot management, Billing algorithms.
@@ -79,7 +79,7 @@ We use standardized RESTful naming and versioning for longevity.
 
 ---
 
-## 🔐 6. Security Best Practices
+##  6. Security Best Practices
 
 1.  **Stateless JWT**: Short-lived access tokens with secure HTTP-only cookies for refresh.
 2.  **password Hashing**: BCrypt with high cost factor.
@@ -89,7 +89,7 @@ We use standardized RESTful naming and versioning for longevity.
 
 ---
 
-## 📈 7. Scalability & Deployment Readiness
+##  7. Scalability & Deployment Readiness
 
 - **Containerization**: Use `docker-compose` for local dev (MySQL + Backend + Frontend).
 - **Caching**: Implement **Redis** for frequently accessed slot statuses.
