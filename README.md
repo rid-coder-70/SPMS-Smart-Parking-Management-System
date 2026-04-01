@@ -129,6 +129,9 @@ Then create Pull Request → Merge into `develop`
 
 ## 📄 Documentation
 
+- [SPMS Architectural Strategy & Roadmap](docs/architecture_and_strategies.md)
+- [Frontend README](frontend/README.md)
+- [Backend README](backend/README.md)
 - SRS Document (docs/)
 - UML Diagrams (docs/)
 - ER Diagram
