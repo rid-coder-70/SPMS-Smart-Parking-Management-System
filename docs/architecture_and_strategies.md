@@ -4,7 +4,89 @@ As a senior software architect, I've outlined the following strategies for the S
 
 ---
 
-## 📂 1. Professional Full-Stack Folder Structure
+## 🗺 1. Use Case Diagram
+
+```mermaid
+usecaseDiagram
+    actor "User" as U
+    actor "Admin" as A
+
+    package "Smart Parking Management System" {
+        U --> (Register/Login)
+        U --> (Check Slot Availability)
+        U --> (Reserve Parking Slot)
+        U --> (Check-in/Check-out)
+        U --> (View Billing & Payment)
+        
+        (Manage Parking Slots) <-- A
+        (Monitor Real-time Dashboard) <-- A
+        (Generate Reports & Analytics) <-- A
+        (Manage User Accounts) <-- A
+    }
+```
+
+---
+
+## 📊 2. Class Diagram
+
+```mermaid
+classDiagram
+    class User {
+        +Long id
+        +String username
+        +String email
+        +String password
+        +Role role
+        +List~Reservation~ reservations
+    }
+
+    class Role {
+        <<enumeration>>
+        USER
+        ADMIN
+    }
+
+    class ParkingSlot {
+        +Long id
+        +String slotNumber
+        +SlotStatus status
+        +String areaLocation
+        +Double hourlyRate
+    }
+
+    class SlotStatus {
+        <<enumeration>>
+        AVAILABLE
+        RESERVED
+        OCCUPIED
+        MAINTENANCE
+    }
+
+    class Reservation {
+        +Long id
+        +LocalDateTime startTime
+        +LocalDateTime endTime
+        +ReservationStatus status
+        +User user
+        +ParkingSlot slot
+    }
+
+    class Billing {
+        +Long id
+        +Reservation reservation
+        +Double amount
+        +PaymentStatus paymentStatus
+        +LocalDateTime generatedAt
+    }
+
+    User "1" -- "0..*" Reservation : makes
+    ParkingSlot "1" -- "0..*" Reservation : assigned to
+    Reservation "1" -- "1" Billing : generates
+```
+
+---
+
+## 📂 3. Professional Full-Stack Folder Structure
 
 We organize the project as a monorepo for easier management during the MVP phase while keeping frontend and backend decoupled for independent deployment.
 
@@ -20,7 +102,7 @@ SPMS/
 
 ---
 
-## 🏗 2. Microservice-Ready Backend Architecture
+## 🏗 4. Microservice-Ready Backend Architecture
 
 While starting as a monolithic Spring Boot app, we apply **Domain-Driven Design (DDD)**. Each core module can be extracted into its own service later with minimal effort.
 
@@ -31,7 +113,7 @@ While starting as a monolithic Spring Boot app, we apply **Domain-Driven Design 
 
 ---
 
-## 🎨 3. Frontend Feature-Based Architecture
+## 🎨 5. Frontend Feature-Based Architecture
 
 We follow a modular **Feature-First** approach in Next.js to ensure components are scoped correctly.
 
@@ -45,7 +127,7 @@ frontend/src/features/
 
 ---
 
-## 🔌 4. REST API Endpoint Structure (v1)
+## 🔌 6. REST API Endpoint Structure (v1)
 
 We use standardized RESTful naming and versioning for longevity.
 
@@ -70,7 +152,7 @@ We use standardized RESTful naming and versioning for longevity.
 
 ---
 
-## 👥 5. Team Task Distribution (Role-Based)
+## 👥 7. Team Task Distribution (Role-Based)
 
 - **Backend Lead (Ridoy)**: Core security (JWT/RBAC), Framework setup, Exception handling.
 - **Backend Dev (Priom)**: Reservation logic, Slot management, Billing algorithms.
@@ -80,7 +162,7 @@ We use standardized RESTful naming and versioning for longevity.
 
 ---
 
-## 🔐 6. Security Best Practices
+## 🔐 8. Security Best Practices
 
 1.  **Stateless JWT**: Short-lived access tokens with secure HTTP-only cookies for refresh.
 2.  **password Hashing**: BCrypt with high cost factor.
@@ -90,7 +172,7 @@ We use standardized RESTful naming and versioning for longevity.
 
 ---
 
-## 📈 7. Scalability & Deployment Readiness
+## 📈 9. Scalability & Deployment Readiness
 
 - **Containerization**: Use `docker-compose` for local dev (MySQL + Backend + Frontend).
 - **Caching**: Implement **Redis** for frequently accessed slot statuses.
