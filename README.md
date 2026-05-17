@@ -1,12 +1,14 @@
-#  Smart Parking Management System (SPMS)
+# Smart Parking Management System (SPMS)
+
+![SPMS Landing Page Preview](./frontend/public/landing-preview.png)
 
 A full-stack Smart Parking Management System built using:
 
--  Next.js (Frontend)
--  Tailwind CSS
--  Spring Boot (Backend)
--  MySQL Database
--  JWT Authentication + RBAC
+- Next.js (Frontend)
+- Tailwind CSS
+- Spring Boot (Backend)
+- MySQL Database
+- JWT Authentication + RBAC
 
 ---
 

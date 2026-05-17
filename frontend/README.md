@@ -1,5 +1,7 @@
 # SPMS Frontend
 
+![SPMS Frontend Dashboard UI](./public/landing-preview.png)
+
 Built with:
 - Next.js 14 (App Router)
 - TypeScript
