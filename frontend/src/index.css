@@ -21,6 +21,11 @@
     background-color: rgba(234, 179, 8, 0.3); /* brand-500/30 */
     color: #fef08a; /* brand-200 */
   }
+
+  option {
+    background-color: #0f172a;
+    color: #ffffff;
+  }
 }
 
 @layer components {
