@@ -1,25 +1,23 @@
 import { useState, FormEvent, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-import api from '@/common/api';
-import type {
-  ChangePasswordPayload,
-  UpdateProfilePayload,
-  VehicleType,
-} from '@/common/types';
-import { Eye, EyeOff } from 'lucide-react';
-
-// ─── Badge helpers ────────────────────────────────────────────
+import { AuthService } from './auth.service';
+import type { ChangePasswordPayload, UpdateProfilePayload, VehicleType } from '@/common/types';
+import { Eye, EyeOff, User as UserIcon, Lock, Car, CheckCircle, AlertCircle } from 'lucide-react';
 
 function AccountBadge({ status }: { status: string }) {
   const cls =
-    status === 'ACTIVE'   ? 'badge-active'   :
-    status === 'LOCKED'   ? 'badge-locked'   : 'badge-inactive';
-  return <span className={cls}>{status}</span>;
+    status === 'ACTIVE'   ? 'bg-green-500/10 border-green-500/30 text-green-400' :
+    status === 'LOCKED'   ? 'bg-red-500/10 border-red-500/30 text-red-400'       : 
+    'bg-gray-500/10 border-gray-500/30 text-gray-400';
+  return <span className={`badge ${cls}`}>{status}</span>;
 }
 
 function RoleBadge({ role }: { role: string }) {
-  return <span className={role === 'ADMIN' ? 'badge-admin' : 'badge-user'}>{role}</span>;
+  const cls = role === 'ADMIN' 
+    ? 'bg-brand-500/20 border-brand-500/40 text-brand-300 font-bold' 
+    : 'bg-blue-500/10 border-blue-500/30 text-blue-300';
+  return <span className={`badge ${cls}`}>{role}</span>;
 }
 
 const VEHICLE_OPTIONS: { value: VehicleType; label: string }[] = [
@@ -28,87 +26,64 @@ const VEHICLE_OPTIONS: { value: VehicleType; label: string }[] = [
   { value: 'LARGE',      label: 'Large Vehicle (SUV / Van)' },
 ];
 
-// ─── ProfilePage ──────────────────────────────────────────────
-
 export default function ProfilePage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
-  // ── Profile update form ───────────────────────────────────
   const [profileForm, setProfileForm] = useState<UpdateProfilePayload>({
     email:         user?.email         ?? '',
     phone:         user?.phone         ?? '',
-    vehicleType:   user?.vehicleType,
+    vehicleType:   user?.vehicleType   ?? 'STANDARD',
     vehicleNumber: user?.vehicleNumber ?? '',
   });
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileMsg,    setProfileMsg]    = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
 
-  // ── Password change form ──────────────────────────────────
   const [pwForm, setPwForm] = useState<ChangePasswordPayload>({
     currentPassword: '',
     newPassword:     '',
-    confirmPassword: '',
   });
   const [pwSaving, setPwSaving] = useState(false);
   const [pwMsg,    setPwMsg]    = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
+  
+  const [showCurrentPw, setShowCurrentPw] = useState(false);
+  const [showNewPw,     setShowNewPw]     = useState(false);
 
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  // Sync profile form when user state changes (e.g. after save)
   useEffect(() => {
     if (user) {
       setProfileForm({
         email:         user.email         ?? '',
         phone:         user.phone         ?? '',
-        vehicleType:   user.vehicleType,
+        vehicleType:   user.vehicleType   ?? 'STANDARD',
         vehicleNumber: user.vehicleNumber ?? '',
       });
     }
   }, [user]);
 
-  // ── Save profile ──────────────────────────────────────────
   async function handleProfileSubmit(e: FormEvent) {
     e.preventDefault();
-    setProfileMsg(null);
     setProfileSaving(true);
+    setProfileMsg(null);
     try {
-      await api.put('/users/me', profileForm);
+      await AuthService.updateProfile(profileForm);
       setProfileMsg({ type: 'ok', text: 'Profile updated successfully.' });
-    } catch (err: unknown) {
-      const e = err as { message?: string };
-      setProfileMsg({ type: 'err', text: e.message ?? 'Failed to update profile.' });
+    } catch (err: any) {
+      setProfileMsg({ type: 'err', text: err.message ?? 'Failed to update profile.' });
     } finally {
       setProfileSaving(false);
     }
   }
 
-  // ── Change password ───────────────────────────────────────
   async function handlePasswordSubmit(e: FormEvent) {
     e.preventDefault();
-    setPwMsg(null);
-
-    if (pwForm.newPassword !== pwForm.confirmPassword) {
-      setPwMsg({ type: 'err', text: 'New passwords do not match.' });
-      return;
-    }
-    if (pwForm.newPassword.length < 6) {
-      setPwMsg({ type: 'err', text: 'New password must be at least 6 characters.' });
-      return;
-    }
-
     setPwSaving(true);
+    setPwMsg(null);
     try {
-      await api.put('/users/me/password', pwForm);
-      setPwMsg({ type: 'ok', text: 'Password changed. Please log in again.' });
-      setPwForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
-      // Force re-login after password change
-      setTimeout(() => { logout(); navigate('/login'); }, 1500);
-    } catch (err: unknown) {
-      const e = err as { message?: string };
-      setPwMsg({ type: 'err', text: e.message ?? 'Failed to change password.' });
+      await AuthService.changePassword(pwForm);
+      setPwMsg({ type: 'ok', text: 'Password changed successfully.' });
+      setPwForm({ currentPassword: '', newPassword: '' });
+    } catch (err: any) {
+      setPwMsg({ type: 'err', text: err.message ?? 'Failed to change password.' });
     } finally {
       setPwSaving(false);
     }
@@ -117,208 +92,167 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-night-900 px-4 py-10 relative overflow-hidden">
-      {/* Background removed for minimal style */}
+    <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
       
-      <div className="mx-auto max-w-2xl space-y-6 relative z-10">
-        <div className="flex items-center">
-          <Link to="/" className="text-white/60 hover:text-white transition-colors flex items-center gap-2 text-sm font-medium">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-            Back to Home
-          </Link>
-        </div>
-
-        {/* ── User Info Card ────────────────────────────── */}
-        <div className="card animate-fade-in">
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-white">{user.username}</h1>
-              <p className="mt-1 text-sm text-white/60">{user.email}</p>
-            </div>
-            <div className="flex gap-2">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-full bg-brand-500/20 border border-brand-500/40 flex items-center justify-center text-brand-300">
+            <UserIcon className="h-8 w-8" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-white">{user.username}</h1>
+            <div className="flex items-center gap-2 mt-2">
               <RoleBadge role={user.role} />
-              <AccountBadge status={user.accountStatus} />
+              <AccountBadge status={user.status} />
             </div>
           </div>
-
-          <dl className="mt-6 grid grid-cols-2 gap-4 text-sm border-t border-white/10 pt-6">
-            {[
-              { label: 'User ID',       value: user.id },
-              { label: 'Phone',         value: user.phone || '—' },
-              { label: 'Vehicle Type',  value: user.vehicleType || '—' },
-              { label: 'Plate Number',  value: user.vehicleNumber || '—' },
-            ].map(({ label, value }) => (
-              <div key={label}>
-                <dt className="font-medium text-white/50">{label}</dt>
-                <dd className="mt-1 text-white font-medium">{String(value)}</dd>
-              </div>
-            ))}
-          </dl>
-
-          <button
-            onClick={() => { logout(); navigate('/login'); }}
-            className="btn-secondary mt-8 w-full border-red-500/30 text-red-400 hover:bg-red-500/10 hover:border-red-500/50"
-          >
-            Sign out
-          </button>
         </div>
+      </div>
 
-        {/* ── Update Profile Form ───────────────────────── */}
-        <div className="card animate-slide-up" style={{ animationDelay: '0.1s' }}>
-          <h2 className="mb-6 text-xl font-bold text-white border-b border-white/10 pb-4">Update Profile</h2>
+      <div className="grid md:grid-cols-2 gap-8">
+        
+        {/* Profile Settings Form */}
+        <section className="card">
+          <div className="flex items-center gap-2 mb-6">
+            <UserIcon className="h-5 w-5 text-brand-400" />
+            <h2 className="text-xl font-bold text-white">Profile Details</h2>
+          </div>
 
           {profileMsg && (
-            <div className={profileMsg.type === 'ok' ? 'alert-success mb-4' : 'alert-error mb-4'}>
-              {profileMsg.text}
+            <div className={`mb-6 ${profileMsg.type === 'ok' ? 'alert-success' : 'alert-error'}`}>
+              {profileMsg.type === 'ok' ? (
+                <CheckCircle className="h-5 w-5 text-green-400 shrink-0 mt-0.5" />
+              ) : (
+                <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+              )}
+              <p>{profileMsg.text}</p>
             </div>
           )}
 
-          <form onSubmit={handleProfileSubmit} noValidate className="space-y-4">
+          <form onSubmit={handleProfileSubmit} className="space-y-4">
             <div>
-              <label htmlFor="profile-email" className="label">Email</label>
+              <label className="label">Email Address</label>
               <input
-                id="profile-email"
                 type="email"
-                value={profileForm.email ?? ''}
-                onChange={(e) => setProfileForm((p) => ({ ...p, email: e.target.value }))}
+                required
                 className="input"
+                value={profileForm.email}
+                onChange={e => setProfileForm({ ...profileForm, email: e.target.value })}
               />
             </div>
-
+            
             <div>
-              <label htmlFor="profile-phone" className="label">Phone</label>
+              <label className="label">Phone Number</label>
               <input
-                id="profile-phone"
                 type="tel"
-                placeholder="+8801XXXXXXXXX"
-                value={profileForm.phone ?? ''}
-                onChange={(e) => setProfileForm((p) => ({ ...p, phone: e.target.value }))}
                 className="input"
+                value={profileForm.phone}
+                onChange={e => setProfileForm({ ...profileForm, phone: e.target.value })}
               />
             </div>
 
-            <div>
-              <label htmlFor="profile-vehicle-type" className="label">Vehicle Type</label>
-              <select
-                id="profile-vehicle-type"
-                value={profileForm.vehicleType ?? ''}
-                onChange={(e) =>
-                  setProfileForm((p) => ({
-                    ...p,
-                    vehicleType: (e.target.value as VehicleType) || undefined,
-                  }))
-                }
-                className="input appearance-none bg-night-800/50"
-              >
-                <option value="" className="bg-night-800 text-white/50">— No change —</option>
-                {VEHICLE_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value} className="bg-night-800 text-white">{o.label}</option>
-                ))}
-              </select>
+            <div className="pt-4 border-t border-night-700">
+              <div className="flex items-center gap-2 mb-4">
+                <Car className="h-4 w-4 text-brand-400" />
+                <h3 className="font-semibold text-white">Vehicle Information</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="label">Vehicle Type</label>
+                  <select
+                    className="input"
+                    value={profileForm.vehicleType}
+                    onChange={e => setProfileForm({ ...profileForm, vehicleType: e.target.value as VehicleType })}
+                  >
+                    {VEHICLE_OPTIONS.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="label">License Plate</label>
+                  <input
+                    type="text"
+                    className="input"
+                    value={profileForm.vehicleNumber}
+                    onChange={e => setProfileForm({ ...profileForm, vehicleNumber: e.target.value })}
+                  />
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label htmlFor="profile-vehicle-number" className="label">Plate / Vehicle Number</label>
-              <input
-                id="profile-vehicle-number"
-                type="text"
-                placeholder="e.g. DHA-1234"
-                value={profileForm.vehicleNumber ?? ''}
-                onChange={(e) => setProfileForm((p) => ({ ...p, vehicleNumber: e.target.value }))}
-                className="input"
-              />
-            </div>
-
-            <button type="submit" disabled={profileSaving} className="btn-primary">
-              {profileSaving ? 'Saving…' : 'Save Changes'}
+            <button type="submit" disabled={profileSaving} className="btn-primary w-full mt-6">
+              {profileSaving ? 'Saving...' : 'Save Profile'}
             </button>
           </form>
-        </div>
+        </section>
 
-        {/* ── Change Password Form ──────────────────────── */}
-        <div className="card animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          <h2 className="mb-6 text-xl font-bold text-white border-b border-white/10 pb-4">Change Password</h2>
+        {/* Change Password Form */}
+        <section className="card h-fit">
+          <div className="flex items-center gap-2 mb-6">
+            <Lock className="h-5 w-5 text-brand-400" />
+            <h2 className="text-xl font-bold text-white">Change Password</h2>
+          </div>
 
           {pwMsg && (
-            <div className={pwMsg.type === 'ok' ? 'alert-success mb-4' : 'alert-error mb-4'}>
-              {pwMsg.text}
+            <div className={`mb-6 ${pwMsg.type === 'ok' ? 'alert-success' : 'alert-error'}`}>
+              {pwMsg.type === 'ok' ? (
+                <CheckCircle className="h-5 w-5 text-green-400 shrink-0 mt-0.5" />
+              ) : (
+                <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+              )}
+              <p>{pwMsg.text}</p>
             </div>
           )}
 
-          <form onSubmit={handlePasswordSubmit} noValidate className="space-y-4">
+          <form onSubmit={handlePasswordSubmit} className="space-y-4">
             <div>
-              <label htmlFor="pw-current" className="label">Current Password</label>
+              <label className="label">Current Password</label>
               <div className="relative">
                 <input
-                  id="pw-current"
-                  type={showCurrentPassword ? 'text' : 'password'}
-                  autoComplete="current-password"
+                  type={showCurrentPw ? 'text' : 'password'}
+                  required
+                  className="input pr-10"
                   value={pwForm.currentPassword}
-                  onChange={(e) => setPwForm((p) => ({ ...p, currentPassword: e.target.value }))}
-                  className="input pr-10"
+                  onChange={e => setPwForm({ ...pwForm, currentPassword: e.target.value })}
                 />
                 <button
                   type="button"
-                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-white/50 hover:text-white transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-white/40 hover:text-white/60"
+                  onClick={() => setShowCurrentPw(!showCurrentPw)}
                 >
-                  {showCurrentPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
 
             <div>
-              <label htmlFor="pw-new" className="label">New Password</label>
+              <label className="label">New Password</label>
               <div className="relative">
                 <input
-                  id="pw-new"
-                  type={showNewPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  placeholder="At least 6 characters"
+                  type={showNewPw ? 'text' : 'password'}
+                  required
+                  className="input pr-10"
                   value={pwForm.newPassword}
-                  onChange={(e) => setPwForm((p) => ({ ...p, newPassword: e.target.value }))}
-                  className="input pr-10"
+                  onChange={e => setPwForm({ ...pwForm, newPassword: e.target.value })}
                 />
                 <button
                   type="button"
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-white/50 hover:text-white transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-white/40 hover:text-white/60"
+                  onClick={() => setShowNewPw(!showNewPw)}
                 >
-                  {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showNewPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
 
-            <div>
-              <label htmlFor="pw-confirm" className="label">Confirm New Password</label>
-              <div className="relative">
-                <input
-                  id="pw-confirm"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  value={pwForm.confirmPassword}
-                  onChange={(e) => setPwForm((p) => ({ ...p, confirmPassword: e.target.value }))}
-                  className="input pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-white/50 hover:text-white transition-colors"
-                >
-                  {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={pwSaving || !pwForm.currentPassword || !pwForm.newPassword}
-              className="btn-primary"
-            >
-              {pwSaving ? 'Changing…' : 'Change Password'}
+            <button type="submit" disabled={pwSaving} className="btn-primary w-full mt-2">
+              {pwSaving ? 'Updating...' : 'Update Password'}
             </button>
           </form>
-        </div>
+        </section>
 
       </div>
     </div>

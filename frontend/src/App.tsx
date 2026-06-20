@@ -8,14 +8,12 @@ import LoginPage    from '@/features/auth/LoginPage';
 import RegisterPage from '@/features/auth/RegisterPage';
 import ProfilePage  from '@/features/auth/ProfilePage';
 
-// ── Placeholder pages for future modules ─────────────────────
-// Module 2 — Parking
-import { AdminLotsPage } from '@/features/parking/AdminLotsPage';
+// ── Module 2 — Parking ────────────────────────────────────────
+import { AdminLotsPage }  from '@/features/parking/AdminLotsPage';
 import { AdminSlotsPage } from '@/features/parking/AdminSlotsPage';
-// import ParkingMapPage  from '@/features/parking/ParkingMapPage';
 
-// Module 3 — Reservations
-// import ReservationsPage from '@/features/reservations/ReservationsPage';
+// ── Module 3 — Reservations ───────────────────────────────────
+import ReservationsPage from '@/features/reservations/ReservationsPage';
 
 // Module 4 — Billing
 // import BillingPage from '@/features/billing/BillingPage';
@@ -43,24 +41,20 @@ function App() {
 
           {/* ── Authenticated routes ─────────────────────── */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile"      element={<ProfilePage />} />
 
-            {/* Module 2 — Parking (uncomment when built) */}
-            {/* <Route path="/parking"      element={<ParkingMapPage />} /> */}
-
-            {/* Module 3 — Reservations (uncomment when built) */}
-            {/* <Route path="/reservations" element={<ReservationsPage />} /> */}
+            {/* Module 3 — Reservations */}
+            <Route path="/reservations" element={<ReservationsPage />} />
 
             {/* Module 4 — Billing (uncomment when built) */}
-            {/* <Route path="/billing"      element={<BillingPage />} /> */}
-
+            {/* <Route path="/billing" element={<BillingPage />} /> */}
           </Route>
 
           {/* ── Admin-only routes ─────────────────────────── */}
           <Route element={<AdminRoute />}>
             {/* Module 5 — Admin (uncomment when built) */}
             {/* <Route path="/admin" element={<AdminDashboard />} /> */}
-            <Route path="/admin/lots" element={<AdminLotsPage />} />
+            <Route path="/admin/lots"  element={<AdminLotsPage />} />
             <Route path="/admin/slots" element={<AdminSlotsPage />} />
           </Route>
 
@@ -74,3 +68,4 @@ function App() {
 }
 
 export default App;
+
