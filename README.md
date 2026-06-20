@@ -80,7 +80,7 @@ You can immediately test the fully integrated Authentication module:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 SPMS-Smart-Parking-Management-System/
@@ -110,7 +110,7 @@ SPMS-Smart-Parking-Management-System/
 
 ---
 
-## 👥 Team Members & Responsibilities
+##  Team Members & Responsibilities
 
 | Name | Role | Responsibility |
 |------|------|----------------|
@@ -122,7 +122,7 @@ SPMS-Smart-Parking-Management-System/
 
 ---
 
-## 🌿 Branch Strategy
+##  Branch Strategy
 
 We follow a **Feature Branch Workflow**:
 
