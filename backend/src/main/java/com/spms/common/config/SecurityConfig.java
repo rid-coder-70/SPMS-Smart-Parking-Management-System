@@ -69,6 +69,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/slots", "/slots/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/lots", "/lots/*/slots").permitAll()
                 // Admin-only (coarse; fine-grained via @PreAuthorize in controllers)
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 // Everything else needs a valid JWT

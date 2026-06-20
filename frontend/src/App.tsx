@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthProvider } from '@/features/auth/AuthContext';
 import { ProtectedRoute, AdminRoute } from '@/common/ProtectedRoute';
 
@@ -10,6 +10,8 @@ import ProfilePage  from '@/features/auth/ProfilePage';
 
 // ── Placeholder pages for future modules ─────────────────────
 // Module 2 — Parking
+import { AdminLotsPage } from '@/features/parking/AdminLotsPage';
+import { AdminSlotsPage } from '@/features/parking/AdminSlotsPage';
 // import ParkingMapPage  from '@/features/parking/ParkingMapPage';
 
 // Module 3 — Reservations
@@ -58,6 +60,8 @@ function App() {
           <Route element={<AdminRoute />}>
             {/* Module 5 — Admin (uncomment when built) */}
             {/* <Route path="/admin" element={<AdminDashboard />} /> */}
+            <Route path="/admin/lots" element={<AdminLotsPage />} />
+            <Route path="/admin/slots" element={<AdminSlotsPage />} />
           </Route>
 
           {/* ── Fallback ─────────────────────────────────── */}
