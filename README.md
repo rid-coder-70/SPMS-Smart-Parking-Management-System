@@ -89,10 +89,10 @@ SPMS-Smart-Parking-Management-System/
 │   ├── pom.xml
 │   └── src/main/java/com/spms/
 │       ├── auth/          # Module 1: Authentication & User Mgmt
-│       ├── parking/       # Module 2: Parking (Pending)
-│       ├── reservation/   # Module 3: Reservations (Pending)
-│       ├── billing/       # Module 4: Billing (Pending)
-│       ├── admin/         # Module 5: Admin (Pending)
+│       ├── parking/       # Module 2: Parking
+│       ├── reservation/   # Module 3: Reservations
+│       ├── billing/       # Module 4: Billing
+│       ├── admin/         # Module 5: Admin Analytics
 │       └── common/        # Shared enums, exception handlers, JWT util
 │
 └── frontend/

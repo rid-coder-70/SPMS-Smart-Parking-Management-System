@@ -94,3 +94,79 @@ This guide provides step-by-step instructions for starting the backend, starting
 
 - Try manually changing the URL to `http://localhost:5173/profile` without being logged in.
 - **Expected:** The `ProtectedRoute` instantly redirects you back to `/login` because there is no valid JWT token in your `localStorage`.
+
+---
+
+### Phase 5: Testing the Parking Lot & Slot Management Module
+
+Now that the Parking module is built, you can test the administrative functions and the live grid.
+
+#### 1. Creating a Parking Lot
+- **Action:** Ensure you are logged in. For these admin actions, you must use an account with the `ADMIN` role. (If testing locally, you may need to update your registered user's role to `ADMIN` directly in the H2 database).
+- **Action:** Navigate to `http://localhost:5173/admin/lots` (Manage Parking Lots).
+- **Expected:** You should see the Admin Lots page with a form and a table.
+- **Action:** Fill out the "Add New Lot" form (e.g., Lot Name: "Main Street", Location: "Downtown", Capacity: 50).
+- **Action:** Click "Add Lot".
+- **Expected:** The table instantly updates to show the new lot with an "ACTIVE" status.
+
+#### 2. Creating Parking Slots
+- **Action:** Navigate to `http://localhost:5173/admin/slots` (Manage Parking Slots).
+- **Expected:** You see a dropdown to "Select Parking Lot".
+- **Action:** Select the "Main Street" lot you just created.
+- **Expected:** The "Add New Slot" form and the "Current Slots Overview" grid appear.
+- **Action:** Add a few slots of different types (e.g., Slot Number: "A1", Type: "Standard"; Slot Number: "M1", Type: "Motorcycle").
+- **Expected:** As you add slots, they instantly appear in the live grid and the table below. They will be color-coded green (`AVAILABLE`) with their slot type.
+
+#### 3. Duplicate Slot Rejection
+- **Action:** Try to add a slot with the exact same slot number (e.g., "A1") to the same lot.
+- **Expected:** The backend throws a 409 Conflict, and the frontend displays a red error message: "Slot number already exists in this lot".
+
+#### 4. Managing Slot Status (Out of Service)
+- **Action:** In the slots table, find one of the slots you just created (e.g., "A1") and click the "Mark Out of Service" button.
+- **Expected:** The slot's status in the table changes to "OUT_OF_SERVICE", the action button disappears, and in the live grid above, the slot card instantly updates to a grey color, indicating it is no longer available.
+
+---
+
+### Phase 6: Testing the Reservation & Booking Engine
+
+#### 1. Making a Reservation
+- **Action:** Navigate to `http://localhost:5173/reservations/new`.
+- **Expected:** You see a 3-step wizard to book a slot.
+- **Action:** Select the "Main Street" lot, then click an available green slot in the grid.
+- **Action:** Choose a date, time, and duration (e.g., 1 hr) and click "Confirm Booking".
+- **Expected:** The backend validates the duration and checks for overlaps. On success, you are redirected to the `My Reservations` page.
+- **Action:** Check the Admin Slots page or go back to book another.
+- **Expected:** The slot you booked now appears YELLOW (RESERVED) in the live grid.
+
+#### 2. Conflict & Overlap Handling
+- **Action:** Try to book the exact same slot at the same time.
+- **Expected:** A 409 Conflict error displays on the form: "Slot is already reserved for this time. Please pick another."
+
+#### 3. Checking In and Out
+- **Action:** Navigate to `http://localhost:5173/reservations/check-in-out`.
+- **Expected:** Your pending reservation is shown.
+- **Action:** Click "Check In Now".
+- **Expected:** The reservation status changes to CONFIRMED. If you check the live grid, the slot is now RED (OCCUPIED).
+- **Action:** Click "Check Out".
+- **Expected:** The checkout processes immediately. You are shown a green success message with your Receipt ID and Total Fee, calculated instantly. The slot returns to GREEN (AVAILABLE).
+
+---
+
+### Phase 7: Testing Billing & Payments
+
+- **Action:** Navigate to `http://localhost:5173/billing`.
+- **Expected:** A history of all your completed reservations and their computed fees.
+- **Action:** Click "View Receipt" on your recent transaction.
+- **Expected:** A clean, printable digital receipt displays, breaking down the exact check-in/out times, duration, and the total fee applied by the dynamic `FeeCalculator`.
+
+---
+
+### Phase 8: Testing Pricing Config & Analytics
+
+- **Action:** Log in as an `ADMIN` and navigate to `http://localhost:5173/admin/pricing`.
+- **Expected:** You can view and edit the dynamic base rates, multipliers, and daily caps used by the Billing engine.
+- **Action:** Navigate to `http://localhost:5173/admin/reports`.
+- **Expected:** A comprehensive dashboard powered by Recharts showing:
+  - Total Reservations, Avg Duration, and Occupancy.
+  - A bar chart of total Revenue (switchable between Daily and Monthly).
+  - A bar chart of Peak Hours (showing the busiest times of the week).

@@ -72,3 +72,40 @@ export interface Page<T> {
   number:           number;   // current page (0-indexed)
   size:             number;
 }
+
+// ─── Parking ───────────────────────────────────────────────────
+
+export interface ParkingLot {
+  id: number;
+  lotName: string;
+  location: string;
+  totalCapacity: number;
+  status: string;
+}
+
+export interface ParkingSlot {
+  id: number;
+  lotId: number;
+  slotNumber: string;
+  slotType: VehicleType;
+  status: SlotStatus;
+}
+
+export interface Reservation {
+  id: number;
+  slotId: number;
+  startTime: string;
+  endTime: string;
+  checkInTime: string | null;
+  status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "NO_SHOW";
+}
+
+export interface Transaction {
+  id: number;
+  reservationId: number;
+  checkInTime: string;
+  checkOutTime: string;
+  durationMinutes: number;
+  totalFee: number;
+  paymentStatus: string;
+}

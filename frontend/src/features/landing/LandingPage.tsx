@@ -1,19 +1,10 @@
 import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, MapPin, Shield, CreditCard, ChevronRight } from 'lucide-react';
+import { ArrowRight, MapPin, Shield, CreditCard } from 'lucide-react';
 import { useAuth } from '@/features/auth/AuthContext';
 
 export default function LandingPage() {
-  const { user, logout } = useAuth();
-  const [currentTime, setCurrentTime] = useState(new Date());
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const formattedTime = currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const { user } = useAuth();
 
   const features = [
     {
@@ -34,51 +25,9 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-night-900 overflow-hidden relative">
-      {/* Background removed for minimal style */}
-
-      {/* Navbar */}
-      <nav className="relative z-10 border-b border-white/10 bg-night-900/50 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center">
-                <span className="text-night-900 font-bold text-xl">P</span>
-              </div>
-              <span className="text-xl font-bold text-white">
-                SPMS
-              </span>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="text-sm font-mono text-white/50 bg-night-800 px-3 py-1 rounded-full border border-night-700 hidden sm:block">
-                {formattedTime}
-              </div>
-              {user ? (
-                <>
-                  <Link to="/profile" className="text-sm font-medium text-white/80 hover:text-white transition-colors">
-                    Dashboard
-                  </Link>
-                  <button onClick={logout} className="btn-primary py-2 px-4 text-sm">
-                    Log Out
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link to="/login" className="text-sm font-medium text-white/80 hover:text-white transition-colors">
-                    Sign In
-                  </Link>
-                  <Link to="/register" className="btn-primary py-2 px-4 text-sm">
-                    Get Started
-                  </Link>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <>
       {/* Hero Section */}
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
         <div className="text-center max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -119,8 +68,8 @@ export default function LandingPage() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             {user ? (
-              <Link to="/profile" className="btn-primary group w-full sm:w-auto text-base px-8 py-4">
-                Go to Dashboard
+              <Link to="/reservations/new" className="btn-primary group w-full sm:w-auto text-base px-8 py-4">
+                Book a Slot Now
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             ) : (
@@ -156,7 +105,7 @@ export default function LandingPage() {
             </div>
           ))}
         </motion.div>
-      </main>
-    </div>
+      </div>
+    </>
   );
 }
