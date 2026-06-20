@@ -73,4 +73,16 @@
   .badge-locked   { @apply badge bg-red-500/10 border-red-500/20   text-red-400; }
   .badge-admin    { @apply badge bg-slate-500/10 border-slate-500/20 text-slate-400; }
   .badge-user     { @apply badge bg-brand-500/10 border-brand-500/20 text-brand-500; }
+
+  /* Reservation status badges */
+  .badge-pending   { @apply badge bg-yellow-500/10 border-yellow-500/30 text-yellow-300; }
+  .badge-confirmed { @apply badge bg-blue-500/10   border-blue-500/30   text-blue-300; }
+  .badge-cancelled { @apply badge bg-gray-500/10   border-gray-500/30   text-gray-400; }
+  .badge-completed { @apply badge bg-green-500/10  border-green-500/30  text-green-300; }
+  .badge-no-show   { @apply badge bg-red-500/10    border-red-500/30    text-red-400; }
+
+  .alert-warning {
+    @apply rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-200 backdrop-blur-sm flex items-start gap-3;
+  }
 }
+

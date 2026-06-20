@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import api from '../../common/api';
-import { ParkingLot } from '../../common/types';
+import { ParkingService } from './parking.service';
+import type { ParkingLot } from '../../common/types';
+import { PlusCircle, Trash2, MapPin, Hash, AlertCircle, RefreshCw } from 'lucide-react';
 
 export const AdminLotsPage: React.FC = () => {
   const [lots, setLots] = useState<ParkingLot[]>([]);
@@ -15,9 +16,11 @@ export const AdminLotsPage: React.FC = () => {
   const [addError, setAddError] = useState('');
 
   const fetchLots = async () => {
+    setLoading(true);
     try {
-      const response = await api.get<ParkingLot[]>('/lots');
-      setLots(response.data);
+      const data = await ParkingService.getAllLots();
+      setLots(data);
+      setError('');
     } catch (err: any) {
       setError(err?.message || 'Failed to fetch lots');
     } finally {
@@ -36,7 +39,7 @@ export const AdminLotsPage: React.FC = () => {
     setAdding(true);
     setAddError('');
     try {
-      await api.post('/lots', {
+      await ParkingService.createLot({
         lotName,
         location,
         totalCapacity: Number(totalCapacity)
@@ -44,7 +47,7 @@ export const AdminLotsPage: React.FC = () => {
       setLotName('');
       setLocation('');
       setTotalCapacity('');
-      fetchLots(); // Refresh list after adding
+      fetchLots();
     } catch (err: any) {
       setAddError(err?.message || 'Failed to add lot');
     } finally {
@@ -54,113 +57,128 @@ export const AdminLotsPage: React.FC = () => {
 
   const handleDeactivate = async (id: number) => {
     if (!window.confirm('Are you sure you want to deactivate this parking lot?')) return;
-    
     try {
-      await api.put(`/lots/${id}/deactivate`);
-      fetchLots(); // Refresh list
+      await ParkingService.deleteLot(id);
+      fetchLots();
     } catch (err: any) {
       alert(err?.message || 'Failed to deactivate lot');
     }
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 animate-fade-in">
+    <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Manage Parking Lots</h1>
-          <p className="text-gray-500 mt-1">Add new lots or deactivate existing ones.</p>
+          <h1 className="text-2xl font-bold text-white">Manage Parking Lots</h1>
+          <p className="text-white/50 text-sm mt-1">Add new lots or deactivate existing ones.</p>
         </div>
+        <button onClick={fetchLots} className="btn-secondary flex items-center gap-2 text-sm">
+          <RefreshCw className="h-4 w-4" /> Refresh
+        </button>
       </div>
 
       {/* Add Lot Form */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 transition-shadow hover:shadow-md">
-        <h2 className="text-lg font-semibold mb-5 text-gray-800">Add New Lot</h2>
-        {addError && <div className="mb-5 text-sm text-red-600 bg-red-50/80 border border-red-100 p-3 rounded-lg">{addError}</div>}
+      <div className="card mb-8">
+        <h2 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
+          <PlusCircle className="h-5 w-5 text-brand-400" /> Add New Lot
+        </h2>
         
-        <form onSubmit={handleAddLot} className="flex flex-wrap gap-5 items-end">
-          <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Lot Name</label>
+        {addError && (
+          <div className="alert-error mb-5">
+            <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+            <p>{addError}</p>
+          </div>
+        )}
+        
+        <form onSubmit={handleAddLot} className="grid sm:grid-cols-4 gap-4 items-end">
+          <div className="sm:col-span-1">
+            <label className="label">Lot Name</label>
             <input 
               type="text" 
               required
               value={lotName}
               onChange={(e) => setLotName(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all bg-gray-50/50 hover:bg-white"
+              className="input"
               placeholder="e.g. Main Lot A"
             />
           </div>
-          <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Location</label>
+          <div className="sm:col-span-1">
+            <label className="label">Location</label>
             <input 
               type="text" 
               required
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all bg-gray-50/50 hover:bg-white"
+              className="input"
               placeholder="e.g. North Wing"
             />
           </div>
-          <div className="w-32">
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Capacity</label>
+          <div className="sm:col-span-1">
+            <label className="label">Capacity</label>
             <input 
               type="number" 
               required
               min="1"
               value={totalCapacity}
               onChange={(e) => setTotalCapacity(e.target.value ? Number(e.target.value) : '')}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all bg-gray-50/50 hover:bg-white"
+              className="input"
               placeholder="100"
             />
           </div>
-          <button 
-            type="submit" 
-            disabled={adding}
-            className="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-xl shadow-sm hover:bg-blue-700 hover:shadow disabled:opacity-50 transition-all"
-          >
-            {adding ? 'Adding...' : 'Add Lot'}
-          </button>
+          <div className="sm:col-span-1">
+            <button type="submit" disabled={adding} className="btn-primary w-full">
+              {adding ? 'Adding...' : 'Add Lot'}
+            </button>
+          </div>
         </form>
       </div>
 
       {/* Lots Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="card p-0 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-500 animate-pulse font-medium">Loading lots...</div>
+          <div className="p-12 text-center flex flex-col items-center">
+            <RefreshCw className="h-8 w-8 text-brand-400 animate-spin mb-4" />
+            <p className="text-white/50 text-sm">Loading lots...</p>
+          </div>
         ) : error ? (
-          <div className="p-12 text-center text-red-500 font-medium">{error}</div>
+          <div className="p-12 text-center text-red-400">{error}</div>
         ) : lots.length === 0 ? (
-          <div className="p-12 text-center text-gray-500 font-medium">No active parking lots found.</div>
+          <div className="p-12 text-center text-white/50">No active parking lots found.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50/80 border-b border-gray-100 text-gray-500 text-xs uppercase tracking-widest font-semibold">
-                  <th className="p-5">ID</th>
-                  <th className="p-5">Lot Name</th>
-                  <th className="p-5">Location</th>
-                  <th className="p-5">Capacity</th>
-                  <th className="p-5">Status</th>
-                  <th className="p-5 text-right">Actions</th>
+                <tr className="bg-night-900 border-b border-night-700 text-white/50 text-xs uppercase tracking-wider">
+                  <th className="px-6 py-4 font-medium">ID</th>
+                  <th className="px-6 py-4 font-medium">Lot Name</th>
+                  <th className="px-6 py-4 font-medium">Location</th>
+                  <th className="px-6 py-4 font-medium">Capacity</th>
+                  <th className="px-6 py-4 font-medium">Status</th>
+                  <th className="px-6 py-4 font-medium text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-night-700">
                 {lots.map(lot => (
-                  <tr key={lot.id} className="hover:bg-gray-50/50 transition-colors group">
-                    <td className="p-5 text-gray-500 text-sm">#{lot.id}</td>
-                    <td className="p-5 font-semibold text-gray-800">{lot.lotName}</td>
-                    <td className="p-5 text-gray-600">{lot.location}</td>
-                    <td className="p-5 text-gray-600 font-medium">{lot.totalCapacity}</td>
-                    <td className="p-5">
-                      <span className="inline-flex px-2.5 py-1 text-xs font-bold bg-green-100 text-green-700 rounded-full shadow-sm">
-                        {lot.status}
-                      </span>
+                  <tr key={lot.id} className="hover:bg-white/5 transition-colors group">
+                    <td className="px-6 py-4 text-white/50 text-sm font-mono">#{lot.id}</td>
+                    <td className="px-6 py-4 font-semibold text-white">{lot.lotName}</td>
+                    <td className="px-6 py-4 text-white/70 flex items-center gap-1.5">
+                      <MapPin className="h-4 w-4 text-white/40" /> {lot.location}
                     </td>
-                    <td className="p-5 text-right">
+                    <td className="px-6 py-4 text-white/70 font-medium">
+                      <div className="flex items-center gap-1.5">
+                        <Hash className="h-4 w-4 text-brand-400" /> {lot.totalCapacity}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="badge badge-active">{lot.status}</span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
                       <button 
                         onClick={() => handleDeactivate(lot.id)}
-                        className="text-sm text-red-600 hover:text-red-700 font-semibold px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-50 transition-all focus:opacity-100"
+                        className="text-sm font-medium text-red-400 hover:text-red-300 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 ml-auto"
                       >
-                        Deactivate
+                        <Trash2 className="h-4 w-4" /> Deactivate
                       </button>
                     </td>
                   </tr>

@@ -55,8 +55,11 @@ export default function LandingPage() {
               </div>
               {user ? (
                 <>
+                  <Link to="/reservations" className="text-sm font-medium text-white/80 hover:text-white transition-colors">
+                    Reservations
+                  </Link>
                   <Link to="/profile" className="text-sm font-medium text-white/80 hover:text-white transition-colors">
-                    Dashboard
+                    Profile
                   </Link>
                   <button onClick={logout} className="btn-primary py-2 px-4 text-sm">
                     Log Out
