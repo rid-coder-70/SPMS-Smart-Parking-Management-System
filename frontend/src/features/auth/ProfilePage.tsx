@@ -1,5 +1,5 @@
 import { useState, FormEvent, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import api from '@/common/api';
 import type {
@@ -7,6 +7,7 @@ import type {
   UpdateProfilePayload,
   VehicleType,
 } from '@/common/types';
+import { Eye, EyeOff } from 'lucide-react';
 
 // ─── Badge helpers ────────────────────────────────────────────
 
@@ -51,6 +52,10 @@ export default function ProfilePage() {
   });
   const [pwSaving, setPwSaving] = useState(false);
   const [pwMsg,    setPwMsg]    = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
+
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Sync profile form when user state changes (e.g. after save)
   useEffect(() => {
@@ -112,15 +117,23 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-10">
-      <div className="mx-auto max-w-2xl space-y-6">
+    <div className="min-h-screen bg-night-900 px-4 py-10 relative overflow-hidden">
+      {/* Background removed for minimal style */}
+      
+      <div className="mx-auto max-w-2xl space-y-6 relative z-10">
+        <div className="flex items-center">
+          <Link to="/" className="text-white/60 hover:text-white transition-colors flex items-center gap-2 text-sm font-medium">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            Back to Home
+          </Link>
+        </div>
 
         {/* ── User Info Card ────────────────────────────── */}
-        <div className="card">
+        <div className="card animate-fade-in">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-xl font-bold text-gray-900">{user.username}</h1>
-              <p className="mt-0.5 text-sm text-gray-500">{user.email}</p>
+              <h1 className="text-2xl font-bold text-white">{user.username}</h1>
+              <p className="mt-1 text-sm text-white/60">{user.email}</p>
             </div>
             <div className="flex gap-2">
               <RoleBadge role={user.role} />
@@ -128,7 +141,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <dl className="mt-4 grid grid-cols-2 gap-4 text-sm">
+          <dl className="mt-6 grid grid-cols-2 gap-4 text-sm border-t border-white/10 pt-6">
             {[
               { label: 'User ID',       value: user.id },
               { label: 'Phone',         value: user.phone || '—' },
@@ -136,23 +149,23 @@ export default function ProfilePage() {
               { label: 'Plate Number',  value: user.vehicleNumber || '—' },
             ].map(({ label, value }) => (
               <div key={label}>
-                <dt className="font-medium text-gray-500">{label}</dt>
-                <dd className="mt-0.5 text-gray-900">{String(value)}</dd>
+                <dt className="font-medium text-white/50">{label}</dt>
+                <dd className="mt-1 text-white font-medium">{String(value)}</dd>
               </div>
             ))}
           </dl>
 
           <button
             onClick={() => { logout(); navigate('/login'); }}
-            className="btn-secondary mt-6 text-red-600 border-red-200 hover:bg-red-50"
+            className="btn-secondary mt-8 w-full border-red-500/30 text-red-400 hover:bg-red-500/10 hover:border-red-500/50"
           >
             Sign out
           </button>
         </div>
 
         {/* ── Update Profile Form ───────────────────────── */}
-        <div className="card">
-          <h2 className="mb-5 text-lg font-semibold text-gray-900">Update Profile</h2>
+        <div className="card animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          <h2 className="mb-6 text-xl font-bold text-white border-b border-white/10 pb-4">Update Profile</h2>
 
           {profileMsg && (
             <div className={profileMsg.type === 'ok' ? 'alert-success mb-4' : 'alert-error mb-4'}>
@@ -195,11 +208,11 @@ export default function ProfilePage() {
                     vehicleType: (e.target.value as VehicleType) || undefined,
                   }))
                 }
-                className="input"
+                className="input appearance-none bg-night-800/50"
               >
-                <option value="">— No change —</option>
+                <option value="" className="bg-night-800 text-white/50">— No change —</option>
                 {VEHICLE_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
+                  <option key={o.value} value={o.value} className="bg-night-800 text-white">{o.label}</option>
                 ))}
               </select>
             </div>
@@ -223,8 +236,8 @@ export default function ProfilePage() {
         </div>
 
         {/* ── Change Password Form ──────────────────────── */}
-        <div className="card">
-          <h2 className="mb-5 text-lg font-semibold text-gray-900">Change Password</h2>
+        <div className="card animate-slide-up" style={{ animationDelay: '0.2s' }}>
+          <h2 className="mb-6 text-xl font-bold text-white border-b border-white/10 pb-4">Change Password</h2>
 
           {pwMsg && (
             <div className={pwMsg.type === 'ok' ? 'alert-success mb-4' : 'alert-error mb-4'}>
@@ -235,39 +248,66 @@ export default function ProfilePage() {
           <form onSubmit={handlePasswordSubmit} noValidate className="space-y-4">
             <div>
               <label htmlFor="pw-current" className="label">Current Password</label>
-              <input
-                id="pw-current"
-                type="password"
-                autoComplete="current-password"
-                value={pwForm.currentPassword}
-                onChange={(e) => setPwForm((p) => ({ ...p, currentPassword: e.target.value }))}
-                className="input"
-              />
+              <div className="relative">
+                <input
+                  id="pw-current"
+                  type={showCurrentPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  value={pwForm.currentPassword}
+                  onChange={(e) => setPwForm((p) => ({ ...p, currentPassword: e.target.value }))}
+                  className="input pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-white/50 hover:text-white transition-colors"
+                >
+                  {showCurrentPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
+              </div>
             </div>
 
             <div>
               <label htmlFor="pw-new" className="label">New Password</label>
-              <input
-                id="pw-new"
-                type="password"
-                autoComplete="new-password"
-                placeholder="At least 6 characters"
-                value={pwForm.newPassword}
-                onChange={(e) => setPwForm((p) => ({ ...p, newPassword: e.target.value }))}
-                className="input"
-              />
+              <div className="relative">
+                <input
+                  id="pw-new"
+                  type={showNewPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  placeholder="At least 6 characters"
+                  value={pwForm.newPassword}
+                  onChange={(e) => setPwForm((p) => ({ ...p, newPassword: e.target.value }))}
+                  className="input pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-white/50 hover:text-white transition-colors"
+                >
+                  {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
+              </div>
             </div>
 
             <div>
               <label htmlFor="pw-confirm" className="label">Confirm New Password</label>
-              <input
-                id="pw-confirm"
-                type="password"
-                autoComplete="new-password"
-                value={pwForm.confirmPassword}
-                onChange={(e) => setPwForm((p) => ({ ...p, confirmPassword: e.target.value }))}
-                className="input"
-              />
+              <div className="relative">
+                <input
+                  id="pw-confirm"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  value={pwForm.confirmPassword}
+                  onChange={(e) => setPwForm((p) => ({ ...p, confirmPassword: e.target.value }))}
+                  className="input pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-white/50 hover:text-white transition-colors"
+                >
+                  {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
+              </div>
             </div>
 
             <button
