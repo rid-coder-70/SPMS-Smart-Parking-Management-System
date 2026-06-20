@@ -2,7 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '@/features/auth/AuthContext';
 import { ProtectedRoute, AdminRoute } from '@/common/ProtectedRoute';
 
-// ── Auth pages (Module 1) ─────────────────────────────────────
+// ── Public pages ────────────────────────────────────────────────
+import LandingPage  from '@/features/landing/LandingPage';
 import LoginPage    from '@/features/auth/LoginPage';
 import RegisterPage from '@/features/auth/RegisterPage';
 import ProfilePage  from '@/features/auth/ProfilePage';
@@ -34,6 +35,7 @@ function App() {
         <Routes>
 
           {/* ── Public routes ────────────────────────────── */}
+          <Route path="/"         element={<LandingPage />} />
           <Route path="/login"    element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
@@ -50,12 +52,6 @@ function App() {
             {/* Module 4 — Billing (uncomment when built) */}
             {/* <Route path="/billing"      element={<BillingPage />} /> */}
 
-            {/* Default authenticated landing page */}
-            <Route index path="/" element={
-              <div className="flex min-h-screen items-center justify-center text-gray-500">
-                <p>Welcome to SPMS — select a feature from the menu.</p>
-              </div>
-            } />
           </Route>
 
           {/* ── Admin-only routes ─────────────────────────── */}
