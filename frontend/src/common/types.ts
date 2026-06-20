@@ -72,3 +72,21 @@ export interface Page<T> {
   number:           number;   // current page (0-indexed)
   size:             number;
 }
+
+// ─── Parking Module ───────────────────────────────────────────
+
+export interface ParkingLot {
+  id: number;
+  lotName: string;
+  location: string;
+  totalCapacity: number;
+  status: string;
+}
+
+export interface ParkingSlot {
+  id: number;
+  lotId: number;
+  slotNumber: string;
+  slotType: VehicleType;
+  status: SlotStatus;
+}

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthProvider } from '@/features/auth/AuthContext';
 import { ProtectedRoute, AdminRoute } from '@/common/ProtectedRoute';
 
@@ -9,6 +9,8 @@ import ProfilePage  from '@/features/auth/ProfilePage';
 
 // ── Placeholder pages for future modules ─────────────────────
 // Module 2 — Parking
+import { AdminLotsPage } from '@/features/parking/AdminLotsPage';
+import { AdminSlotsPage } from '@/features/parking/AdminSlotsPage';
 // import ParkingMapPage  from '@/features/parking/ParkingMapPage';
 
 // Module 3 — Reservations
@@ -52,8 +54,13 @@ function App() {
 
             {/* Default authenticated landing page */}
             <Route index path="/" element={
-              <div className="flex min-h-screen items-center justify-center text-gray-500">
-                <p>Welcome to SPMS — select a feature from the menu.</p>
+              <div className="flex flex-col min-h-screen items-center justify-center bg-gray-50 text-gray-800 p-6">
+                <h1 className="text-4xl font-bold mb-2">Welcome to SPMS</h1>
+                <p className="text-gray-500 mb-8">Select a management module below to get started:</p>
+                <div className="flex gap-4">
+                  <Link to="/admin/lots" className="px-6 py-3 bg-blue-600 text-white rounded-xl shadow-sm hover:bg-blue-700 hover:shadow font-medium transition-all">Manage Parking Lots</Link>
+                  <Link to="/admin/slots" className="px-6 py-3 bg-indigo-600 text-white rounded-xl shadow-sm hover:bg-indigo-700 hover:shadow font-medium transition-all">Manage Parking Slots</Link>
+                </div>
               </div>
             } />
           </Route>
@@ -62,6 +69,8 @@ function App() {
           <Route element={<AdminRoute />}>
             {/* Module 5 — Admin (uncomment when built) */}
             {/* <Route path="/admin" element={<AdminDashboard />} /> */}
+            <Route path="/admin/lots" element={<AdminLotsPage />} />
+            <Route path="/admin/slots" element={<AdminSlotsPage />} />
           </Route>
 
           {/* ── Fallback ─────────────────────────────────── */}
