@@ -1,5 +1,6 @@
 package com.spms.common.config;
 
+import com.spms.auth.security.JwtAuthEntryPoint;
 import com.spms.auth.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,17 +19,17 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
- * Central Spring Security configuration.
- *  - CORS: allows http://localhost:5173 (Vite dev server)
- *  - CSRF: disabled (stateless JWT API)
+ * Spring Security configuration:
+ *  - CSRF disabled (stateless JWT API)
  *  - Sessions: STATELESS
- *  - Public endpoints: /auth/**, /h2-console/**
- *  - Everything else: requires authentication
- *  - Method-level @PreAuthorize enabled for ADMIN checks
+ *  - CORS: allows http://localhost:5173 (Vite dev server)
+ *  - Public:  /api/v1/auth/**, /h2-console/**
+ *  - Admin:   /api/v1/admin/** → ROLE_ADMIN
+ *  - Rest:    authenticated
+ *  - Method-level @PreAuthorize / @Secured enabled
  */
 @Configuration
 @EnableWebSecurity
@@ -36,33 +37,50 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final JwtAuthEntryPoint jwtAuthEntryPoint;
+
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider  authenticationProvider;
 
+
     @Value("${cors.allowed-origins}")
-    private String[] allowedOrigins;
+    private String allowedOriginsRaw;   // comma-separated
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            // ── CORS ────────────────────────────────────────────
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+            // ── CSRF disabled (JWT API is stateless) ────────────
             .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+            // ── No sessions ──────────────────────────────────────
+            // ── Exception handling — return JSON, not redirects ──
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint(jwtAuthEntryPoint)
+            )
+            .sessionManagement(sm ->
+                sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+            // ── Authorization rules ──────────────────────────────
             .authorizeHttpRequests(auth -> auth
-                // ── Public endpoints ──────────────────────────────
+                // Public
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/slots", "/slots/**").permitAll()
-                // ── Admin-only (coarse guard; fine-grained via @PreAuthorize) ──
+                // Admin-only (coarse; fine-grained via @PreAuthorize in controllers)
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                // ── Everything else requires a valid JWT ──────────
+                // Everything else needs a valid JWT
                 .anyRequest().authenticated()
             )
+
+            // ── JWT filter ───────────────────────────────────────
             .authenticationProvider(authenticationProvider)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-            // Allow H2 console frames (dev only)
-            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
+
+            // Allow H2 console iframe (dev only)
+            .headers(h -> h.frameOptions(fo -> fo.sameOrigin()));
 
         return http.build();
     }
@@ -70,7 +88,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList(allowedOrigins));
+
+        // Parse comma-separated origins from properties
+        List<String> origins = List.of(allowedOriginsRaw.split(","));
+        config.setAllowedOrigins(origins);
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         config.setExposedHeaders(List.of("Authorization"));
