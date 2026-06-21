@@ -163,6 +163,17 @@ export default function ProfilePage() {
           </button>
         </div>
 
+        {/* ── Admin Navigation ────────────────────────────── */}
+        {user.role === 'ADMIN' && (
+          <div className="card animate-slide-up">
+            <h2 className="mb-4 text-xl font-bold text-white border-b border-white/10 pb-4">Admin Controls</h2>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link to="/admin/lots" className="btn-primary w-full text-center py-3">Manage Lots</Link>
+              <Link to="/admin/slots" className="btn-secondary w-full text-center border-brand-500/30 hover:bg-brand-500/10 py-3">Manage Slots</Link>
+            </div>
+          </div>
+        )}
+
         {/* ── Update Profile Form ───────────────────────── */}
         <div className="card animate-slide-up" style={{ animationDelay: '0.1s' }}>
           <h2 className="mb-6 text-xl font-bold text-white border-b border-white/10 pb-4">Update Profile</h2>

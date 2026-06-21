@@ -72,6 +72,11 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/lots", "/lots/*/slots").permitAll()
                 // Admin-only (coarse; fine-grained via @PreAuthorize in controllers)
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                // Reports — admin only
+                .requestMatchers("/reports/**").hasRole("ADMIN")
+                // Reservations & Billing — any authenticated user
+                .requestMatchers("/reservations/**").authenticated()
+                .requestMatchers("/billing/**").authenticated()
                 // Everything else needs a valid JWT
                 .anyRequest().authenticated()
             )
