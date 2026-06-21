@@ -45,7 +45,7 @@ export function AdminRoute() {
 
   if (loading)                   return <LoadingSpinner />;
   if (!user)                     return <Navigate to="/login" replace />;
-  if (user.role !== 'ADMIN')     return <Navigate to="/profile" replace />;
+  if (user.role !== 'ADMIN')     return <Navigate to="/dashboard" replace />;
 
   return <Outlet />;
 }

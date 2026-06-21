@@ -73,10 +73,10 @@ The backend is now running on **http://localhost:8080** and connected to an in-m
 ### Step 3: View the App
 Open your browser and navigate to: **http://localhost:5173**
 
-You can immediately test the fully integrated Authentication module:
-1. Click **Register** to create a new account.
-2. Sign in with your new credentials.
-3. Test the **account lockout feature** by intentionally entering the wrong password 3 times in a row.
+You can immediately test the fully integrated system:
+1. **Admin Setup**: Log in with username `admin` and password `admin123`. Navigate to the **Admin Dashboard** and add a new Parking Lot and some Slots.
+2. **User Flow**: Register a new account, log in, and browse the **Parking Map**. Select an available slot to reserve it.
+3. **Billing Flow**: Navigate to **My Reservations** to check in, and then to **My Billing** to check out and pay.
 
 ---
 
@@ -88,24 +88,25 @@ SPMS-Smart-Parking-Management-System/
 │   ├── mvnw               # Maven wrapper (run this!)
 │   ├── pom.xml
 │   └── src/main/java/com/spms/
-│       ├── auth/          # Module 1: Authentication & User Mgmt
-│       ├── parking/       # Module 2: Parking (Pending)
-│       ├── reservation/   # Module 3: Reservations (Pending)
-│       ├── billing/       # Module 4: Billing (Pending)
-│       ├── admin/         # Module 5: Admin (Pending)
+│       ├── auth/          # Module 1: Authentication & User Mgmt (Completed)
+│       ├── parking/       # Module 2: Parking Lots & Slots (Completed)
+│       ├── reservation/   # Module 3: Reservations (Completed)
+│       ├── billing/       # Module 4: Billing & Transactions (Completed)
+│       ├── reporting/     # Module 5: Admin Reports (Completed)
 │       └── common/        # Shared enums, exception handlers, JWT util
 │
 └── frontend/
     ├── package.json
     ├── vite.config.ts
     └── src/
-        ├── common/        # Axios interceptors, protected routes, types
+        ├── common/        # Axios interceptors, protected routes, Dashboard layout
         └── features/
             ├── auth/      # Login, Register, Profile components
-            ├── parking/
-            ├── reservations/
-            ├── billing/
-            └── admin/
+            ├── parking/   # Parking Map, Lot Selector, Slot Grid, Admin Management
+            ├── reservations/ # Reservations Dashboard, Check-in flow
+            ├── billing/   # Transactions, Receipts, Check-out flow
+            ├── dashboard/ # User Dashboard
+            └── admin/     # Admin Dashboard, Revenue & Occupancy Reports
 ```
 
 ---

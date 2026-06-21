@@ -30,7 +30,7 @@ export const LotSelector: React.FC<LotSelectorProps> = ({ value, onChange, class
 
   if (loading) {
     return (
-      <select disabled className={`border border-gray-200 bg-gray-50 text-gray-500 rounded-lg px-4 py-2.5 text-sm ${className}`}>
+      <select disabled className={`input appearance-none opacity-50 ${className}`}>
         <option>Loading lots...</option>
       </select>
     );
@@ -38,7 +38,7 @@ export const LotSelector: React.FC<LotSelectorProps> = ({ value, onChange, class
 
   if (error) {
     return (
-      <select disabled className={`border border-red-200 bg-red-50 text-red-500 rounded-lg px-4 py-2.5 text-sm ${className}`}>
+      <select disabled className={`input appearance-none border-red-500/30 text-red-400 ${className}`}>
         <option>Error loading lots</option>
       </select>
     );
@@ -46,7 +46,7 @@ export const LotSelector: React.FC<LotSelectorProps> = ({ value, onChange, class
 
   if (lots.length === 0) {
     return (
-      <select disabled className={`border border-gray-200 bg-gray-50 text-gray-500 rounded-lg px-4 py-2.5 text-sm ${className}`}>
+      <select disabled className={`input appearance-none opacity-50 ${className}`}>
         <option>No active lots available</option>
       </select>
     );
@@ -54,14 +54,14 @@ export const LotSelector: React.FC<LotSelectorProps> = ({ value, onChange, class
 
   return (
     <select
-      className={`border border-gray-300 rounded-lg px-4 py-2.5 text-sm bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-colors ${className}`}
+      className={`input appearance-none ${className}`}
       value={value || ''}
       onChange={(e) => onChange(Number(e.target.value))}
     >
-      <option value="" disabled>Select a parking lot</option>
+      <option value="" disabled className="bg-night-800 text-white/50">Select a parking lot</option>
       {lots.map((lot) => (
-        <option key={lot.id} value={lot.id}>
-          {lot.lotName} - {lot.location} (Capacity: {lot.totalCapacity})
+        <option key={lot.id} value={lot.id} className="bg-night-800 text-white">
+          {lot.lotName} — {lot.location} (Capacity: {lot.totalCapacity})
         </option>
       ))}
     </select>

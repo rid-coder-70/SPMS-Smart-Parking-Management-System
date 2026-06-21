@@ -1,5 +1,5 @@
 import { useState, FormEvent, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import api from '@/common/api';
 import type {
@@ -117,16 +117,8 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-night-900 px-4 py-10 relative overflow-hidden">
-      {/* Background removed for minimal style */}
-      
-      <div className="mx-auto max-w-2xl space-y-6 relative z-10">
-        <div className="flex items-center">
-          <Link to="/" className="text-white/60 hover:text-white transition-colors flex items-center gap-2 text-sm font-medium">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-            Back to Home
-          </Link>
-        </div>
+    <div className="animate-fade-in">
+      <div className="mx-auto max-w-2xl space-y-6">
 
         {/* ── User Info Card ────────────────────────────── */}
         <div className="card animate-fade-in">
@@ -163,16 +155,7 @@ export default function ProfilePage() {
           </button>
         </div>
 
-        {/* ── Admin Navigation ────────────────────────────── */}
-        {user.role === 'ADMIN' && (
-          <div className="card animate-slide-up">
-            <h2 className="mb-4 text-xl font-bold text-white border-b border-white/10 pb-4">Admin Controls</h2>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/admin/lots" className="btn-primary w-full text-center py-3">Manage Lots</Link>
-              <Link to="/admin/slots" className="btn-secondary w-full text-center border-brand-500/30 hover:bg-brand-500/10 py-3">Manage Slots</Link>
-            </div>
-          </div>
-        )}
+
 
         {/* ── Update Profile Form ───────────────────────── */}
         <div className="card animate-slide-up" style={{ animationDelay: '0.1s' }}>
