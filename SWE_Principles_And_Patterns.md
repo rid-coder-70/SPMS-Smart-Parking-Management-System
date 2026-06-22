@@ -1,78 +1,48 @@
 # Software Engineering Principles & Design Patterns in SPMS
 
-This document outlines the core **Software Engineering (SWE) Principles**, specifically the **SOLID** principles, and the **Design Patterns** that have been applied in the development of the **Smart Parking Management System (SPMS)**.
+This document outlines the core **Software Engineering (SWE) Principles**, specifically the **SOLID** principles, and the **Design Patterns** applied in the **Smart Parking Management System (SPMS)**.
 
-By adhering to these patterns, the project maintains high cohesion, loose coupling, and scalability, fulfilling modern software engineering best practices.
-
----
-
-## 1. SOLID Principles
-
-### S - Single Responsibility Principle (SRP)
-*A class should have one, and only one, reason to change.*
-
-**Implementation in SPMS:**
-- **`AuthService.java`**: Responsible *solely* for authenticating users, generating JWT tokens, and handling registration logic. It does not handle database persistence details directly or parking slot management.
-- **`LoginLockService.java`**: Dedicated exclusively to tracking failed login attempts and locking/unlocking accounts. It offloads this responsibility from the `AuthService` to keep the authentication logic clean.
-- **`FeeCalculator.java` (Billing Module)**: Has a single reason to change—if the pricing algorithm or business rules for calculating parking fees change.
-
-### O - Open/Closed Principle (OCP)
-*Software entities should be open for extension but closed for modification.*
-
-**Implementation in SPMS:**
-- **Spring Security Configuration**: We configure our security filters (`JwtAuthenticationFilter`) without modifying the core internal classes of Spring Security. We extend the framework's capabilities through configuration and filter chaining.
-- **DTOs & Controllers**: If a new type of vehicle is added, we don't need to rewrite the `ReservationService`. We simply extend the `VehicleType` enum. The business logic gracefully handles the new type because it relies on abstractions rather than hardcoded vehicle strings.
-
-### L - Liskov Substitution Principle (LSP)
-*Objects of a superclass should be replaceable with objects of its subclasses without breaking the application.*
-
-**Implementation in SPMS:**
-- **`JpaRepository` Interfaces**: In our persistence layer (e.g., `ReservationRepository`, `UserRepository`), we use interfaces that extend Spring Data's `JpaRepository`. Any underlying database implementation provided by Spring Data JPA can be substituted at runtime without breaking our application logic. We code to the interface, not the concrete implementation.
-
-### I - Interface Segregation Principle (ISP)
-*No client should be forced to depend on methods it does not use.*
-
-**Implementation in SPMS:**
-- **API Segregation**: We divide our REST APIs into distinct controllers (`AuthController`, `ParkingSlotController`, `ReservationController`). The frontend mobile map component only calls the `ParkingSlotController` and does not need to know about the `BillingController`.
-- **Repository Segregation**: Rather than a single massive `DatabaseRepository`, we have specific, segregated repositories (`UserRepository`, `LotRepository`, `SlotRepository`).
-
-### D - Dependency Inversion Principle (DIP)
-*High-level modules should not depend on low-level modules. Both should depend on abstractions.*
-
-**Implementation in SPMS:**
-- **Constructor Injection**: Throughout the project (e.g., in `ReservationService`), dependencies are injected via constructors (using Lombok's `@RequiredArgsConstructor`). The controllers depend on the `Service` layer abstractions, and the services depend on `Repository` interfaces, rather than instantiating concrete database connections themselves. This allows us to inject mock repositories easily during Unit Testing (e.g., `ReservationServiceTest`).
+To demonstrate our architecture, we highlight four core flows: **Registering a User, Booking a Reservation, Viewing the Parking Map, and Adding a Slot**. These flows perfectly demonstrate our adherence to SOLID principles (like SRP and DIP) and our use of Gang of Four Design Patterns (Facade, Command, Singleton, Prototype, Simple Factory, Adapter).
 
 ---
 
-## 2. Design Patterns
+## 1. Feature: User Registration (Creating a New Account)
+*Demonstrating this is as easy as typing a name and password into the sign-up form and clicking "Register".*
 
-The SPMS architecture utilizes several classic Gang of Four (GoF) design patterns, either explicitly in our custom code or implicitly through the Spring Boot framework that powers the backend.
+**Why it's easy but strong:** The flow is simple (Frontend -> Controller -> Service -> DB), making it very easy to trace and explain to the teacher.
 
-### 1. Facade Pattern
-- **Where:** The Controller Layer (e.g., `ReservationController`, `AuthController`).
-- **How:** The controllers act as a unified, simplified interface (Facade) for the complex subsystems behind them. For example, when calling `/api/reservations`, the controller hides the complexity of checking slot availability, validating time windows, interacting with the database, and calculating durations. The client (frontend) only sees a clean, simple REST endpoint.
-
-### 2. Singleton Pattern
-- **Where:** Spring Beans (`@Service`, `@Repository`, `@RestController`).
-- **How:** In SPMS, classes like `AuthService`, `ParkingSlotService`, and `JwtUtil` are singletons. The Spring IoC (Inversion of Control) container guarantees that only one shared instance of these classes is created during application startup. This prevents massive memory overhead since these services don't hold conversational state and are safely reused across thousands of requests.
-
-### 3. Simple Factory Pattern
-- **Where:** Entity & DTO Creation / Spring's `ResponseEntity`.
-- **How:** We use static factory methods to create objects. For instance, when returning HTTP responses, we use `ResponseEntity.ok(data)` or `ResponseEntity.badRequest().body(error)` rather than manually instantiating response objects. Additionally, mapping methods like `AuthResponse.from(user)` serve as simple factories that take raw entities and construct formatted DTOs for the client.
-
-### 4. Adapter Pattern
-- **Where:** Spring Security Authentication (`UserDetails` interface).
-- **How:** Spring Security expects user information to be provided in a very specific format (`UserDetails`). Our internal `User` entity doesn't match this natively. We implemented an adapter (either extending our `User` or wrapping it via a `CustomUserDetails` class) to adapt our internal database schema so that the Spring Security framework can understand and authenticate it seamlessly.
-
-### 5. Command Pattern
-- **Where:** API Endpoints and Database Transactions.
-- **How:** Every HTTP request to the backend represents a "Command" (e.g., `CreateReservationRequest`). The controller delegates this command object to the `Service` layer, which executes the specific business logic. Furthermore, Spring Data JPA encapsulates database operations (`save`, `delete`, `update`) as executable commands sent to the database driver, abstracting away the complex SQL syntax.
-
-### 6. Prototype Pattern
-- **Where:** Entity Instances and DTOs.
-- **How:** Unlike Services which are Singletons, our data objects (`Reservation`, `User`, `ParkingSlot`) are created repeatedly. While we don't explicitly call `clone()`, we use the Builder pattern (e.g., `Reservation.builder().build()`) to rapidly stamp out new instances of data objects for every single web request, effectively mirroring the Prototype pattern's goal of creating new objects efficiently when needed.
+* **Facade Pattern:** The `AuthController` acts as a Facade. The frontend just says "Here is the user info, register them!" and the Controller hides the complex steps (checking if the email exists, hashing the password, saving to the database).
+* **Prototype Pattern (via Builder):** We create the new user using `User.builder().username(...).build()`. We use the Builder pattern to easily stamp out a new Prototype of a user object.
+* **Command Pattern:** The JSON payload (`RegisterPayload`) sent from the React frontend acts as a Command object that tells the backend exactly what to execute.
+* **Adapter Pattern:** Spring Security requires a very specific `UserDetails` object format to log someone in. We used the Adapter Pattern to take our newly registered `User` and adapt it so the security framework can understand it.
 
 ---
 
-## Conclusion
-By combining the **SOLID principles** with robust **Design Patterns**, the SPMS codebase is highly modular. The separation of concerns allows the frontend developers to work purely with DTO API contracts, while backend developers can swap out logic, write decoupled unit tests via mocking, and easily extend functionality without breaking existing systems.
+## 2. Feature: Booking a Parking Slot (Reservation Only)
+*To demonstrate, a user selects a green slot on the map, picks a start/end time, and clicks "Confirm Reservation".*
+
+**Why it's easy but strong:** We get to show off core system functionality while clearly defining boundaries in the code.
+
+* **Single Responsibility Principle (SRP):** Our `ReservationService` has a single responsibility: booking the time slot. Notice that it does *not* handle the payment or fee calculation. We strictly separated the Billing logic into its own service to follow SRP.
+* **Facade Pattern:** The `ReservationController` acts as a Facade. The frontend simply sends a request to book slot A-101, and the Controller hides all the complex backend checks (verifying the slot is available, parsing the dates, saving to the database).
+* **Command Pattern:** The JSON data sent from the frontend (`CreateReservationRequest`) acts as a Command object that tells the backend exactly what action to execute.
+
+---
+
+## 3. Feature: Viewing the Parking Map (Fetching Slots)
+*To demonstrate, just click on "Parking Map" in the sidebar and watch the dynamic grid of available and occupied slots load with animations.*
+
+**Why it's easy but strong:** It's just a simple `GET` request, but it relies heavily on database abstraction.
+
+* **Dependency Inversion Principle (DIP):** Our `ParkingSlotService` relies on the `ParkingSlotRepository` **interface**, not a concrete database connection. This means our high-level service doesn't care if the underlying database is PostgreSQL or MySQL.
+* **Adapter Pattern:** Spring Data JPA (our repository interface) acts as an Adapter. It adapts our Java `ParkingSlot` objects into raw SQL queries that the database can understand, so we never had to write manual `SELECT * FROM slots` queries.
+
+---
+
+## 4. Feature: Adding a New Parking Slot (Admin Panel)
+*To demonstrate, log in as an Admin, go to "Manage Slots", type "A-101", and click Add.*
+
+**Why it's easy but strong:** It is a basic CRUD (Create) operation, which is very easy to explain and visually obvious when the new slot appears on the screen.
+
+* **Singleton Pattern:** Our `ParkingSlotService` is a Singleton. There is only one instance of this service running in the application's memory, efficiently handling slot creations for every single admin logged into the system.
+* **Simple Factory Pattern:** When the slot is saved to the database, we don't send the raw database entity back to the frontend. Instead, we use a Simple Factory approach (a DTO mapper) to create a clean, safe `ParkingSlotDto` to return to the React frontend.
