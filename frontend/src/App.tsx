@@ -20,6 +20,23 @@ import { AdminLotsPage } from '@/features/parking/AdminLotsPage';
 import { AdminSlotsPage } from '@/features/parking/AdminSlotsPage';
 import AdminDashboard from '@/features/admin/AdminDashboard';
 import ReportsPage from '@/features/admin/ReportsPage';
+import LandingPage  from '@/features/landing/LandingPage';
+import LoginPage    from '@/features/auth/LoginPage';
+import RegisterPage from '@/features/auth/RegisterPage';
+import ProfilePage  from '@/features/auth/ProfilePage';
+
+// ── Module 2 — Parking ────────────────────────────────────────
+import { AdminLotsPage }  from '@/features/parking/AdminLotsPage';
+import { AdminSlotsPage } from '@/features/parking/AdminSlotsPage';
+
+// ── Module 3 — Reservations ───────────────────────────────────
+import ReservationsPage from '@/features/reservations/ReservationsPage';
+
+// Module 4 — Billing
+// import BillingPage from '@/features/billing/BillingPage';
+
+// Module 5 — Admin
+// import AdminDashboard from '@/features/admin/AdminDashboard';
 
 // ─────────────────────────────────────────────────────────────
 
@@ -43,6 +60,13 @@ function App() {
               <Route path="/reservations" element={<ReservationsPage />} />
               <Route path="/billing"      element={<BillingPage />} />
             </Route>
+            <Route path="/profile"      element={<ProfilePage />} />
+
+            {/* Module 3 — Reservations */}
+            <Route path="/reservations" element={<ReservationsPage />} />
+
+            {/* Module 4 — Billing (uncomment when built) */}
+            {/* <Route path="/billing" element={<BillingPage />} /> */}
           </Route>
 
           {/* ── Admin-only routes with sidebar layout ────── */}
@@ -53,6 +77,10 @@ function App() {
               <Route path="/admin/slots"   element={<AdminSlotsPage />} />
               <Route path="/admin/reports" element={<ReportsPage />} />
             </Route>
+            {/* Module 5 — Admin (uncomment when built) */}
+            {/* <Route path="/admin" element={<AdminDashboard />} /> */}
+            <Route path="/admin/lots"  element={<AdminLotsPage />} />
+            <Route path="/admin/slots" element={<AdminSlotsPage />} />
           </Route>
 
           {/* ── Fallback ─────────────────────────────────── */}
@@ -65,3 +93,4 @@ function App() {
 }
 
 export default App;
+

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import api from '../../common/api';
-import { ParkingLot } from '../../common/types';
+import { ParkingService } from './parking.service';
+import type { ParkingLot } from '../../common/types';
 
 export interface LotSelectorProps {
   value?: number;
@@ -16,8 +16,8 @@ export const LotSelector: React.FC<LotSelectorProps> = ({ value, onChange, class
   useEffect(() => {
     const fetchLots = async () => {
       try {
-        const response = await api.get<ParkingLot[]>('/lots');
-        setLots(response.data);
+        const data = await ParkingService.getAllLots();
+        setLots(data);
       } catch (err: any) {
         setError(err?.message || 'Failed to fetch parking lots');
       } finally {
@@ -31,6 +31,7 @@ export const LotSelector: React.FC<LotSelectorProps> = ({ value, onChange, class
   if (loading) {
     return (
       <select disabled className={`input appearance-none opacity-50 ${className}`}>
+      <select disabled className={`input opacity-50 cursor-not-allowed ${className}`}>
         <option>Loading lots...</option>
       </select>
     );
@@ -39,6 +40,7 @@ export const LotSelector: React.FC<LotSelectorProps> = ({ value, onChange, class
   if (error) {
     return (
       <select disabled className={`input appearance-none border-red-500/30 text-red-400 ${className}`}>
+      <select disabled className={`input border-red-500/50 text-red-400 ${className}`}>
         <option>Error loading lots</option>
       </select>
     );
@@ -47,6 +49,7 @@ export const LotSelector: React.FC<LotSelectorProps> = ({ value, onChange, class
   if (lots.length === 0) {
     return (
       <select disabled className={`input appearance-none opacity-50 ${className}`}>
+      <select disabled className={`input opacity-50 cursor-not-allowed ${className}`}>
         <option>No active lots available</option>
       </select>
     );
@@ -55,6 +58,7 @@ export const LotSelector: React.FC<LotSelectorProps> = ({ value, onChange, class
   return (
     <select
       className={`input appearance-none ${className}`}
+      className={`input ${className}`}
       value={value || ''}
       onChange={(e) => onChange(Number(e.target.value))}
     >

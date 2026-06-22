@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
  *
  * userId is stored as a plain Long (not a JPA relationship) to keep
  * the reservation module decoupled from the auth module.
+ * Core Reservation entity for Module 3.
+ * References users and parking slots by ID only — no cross-module entity imports.
  */
 @Entity
 @Table(name = "reservations")
@@ -35,6 +37,13 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "slot_id", nullable = false)
     private ParkingSlot parkingSlot;
+    /** FK to users.id — stored as plain Long, no User entity import. */
+    @Column(nullable = false)
+    private Long userId;
+
+    /** FK to parking_slots.id — stored as plain Long. */
+    @Column(nullable = false)
+    private Long slotId;
 
     @Column(nullable = false)
     private LocalDateTime startTime;
@@ -49,6 +58,14 @@ public class Reservation {
 
     @Column(length = 20)
     private String vehicleNumber;
+    /** Populated on check-in; null until user checks in. */
+    @Column
+    private LocalDateTime checkInTime;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    @Builder.Default
+    private ReservationStatus status = ReservationStatus.PENDING;
 
     @Column(nullable = false, updatable = false)
     @Builder.Default

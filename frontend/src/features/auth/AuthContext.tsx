@@ -5,9 +5,9 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import api, { TOKEN_KEY } from '@/common/api';
+import { TOKEN_KEY } from '@/common/api';
+import { AuthService } from './auth.service';
 import type {
-  AuthResponse,
   LoginPayload,
   RegisterPayload,
   User,
@@ -39,8 +39,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (storedToken) {
       setToken(storedToken);
       // Fetch current user profile to rehydrate user state
-      api.get<User>('/users/me')
-        .then((res) => setUser(res.data))
+      AuthService.getMe()
+        .then((data) => setUser(data))
         .catch(() => {
           // Token expired / invalid — clear it
           localStorage.removeItem(TOKEN_KEY);
@@ -54,20 +54,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // ── login ─────────────────────────────────────────────────
   const login = useCallback(async (username: string, password: string) => {
-    const payload: LoginPayload = { username, password };
-    const res = await api.post<AuthResponse>('/auth/login', payload);
-    const { token: newToken, user: newUser } = res.data;
-
-    localStorage.setItem(TOKEN_KEY, newToken);
-    setToken(newToken);
-    setUser(newUser);
+    const data = await AuthService.login({ username, password });
+    localStorage.setItem(TOKEN_KEY, data.token);
+    setToken(data.token);
+    setUser(data.user);
   }, []);
 
   // ── register ──────────────────────────────────────────────
-  const register = useCallback(async (data: RegisterPayload) => {
+  const register = useCallback(async (payload: RegisterPayload) => {
     // POST /auth/register — returns UserSummaryDto (no token)
     // Caller is responsible for navigating to /login afterwards
-    await api.post('/auth/register', data);
+    await AuthService.register(payload);
   }, []);
 
   // ── logout ────────────────────────────────────────────────

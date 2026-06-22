@@ -147,3 +147,36 @@ export interface OccupancyReport {
   availableSlots:  number;
   occupancyPercent: number;
 }
+// ─── Reservation Module ───────────────────────────────────────
+
+export interface Reservation {
+  id: number;
+  slotId: number;
+  startTime: string;
+  endTime: string;
+  checkInTime: string | null;
+  status: ReservationStatus;
+  createdDate: string;
+}
+
+export interface CreateReservationPayload {
+  slotId: number;
+  startTime: string;        // ISO-8601
+  durationMinutes: number;
+}
+
+export interface CancelResponse {
+  cancelled: boolean;
+  feeApplied: boolean;
+}
+
+export interface TransactionResult {
+  totalFee: number;
+  receiptId: number;
+}
+
+export interface CheckOutResponse {
+  reservation: Reservation;
+  transaction: TransactionResult;
+}
+
