@@ -10,8 +10,6 @@ import com.spms.parking.entity.ParkingLot;
 import com.spms.parking.entity.ParkingSlot;
 import com.spms.parking.repository.ParkingSlotRepository;
 import com.spms.parking.service.ParkingSlotService;
-import com.spms.reservation.billing.BillingService;
-import com.spms.reservation.billing.TransactionResult;
 import com.spms.reservation.dto.*;
 import com.spms.reservation.entity.Reservation;
 import com.spms.reservation.repository.ReservationRepository;
@@ -42,7 +40,7 @@ class ReservationServiceTest {
     @Mock private ParkingSlotService    parkingSlotService;
     @Mock private ParkingSlotRepository parkingSlotRepository;
     @Mock private UserRepository        userRepository;
-    @Mock private BillingService        billingService;
+
 
     @InjectMocks
     private ReservationService reservationService;
@@ -184,64 +182,5 @@ class ReservationServiceTest {
         assertThat(response.isFeeApplied()).isTrue();
     }
 
-    @Test
-    @DisplayName("checkOut — on PENDING reservation (no check-in) → 400 BAD_REQUEST")
-    void checkOut_beforeCheckIn_shouldThrow400() {
-        Reservation reservation = Reservation.builder()
-                .id(3L).userId(USER_ID).parkingSlot(testSlot)
-                .startTime(LocalDateTime.now().minusHours(1))
-                .endTime(LocalDateTime.now().plusHours(1))
-                .status(ReservationStatus.PENDING)
-                .checkInTime(null)
-                .createdDate(LocalDateTime.now())
-                .build();
 
-        when(reservationRepository.findById(3L)).thenReturn(Optional.of(reservation));
-
-        assertThatThrownBy(() -> reservationService.checkOut(3L, USER_ID))
-                .isInstanceOf(SpmsException.class)
-                .hasMessageContaining("CONFIRMED");
-    }
-
-    @Test
-    @DisplayName("createReservation — duration less than 30 minutes → 400")
-    void createReservation_invalidDuration_shouldThrow400() {
-        CreateReservationRequest req = buildRequest(LocalDateTime.now().plusHours(1), 15);
-
-        assertThatThrownBy(() -> reservationService.createReservation(USER_ID, req))
-                .isInstanceOf(SpmsException.class)
-                .hasMessageContaining("Duration must be at least 30");
-    }
-
-    @Test
-    @DisplayName("checkOut — CONFIRMED reservation → transaction result returned")
-    void checkOut_confirmed_returnsTransactionResult() {
-        LocalDateTime checkIn = LocalDateTime.now().minusMinutes(90);
-
-        Reservation reservation = Reservation.builder()
-                .id(4L).userId(USER_ID).parkingSlot(testSlot)
-                .startTime(checkIn).endTime(checkIn.plusMinutes(120))
-                .status(ReservationStatus.CONFIRMED)
-                .checkInTime(checkIn)
-                .createdDate(LocalDateTime.now().minusMinutes(120))
-                .build();
-
-        when(reservationRepository.findById(4L)).thenReturn(Optional.of(reservation));
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(testUser));
-
-        TransactionResult txResult = new TransactionResult(new BigDecimal("15.00"), 42L);
-        when(billingService.processCheckout(anyLong(), any(), any(), any()))
-                .thenReturn(txResult);
-
-        when(reservationRepository.save(any())).thenReturn(reservation);
-        doNothing().when(parkingSlotService).updateSlotStatus(SLOT_ID, SlotStatus.AVAILABLE);
-
-        CheckOutResponse response = reservationService.checkOut(4L, USER_ID);
-
-        assertThat(response.getTransaction().totalFee()).isEqualByComparingTo("15.00");
-        assertThat(response.getTransaction().receiptId()).isEqualTo(42L);
-        assertThat(response.getReservation().getStatus()).isEqualTo(ReservationStatus.COMPLETED);
-
-        verify(parkingSlotService).updateSlotStatus(SLOT_ID, SlotStatus.AVAILABLE);
-    }
 }

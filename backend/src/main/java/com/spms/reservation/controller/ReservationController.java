@@ -2,7 +2,7 @@ package com.spms.reservation.controller;
 
 import com.spms.auth.entity.User;
 import com.spms.reservation.dto.CancelResponse;
-import com.spms.reservation.dto.CheckOutResponse;
+
 import com.spms.reservation.dto.CreateReservationRequest;
 import com.spms.reservation.dto.ReservationDto;
 import com.spms.reservation.service.ReservationService;
@@ -56,17 +56,4 @@ public class ReservationController {
         return reservationService.adminCancelReservation(id);
     }
 
-    @PutMapping("/{id}/check-in")
-    public ReservationDto checkIn(
-            @AuthenticationPrincipal User principal,
-            @PathVariable Long id) {
-        return reservationService.checkIn(id, principal.getId());
-    }
-
-    @PutMapping("/{id}/check-out")
-    public CheckOutResponse checkOut(
-            @AuthenticationPrincipal User principal,
-            @PathVariable Long id) {
-        return reservationService.checkOut(id, principal.getId());
-    }
 }

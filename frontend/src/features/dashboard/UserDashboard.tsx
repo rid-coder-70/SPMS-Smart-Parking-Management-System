@@ -2,16 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/features/auth/AuthContext';
 import { ReservationService } from '@/features/reservations/reservation.service';
-import { BillingService } from '@/features/billing/billing.service';
 import { ParkingService } from '@/features/parking/parking.service';
-import type { Reservation, Transaction, ParkingLot } from '@/common/types';
+import type { Reservation, ParkingLot } from '@/common/types';
 import {
   MapPin,
   CalendarCheck,
-  Clock,
   ArrowRight,
   ParkingCircle,
-  TrendingUp,
   Plus,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -36,19 +33,16 @@ function formatDate(iso: string) {
 export default function UserDashboard() {
   const { user } = useAuth();
   const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [lots,         setLots]         = useState<ParkingLot[]>([]);
   const [loading,      setLoading]      = useState(true);
 
   useEffect(() => {
     async function load() {
-      const [res, tx, lo] = await Promise.allSettled([
+      const [res, lo] = await Promise.allSettled([
         ReservationService.getMyReservations(),
-        BillingService.getMyTransactions(),
         ParkingService.getAllLots(),
       ]);
       if (res.status === 'fulfilled') setReservations(res.value.slice(0, 10));
-      if (tx.status  === 'fulfilled') setTransactions(tx.value.slice(0, 10));
       if (lo.status  === 'fulfilled') setLots(lo.value);
       setLoading(false);
     }
@@ -56,8 +50,7 @@ export default function UserDashboard() {
   }, []);
 
   const activeCount  = reservations.filter(r => r.status === 'CONFIRMED' || r.status === 'PENDING').length;
-  const pendingTxCnt = transactions.filter(t => t.paymentStatus === 'PENDING').length;
-  const totalSpent   = transactions.filter(t => t.paymentStatus === 'PAID').reduce((s, t) => s + (t.amount ?? 0), 0);
+
   const availableLots = lots.length;
 
   if (loading) {
@@ -77,24 +70,6 @@ export default function UserDashboard() {
       bg:     'bg-blue-500/8',
       border: 'border-blue-500/15',
       text:   'text-blue-400',
-    },
-    {
-      label:  'Pending Check-outs',
-      value:  pendingTxCnt,
-      icon:   <Clock className="h-4 w-4" />,
-      color:  'amber',
-      bg:     'bg-amber-500/8',
-      border: 'border-amber-500/15',
-      text:   'text-amber-400',
-    },
-    {
-      label:  'Total Spent',
-      value:  `৳${totalSpent.toFixed(0)}`,
-      icon:   <TrendingUp className="h-4 w-4" />,
-      color:  'emerald',
-      bg:     'bg-emerald-500/8',
-      border: 'border-emerald-500/15',
-      text:   'text-emerald-400',
     },
     {
       label:  'Parking Lots',
@@ -212,45 +187,7 @@ export default function UserDashboard() {
         )}
       </div>
 
-      {/* Recent transactions */}
-      {transactions.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-white/40 uppercase tracking-wider">Recent Billing</h2>
-            <Link to="/billing" className="text-xs text-brand-400 hover:text-brand-300 transition-colors flex items-center gap-1">
-              View all <ArrowRight className="h-3 w-3" />
-            </Link>
-          </div>
-          <div className="card p-0 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="table-dark">
-                <thead>
-                  <tr>
-                    <th>Slot</th>
-                    <th>Check-In</th>
-                    <th>Amount</th>
-                    <th>Payment</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {transactions.slice(0, 4).map(t => (
-                    <tr key={t.id}>
-                      <td className="font-mono font-semibold text-white text-xs">{t.slotNumber}</td>
-                      <td className="text-white/45 text-xs">{formatDate(t.checkInTime)}</td>
-                      <td className="font-semibold text-white">{t.amount ? `৳${t.amount.toFixed(2)}` : '—'}</td>
-                      <td>
-                        <span className={statusBadgeClass[t.paymentStatus] ?? 'badge-inactive'}>
-                          {t.paymentStatus}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }

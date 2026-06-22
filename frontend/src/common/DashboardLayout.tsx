@@ -5,10 +5,8 @@ import {
   LayoutDashboard,
   MapPin,
   CalendarCheck,
-  Receipt,
   ParkingCircle,
   LayoutGrid,
-  BarChart3,
   LogOut,
   Menu,
   X,
@@ -28,14 +26,12 @@ const USER_NAV: NavItem[] = [
   { to: '/dashboard',    label: 'Dashboard',       icon: <LayoutDashboard className="h-4 w-4" /> },
   { to: '/parking',      label: 'Parking Map',     icon: <MapPin className="h-4 w-4" /> },
   { to: '/reservations', label: 'Reservations',    icon: <CalendarCheck className="h-4 w-4" /> },
-  { to: '/billing',      label: 'Billing',         icon: <Receipt className="h-4 w-4" /> },
 ];
 
 const ADMIN_NAV: NavItem[] = [
   { to: '/admin',         label: 'Overview',       icon: <LayoutDashboard className="h-4 w-4" /> },
   { to: '/admin/lots',   label: 'Manage Lots',     icon: <ParkingCircle className="h-4 w-4" /> },
   { to: '/admin/slots',  label: 'Manage Slots',    icon: <LayoutGrid className="h-4 w-4" /> },
-  { to: '/admin/reports', label: 'Reports',        icon: <BarChart3 className="h-4 w-4" /> },
 ];
 
 export default function DashboardLayout() {

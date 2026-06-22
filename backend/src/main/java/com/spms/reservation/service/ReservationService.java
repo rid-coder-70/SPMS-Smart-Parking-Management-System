@@ -8,10 +8,7 @@ import com.spms.common.exception.SpmsException;
 import com.spms.parking.entity.ParkingSlot;
 import com.spms.parking.repository.ParkingSlotRepository;
 import com.spms.parking.service.ParkingSlotService;
-import com.spms.reservation.billing.BillingService;
-import com.spms.reservation.billing.TransactionResult;
 import com.spms.reservation.dto.CancelResponse;
-import com.spms.reservation.dto.CheckOutResponse;
 import com.spms.reservation.dto.CreateReservationRequest;
 import com.spms.reservation.dto.ReservationDto;
 import com.spms.reservation.entity.Reservation;
@@ -40,7 +37,6 @@ public class ReservationService {
     private final ParkingSlotRepository parkingSlotRepository;
     private final ParkingSlotService parkingSlotService;
     private final UserRepository userRepository;
-    private final BillingService billingService;
 
     @Transactional
     public ReservationDto createReservation(Long userId, CreateReservationRequest req) {
@@ -103,64 +99,7 @@ public class ReservationService {
         return doCancellation(reservation);
     }
 
-    @Transactional
-    public ReservationDto checkIn(Long reservationId, Long userId) {
-        Reservation reservation = findOwnedReservation(reservationId, userId);
 
-        if (reservation.getStatus() != ReservationStatus.PENDING) {
-            throw SpmsException.badRequest(
-                    "Check-in is only allowed for PENDING reservations. Current status: " + reservation.getStatus());
-        }
-
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime checkInDeadline = reservation.getStartTime().plusMinutes(30);
-
-        if (now.isAfter(checkInDeadline)) {
-            throw SpmsException.conflict("Check-in window has closed (must check in within 30 minutes of start time).");
-        }
-
-        reservation.setCheckInTime(now);
-        reservation.setStatus(ReservationStatus.CONFIRMED);
-        reservationRepository.save(reservation);
-
-        parkingSlotService.updateSlotStatus(reservation.getParkingSlot().getId(), SlotStatus.OCCUPIED);
-
-        log.info("Reservation {} checked in: userId={}, checkInTime={}", reservationId, userId, now);
-        return mapToDto(reservation);
-    }
-
-    @Transactional
-    public CheckOutResponse checkOut(Long reservationId, Long userId) {
-        Reservation reservation = findOwnedReservation(reservationId, userId);
-
-        if (reservation.getStatus() != ReservationStatus.CONFIRMED) {
-            throw SpmsException.badRequest("Check-out requires CONFIRMED status. Current: " + reservation.getStatus());
-        }
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> SpmsException.notFound("User", userId));
-
-        LocalDateTime checkOutTime = LocalDateTime.now();
-
-        TransactionResult result = billingService.processCheckout(
-                reservationId,
-                reservation.getCheckInTime(),
-                checkOutTime,
-                user.getVehicleType()
-        );
-
-        reservation.setStatus(ReservationStatus.COMPLETED);
-        reservationRepository.save(reservation);
-
-        parkingSlotService.updateSlotStatus(reservation.getParkingSlot().getId(), SlotStatus.AVAILABLE);
-
-        log.info("Reservation {} checked out: userId={}, fee={}", reservationId, userId, result.totalFee());
-
-        return CheckOutResponse.builder()
-                .reservation(mapToDto(reservation))
-                .transaction(result)
-                .build();
-    }
 
     @Transactional(readOnly = true)
     public List<ReservationDto> getHistoryForUser(Long userId) {

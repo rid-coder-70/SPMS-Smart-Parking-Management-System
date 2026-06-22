@@ -3,7 +3,6 @@ import type {
   Reservation,
   CreateReservationPayload,
   CancelResponse,
-  CheckOutResponse,
 } from '@/common/types';
 
 /**
@@ -35,11 +34,6 @@ export const ReservationService = {
   cancelDelete: (id: number) =>
     api.delete<Reservation>(`/reservations/${id}`).then(res => res.data),
 
-  checkIn: (id: number) =>
-    api.put<Reservation>(`/reservations/${id}/check-in`).then(res => res.data),
-
-  checkOut: (id: number) =>
-    api.put<CheckOutResponse>(`/reservations/${id}/check-out`).then(res => res.data),
 
   adminCancel: (id: number) =>
     api.delete<Reservation>(`/reservations/${id}/admin`).then(res => res.data),

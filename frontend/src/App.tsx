@@ -13,11 +13,9 @@ import ProfilePage    from '@/features/auth/ProfilePage';
 import UserDashboard  from '@/features/dashboard/UserDashboard';
 import ParkingMapPage from '@/features/parking/ParkingMapPage';
 import ReservationsPage from '@/features/reservations/ReservationsPage';
-import BillingPage    from '@/features/billing/BillingPage';
 
 // ── Admin pages ─────────────────────────────────────────────────
 import AdminDashboard from '@/features/admin/AdminDashboard';
-import ReportsPage    from '@/features/admin/ReportsPage';
 import { AdminLotsPage }  from '@/features/parking/AdminLotsPage';
 import { AdminSlotsPage } from '@/features/parking/AdminSlotsPage';
 
@@ -39,7 +37,6 @@ function App() {
               <Route path="/profile"      element={<ProfilePage />} />
               <Route path="/parking"      element={<ParkingMapPage />} />
               <Route path="/reservations" element={<ReservationsPage />} />
-              <Route path="/billing"      element={<BillingPage />} />
             </Route>
           </Route>
 
@@ -49,7 +46,6 @@ function App() {
               <Route path="/admin"         element={<AdminDashboard />} />
               <Route path="/admin/lots"    element={<AdminLotsPage />} />
               <Route path="/admin/slots"   element={<AdminSlotsPage />} />
-              <Route path="/admin/reports" element={<ReportsPage />} />
             </Route>
           </Route>
 

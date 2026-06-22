@@ -1,42 +1,32 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ReportService } from './report.service';
 import { ParkingService } from '@/features/parking/parking.service';
-import type { OccupancyReport, ParkingLot } from '@/common/types';
+import type { ParkingLot } from '@/common/types';
 import {
   LayoutDashboard,
   ParkingCircle,
   LayoutGrid,
-  BarChart3,
   ArrowRight,
-  TrendingUp,
-  Activity,
   Layers,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function AdminDashboard() {
-  const [occupancy, setOccupancy] = useState<OccupancyReport[]>([]);
   const [lots,      setLots]      = useState<ParkingLot[]>([]);
   const [loading,   setLoading]   = useState(true);
 
   useEffect(() => {
     async function load() {
-      const [occ, lo] = await Promise.allSettled([
-        ReportService.getOccupancy(),
+      const lo = await Promise.resolve(
         ParkingService.getAllLots(),
-      ]);
-      if (occ.status === 'fulfilled') setOccupancy(occ.value ?? []);
-      if (lo.status  === 'fulfilled') setLots(lo.value ?? []);
+      );
+      if (lo) setLots(lo ?? []);
       setLoading(false);
     }
     load();
   }, []);
 
-  const totalCap       = occupancy.reduce((s, o) => s + o.totalCapacity, 0);
-  const totalOccupied  = occupancy.reduce((s, o) => s + o.occupiedSlots, 0);
-  const totalAvailable = occupancy.reduce((s, o) => s + o.availableSlots, 0);
-  const overallPct     = totalCap > 0 ? ((totalOccupied / totalCap) * 100).toFixed(1) : '0';
+  const totalCap       = lots.reduce((s, o) => s + o.totalCapacity, 0);
 
   if (loading) {
     return (
@@ -58,18 +48,6 @@ export default function AdminDashboard() {
       value: totalCap,
       icon: <Layers className="h-4 w-4 text-blue-400" />,
       bg: 'bg-blue-500/8', border: 'border-blue-500/15',
-    },
-    {
-      label: 'Available Slots',
-      value: totalAvailable,
-      icon: <Activity className="h-4 w-4 text-emerald-400" />,
-      bg: 'bg-emerald-500/8', border: 'border-emerald-500/15',
-    },
-    {
-      label: 'Overall Occupancy',
-      value: `${overallPct}%`,
-      icon: <TrendingUp className="h-4 w-4 text-purple-400" />,
-      bg: 'bg-purple-500/8', border: 'border-purple-500/15',
     },
   ];
 
@@ -127,15 +105,6 @@ export default function AdminDashboard() {
               hover:  'hover:bg-blue-500/3',
               arrow:  'group-hover:text-blue-400',
             },
-            {
-              to: '/admin/reports',
-              label: 'View Reports',
-              desc: 'Revenue summaries and live occupancy',
-              icon: <BarChart3 className="h-5 w-5 text-purple-400" />,
-              border: 'hover:border-purple-500/20',
-              hover:  'hover:bg-purple-500/3',
-              arrow:  'group-hover:text-purple-400',
-            },
           ].map(item => (
             <Link
               key={item.to}
@@ -155,59 +124,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Live Occupancy */}
-      {occupancy.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-white/35 uppercase tracking-wider flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              Live Occupancy
-            </h2>
-            <Link to="/admin/reports" className="text-xs text-brand-400 hover:text-brand-300 transition-colors flex items-center gap-1">
-              Full Report <ArrowRight className="h-3 w-3" />
-            </Link>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {occupancy.map(lot => {
-              const pct = lot.occupancyPercent;
-              const color = pct > 80 ? 'red' : pct > 50 ? 'amber' : 'emerald';
-              const barColors: Record<string, string> = {
-                red:     'bg-red-500',
-                amber:   'bg-amber-500',
-                emerald: 'bg-emerald-500',
-              };
-              const textColors: Record<string, string> = {
-                red:     'text-red-400',
-                amber:   'text-amber-400',
-                emerald: 'text-emerald-400',
-              };
-              return (
-                <div key={lot.lotId} className="card hover:border-white/10 transition-all">
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <h3 className="text-sm font-semibold text-white">{lot.lotName}</h3>
-                      <p className="text-xs text-white/35">{lot.occupiedSlots} / {lot.totalCapacity} occupied</p>
-                    </div>
-                    <span className={`text-sm font-bold ${textColors[color]}`}>
-                      {pct.toFixed(1)}%
-                    </span>
-                  </div>
-                  <div className="w-full h-1.5 bg-white/6 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-700 ${barColors[color]}`}
-                      style={{ width: `${Math.min(pct, 100)}%` }}
-                    />
-                  </div>
-                  <div className="flex justify-between text-[11px] text-white/30 mt-2">
-                    <span>Available: {lot.availableSlots}</span>
-                    <span>Total: {lot.totalCapacity}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }

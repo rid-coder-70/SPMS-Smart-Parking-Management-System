@@ -141,50 +141,6 @@ export interface CancelResponse {
   feeApplied: boolean;
 }
 
-// ─── Billing Module ──────────────────────────────────────────
-
-export interface Transaction {
-  id:               number;
-  reservationId:    number;
-  userId:           number;
-  slotNumber:       string;
-  lotName:          string;
-  checkInTime:      string;
-  checkOutTime?:    string;
-  durationMinutes?: number;
-  amount?:          number;
-  paymentStatus:    PaymentStatus;
-  createdDate:      string;
-}
-
-export interface TransactionResult {
-  totalFee:  number;
-  receiptId: number;
-}
-
-export interface CheckOutResponse {
-  reservation: Reservation;
-  transaction: TransactionResult;
-}
-
-// ─── Reporting Module ────────────────────────────────────────
-
-export interface RevenueReport {
-  totalRevenue:      number;
-  totalTransactions: number;
-  averageFee:        number;
-  fromDate:          string;
-  toDate:            string;
-}
-
-export interface OccupancyReport {
-  lotId:            number;
-  lotName:          string;
-  totalCapacity:    number;
-  occupiedSlots:    number;
-  availableSlots:   number;
-  occupancyPercent: number;
-}
 
 // ─── Admin User Management ───────────────────────────────────
 
