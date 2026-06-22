@@ -72,7 +72,7 @@ SPMS/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/SPMS-Smart-Parking-Management-System.git
+git clone https://github.com/rid-coder-70/SPMS-Smart-Parking-Management-System.git
 cd SPMS-Smart-Parking-Management-System
 ```
 
