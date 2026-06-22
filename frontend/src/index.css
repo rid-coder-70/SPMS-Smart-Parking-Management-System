@@ -17,8 +17,8 @@
 
   body {
     font-family: 'Inter', system-ui, sans-serif;
-    background-color: #050814;
-    color: #ffffff;
+    background-color: #ffffff;
+    color: #111827;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -26,8 +26,8 @@
   }
 
   ::selection {
-    background-color: rgba(99, 102, 241, 0.35);
-    color: #c7d2fe;
+    background-color: rgba(249, 115, 22, 0.25);
+    color: #c2410c;
   }
 
   ::-webkit-scrollbar {
@@ -35,14 +35,14 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #0d1117;
+    background: #fff7ed;
   }
   ::-webkit-scrollbar-thumb {
-    background: #334155;
+    background: #fdba74;
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #475569;
+    background: #f97316;
   }
 }
 
@@ -68,43 +68,101 @@
   }
 
   /* ──────────────────────────────────────────────
-     BUTTON SYSTEM
+     BUTTON SYSTEM — all buttons have lift + glow hover
   ────────────────────────────────────────────── */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-xl
            bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white
            hover:bg-indigo-500 active:scale-[0.97]
            disabled:opacity-40 disabled:cursor-not-allowed
-           transition-all duration-200 shadow-lg shadow-indigo-500/20
+           shadow-lg shadow-indigo-500/20
            focus:outline-none focus:ring-2 focus:ring-indigo-500/50;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .btn-primary:hover:not(:disabled) {
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(99, 102, 241, 0.45),
+                0 0 0 1px rgba(99, 102, 241, 0.10);
+  }
+
+  /* ── Light-mode orange brand buttons ── */
+  .btn-primary-light {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl
+           bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white
+           active:scale-[0.97]
+           disabled:opacity-40 disabled:cursor-not-allowed
+           shadow-lg
+           focus:outline-none focus:ring-2 focus:ring-orange-400/50;
+    box-shadow: 0 4px 14px rgba(249,115,22,0.3);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-primary-light:hover:not(:disabled) {
+    background-color: #ea580c;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(249,115,22,0.5),
+                0 0 0 1px rgba(249,115,22,0.12);
+  }
+
+  .btn-secondary-light {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl
+           border border-orange-200 bg-white px-5 py-2.5 text-sm font-semibold text-orange-600
+           active:scale-[0.97]
+           disabled:opacity-40 disabled:cursor-not-allowed
+           focus:outline-none focus:ring-2 focus:ring-orange-400/30;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-secondary-light:hover:not(:disabled) {
+    background-color: #fff7ed;
+    border-color: #fb923c;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(249,115,22,0.18),
+                0 0 0 1px rgba(249,115,22,0.08);
   }
 
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 rounded-xl
            border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/80
            hover:bg-white/10 hover:border-white/20 hover:text-white active:scale-[0.97]
-           disabled:opacity-40 disabled:cursor-not-allowed
-           transition-all duration-200;
+           disabled:opacity-40 disabled:cursor-not-allowed;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,255,255,0.08);
   }
 
   .btn-danger {
     @apply inline-flex items-center justify-center gap-2 rounded-xl
            bg-red-500/10 border border-red-500/20 px-4 py-2 text-sm font-semibold text-red-400
-           hover:bg-red-500/20 hover:border-red-500/40 active:scale-[0.97]
-           disabled:opacity-40 disabled:cursor-not-allowed
-           transition-all duration-200;
+           active:scale-[0.97]
+           disabled:opacity-40 disabled:cursor-not-allowed;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-danger:hover:not(:disabled) {
+    background-color: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.25);
   }
 
   .btn-success {
     @apply inline-flex items-center justify-center gap-2 rounded-xl
            bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 text-sm font-semibold text-emerald-400
-           hover:bg-emerald-500/20 hover:border-emerald-500/40 active:scale-[0.97]
-           disabled:opacity-40 disabled:cursor-not-allowed
-           transition-all duration-200;
+           active:scale-[0.97]
+           disabled:opacity-40 disabled:cursor-not-allowed;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-success:hover:not(:disabled) {
+    background-color: rgba(52, 211, 153, 0.2);
+    border-color: rgba(52, 211, 153, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(52, 211, 153, 0.25);
   }
 
   /* ──────────────────────────────────────────────
@@ -290,6 +348,7 @@
 }
 
 @layer utilities {
+  /* Kept for backwards compat in dashboard */
   .text-gradient-indigo {
     background: linear-gradient(135deg, #818cf8, #6366f1, #a78bfa);
     -webkit-background-clip: text;
@@ -297,8 +356,17 @@
     background-clip: text;
   }
 
+  /* Primary brand gradient: orange → yellow */
   .text-gradient-brand {
-    background: linear-gradient(135deg, #facc15, #eab308, #f59e0b);
+    background: linear-gradient(135deg, #f97316, #fb923c, #facc15);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Alias for landing */
+  .text-gradient-orange {
+    background: linear-gradient(135deg, #f97316, #facc15);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

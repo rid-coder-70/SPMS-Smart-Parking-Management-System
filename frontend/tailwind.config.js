@@ -11,20 +11,46 @@ export default {
         mono: ['JetBrains Mono', 'monospace'],
       },
       colors: {
-        // Primary brand — indigo/violet palette (21st.dev inspired)
+        // Primary brand — orange palette
         brand: {
-          50:  '#eef2ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          300: '#a5b4fc',
-          400: '#818cf8',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
+          50:  '#fff7ed',
+          100: '#ffedd5',
+          200: '#fed7aa',
+          300: '#fdba74',
+          400: '#fb923c',
+          500: '#f97316',
+          600: '#ea580c',
+          700: '#c2410c',
+          800: '#9a3412',
+          900: '#7c2d12',
         },
-        // Dark background palette
+        // Accent — yellow palette
+        accent: {
+          50:  '#fefce8',
+          100: '#fef9c3',
+          200: '#fef08a',
+          300: '#fde047',
+          400: '#facc15',
+          500: '#eab308',
+          600: '#ca8a04',
+          700: '#a16207',
+          800: '#854d0e',
+          900: '#713f12',
+        },
+        // Light surface / background
+        surface: {
+          DEFAULT: '#FFFFFF',
+          warm:    '#fff7ed',
+          muted:   '#fef3c7',
+        },
+        // Dark text tones
+        ink: {
+          900: '#111827',
+          700: '#374151',
+          500: '#6b7280',
+          300: '#d1d5db',
+        },
+        // Legacy dark night colors kept for dashboard compatibility
         night: {
           950: '#050814',
           900: '#080d1a',
@@ -35,24 +61,20 @@ export default {
           400: '#334155',
           300: '#475569',
         },
-        // Surface colours
-        surface: {
-          DEFAULT: 'rgba(255,255,255,0.03)',
-          hover:   'rgba(255,255,255,0.05)',
-          active:  'rgba(99,102,241,0.08)',
-        }
       },
       backgroundImage: {
-        'gradient-radial':  'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':   'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'mesh-bg': "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99,102,241,0.15) 0%, transparent 60%)",
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic':  'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'orange-mesh':     'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(249,115,22,0.18) 0%, transparent 60%)',
+        'yellow-mesh':     'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(250,204,21,0.12) 0%, transparent 60%)',
       },
       animation: {
-        'fade-in':   'fadeIn 0.4s ease-out forwards',
-        'slide-up':  'slideUp 0.5s ease-out forwards',
-        'slide-in':  'slideIn 0.3s ease-out forwards',
+        'fade-in':    'fadeIn 0.4s ease-out forwards',
+        'slide-up':   'slideUp 0.5s ease-out forwards',
+        'slide-in':   'slideIn 0.3s ease-out forwards',
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-        'blob':      'blob 8s infinite',
+        'blob':       'blob 8s infinite',
+        'float':      'float 4s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -68,8 +90,8 @@ export default {
           '100%': { opacity: '1', transform: 'translateX(0)' },
         },
         'pulse-glow': {
-          '0%, 100%': { boxShadow: '0 0 15px rgba(99,102,241,0.2)' },
-          '50%':       { boxShadow: '0 0 30px rgba(99,102,241,0.5)' },
+          '0%, 100%': { boxShadow: '0 0 20px rgba(249,115,22,0.25)' },
+          '50%':       { boxShadow: '0 0 40px rgba(249,115,22,0.5)' },
         },
         blob: {
           '0%':   { transform: 'translate(0px, 0px) scale(1)' },
@@ -77,13 +99,22 @@ export default {
           '66%':  { transform: 'translate(-20px, 20px) scale(0.9)' },
           '100%': { transform: 'translate(0px, 0px) scale(1)' },
         },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%':      { transform: 'translateY(-8px)' },
+        },
       },
       borderColor: {
-        DEFAULT: 'rgba(255,255,255,0.06)',
+        DEFAULT: 'rgba(249,115,22,0.12)',
       },
       backdropBlur: {
         xs: '2px',
-      }
+      },
+      boxShadow: {
+        'orange':    '0 4px 24px rgba(249,115,22,0.18)',
+        'orange-lg': '0 8px 40px rgba(249,115,22,0.25)',
+        'yellow':    '0 4px 24px rgba(250,204,21,0.15)',
+      },
     },
   },
   plugins: [],
