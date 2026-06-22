@@ -1,68 +1,53 @@
-# SPMS — Smart Parking Management System
+# SPMS - Smart Parking Management System
 
-<div align="center">
-  <img src="https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?logo=spring" />
-  <img src="https://img.shields.io/badge/React-18-blue?logo=react" />
-  <img src="https://img.shields.io/badge/TypeScript-5-blue?logo=typescript" />
-  <img src="https://img.shields.io/badge/Tailwind%20CSS-3-38bdf8?logo=tailwindcss" />
-  <img src="https://img.shields.io/badge/JWT-Auth-orange?logo=jsonwebtokens" />
-  <img src="https://img.shields.io/badge/License-MIT-lightgrey" />
-</div>
-
-<br />
-
-> A full-stack parking management platform with real-time slot tracking, advance reservations, automated billing, and an admin analytics dashboard.
+A full-stack parking management platform with real-time slot tracking, advance reservations, and an admin dashboard.
 
 ---
 
-## 📸 Screenshots
-
-| Landing Page | Login (Split-Screen) | User Dashboard |
+| Landing Page | Login | User Dashboard |
 |---|---|---|
-| Dark glassmorphism hero | Branded left panel + form | Live stats & quick actions |
+| Dark theme hero section | Authentication form | Live statistics & actions |
 
-| Register Page | Admin Dashboard | Billing Page |
-|---|---|---|
-| Split-screen with feature list | Occupancy bars + management | Transaction history + checkout |
+| Register Page | Admin Dashboard |
+|---|---|
+| User registration form | Occupancy tracking & management |
 
 ---
 
-## 🏗 Architecture Overview
+## Architecture Overview
 
-```
+```text
 SPMS/
 ├── backend/          # Spring Boot 3 REST API
 │   └── src/main/java/com/spms/
-│       ├── auth/         # Registration, login, JWT
-│       ├── parking/      # Lots & slots management
-│       ├── reservation/  # Reservation lifecycle
-│       ├── billing/      # Check-in/out & fee calculation
-│       └── reporting/    # Revenue & occupancy reports
+│       ├── auth/         # Authentication and user management
+│       ├── common/       # Shared configurations and utilities
+│       ├── parking/      # Parking lots and slots management
+│       └── reservation/  # Reservation lifecycle and booking
 │
 └── frontend/         # Vite + React 18 + TypeScript
     └── src/
-        ├── common/        # api.ts, types.ts, DashboardLayout
+        ├── common/        # Shared components, types, and API logic
         └── features/
-            ├── auth/          # Login, Register, Profile, AuthContext
-            ├── landing/       # Landing page
-            ├── dashboard/     # User dashboard
-            ├── parking/       # Slot grid, lot selector, admin pages
-            ├── reservations/  # Booking, my reservations, check-in/out
-            ├── billing/       # Transaction history
-            └── admin/         # Admin dashboard, reports
+            ├── admin/         # Admin dashboard and reports
+            ├── auth/          # Authentication flows
+            ├── dashboard/     # User dashboard interface
+            ├── landing/       # Landing page view
+            ├── parking/       # Parking slot and lot selection
+            └── reservations/  # Reservation booking and history
 ```
 
 ---
 
-## 🚀 Tech Stack
+## Tech Stack
 
 ### Backend
 | Technology | Purpose |
 |---|---|
 | Spring Boot 3 | REST API framework |
-| Spring Security | JWT authentication & RBAC |
+| Spring Security | JWT authentication |
 | Spring Data JPA | Database ORM |
-| PostgreSQL / H2 | Primary / test database |
+| PostgreSQL / H2 | Database |
 | Maven | Dependency management |
 
 ### Frontend
@@ -72,238 +57,151 @@ SPMS/
 | Vite 5 | Build tool & dev server |
 | Tailwind CSS 3 | Utility-first styling |
 | Framer Motion | Animations |
-| Axios | HTTP client with JWT interceptor |
+| Axios | HTTP client |
 | React Router v6 | Client-side routing |
-| Lucide React | Icon library |
 
 ---
 
-## ⚙️ Environment Setup
+## Environment Setup
 
 ### Prerequisites
-- **Java 17+**
-- **Node.js 18+** and npm
-- **PostgreSQL** (or use the embedded H2 for dev)
-- **Maven 3.8+**
+- Java 17+
+- Node.js 18+ and npm
+- PostgreSQL (or use embedded H2 for development)
+- Maven 3.8+
 
-### 1 — Clone the Repository
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/your-username/SPMS-Smart-Parking-Management-System.git
 cd SPMS-Smart-Parking-Management-System
 ```
 
-### 2 — Backend Configuration
-```bash
-# Navigate to backend
-cd backend
+### 2. Backend Configuration
+Navigate to the `backend` directory and edit `src/main/resources/application.properties`.
 
-# Edit application.properties
-nano src/main/resources/application.properties
-```
-
-Key properties to set:
+Key properties to configure:
 ```properties
-# Server
 server.port=8080
 
-# Database (PostgreSQL)
 spring.datasource.url=jdbc:postgresql://localhost:5432/spms_db
 spring.datasource.username=postgres
 spring.datasource.password=your_password
 
-# JPA
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=false
 
-# JWT
 jwt.secret=your-256-bit-secret-key-here
 jwt.expiration=86400000
 
-# CORS
 cors.allowed-origins=http://localhost:5173
 ```
 
-### 3 — Start the Backend
+### 3. Start the Backend
 ```bash
-# From /backend directory
+cd backend
 mvn spring-boot:run
-
-# Or build and run the jar
-mvn clean package -DskipTests
-java -jar target/spms-*.jar
 ```
-Backend runs on: **http://localhost:8080**
+The backend will run on `http://localhost:8080`.
 
-### 4 — Frontend Configuration
+### 4. Frontend Configuration
+Navigate to the `frontend` directory and install dependencies.
 ```bash
-# Navigate to frontend
-cd ../frontend
-
-# Install dependencies
+cd frontend
 npm install
 ```
 
-Verify the API base URL in `src/common/api.ts`:
-```typescript
-const BASE_URL = 'http://localhost:8080/api/v1';
-```
-
-### 5 — Start the Frontend
+### 5. Start the Frontend
 ```bash
 npm run dev
 ```
-Frontend runs on: **http://localhost:5173**
+The frontend will run on `http://localhost:5173`.
 
 ---
 
-## 🔑 Default Credentials (Seeded Data)
+## Default Credentials
 
-If your backend seeds initial data, use these:
+If the backend seeds initial data, the following credentials may be used:
 
 | Role | Username | Password |
 |---|---|---|
-| Admin | `admin` | `admin123` |
-| User | `user1` | `password` |
+| Admin | admin | admin123 |
+| User | user1 | password |
 
-> **Note:** Create your own accounts via the Register page if no seed data exists.
+Note: If no seed data is present, create an account via the registration page.
 
 ---
 
-## 📡 API Reference
+## API Reference
 
 All endpoints are prefixed with `/api/v1`.
 
-### Auth
-| Method | Endpoint | Auth | Description |
+### Authentication & Users
+| Method | Endpoint | Auth Required | Description |
 |---|---|---|---|
-| POST | `/auth/register` | Public | Create new user account |
-| POST | `/auth/login` | Public | Login, returns JWT token |
+| POST | `/auth/register` | No | Create new user account |
+| POST | `/auth/login` | No | Login and receive JWT |
+| GET | `/users/me` | User | Get current user profile |
+| GET | `/users` | Admin | List all users |
 
-### Users
-| Method | Endpoint | Auth | Description |
+### Parking
+| Method | Endpoint | Auth Required | Description |
 |---|---|---|---|
-| GET | `/users/me` | User | Get own profile |
-| PUT | `/users/me` | User | Update profile |
-| PUT | `/users/me/password` | User | Change password |
-| GET | `/users` | Admin | List all users (paginated) |
-| PUT | `/users/{id}/activate` | Admin | Activate user account |
-| PUT | `/users/{id}/deactivate` | Admin | Deactivate user account |
-| PUT | `/users/{id}/reset-password` | Admin | Reset a user's password |
-
-### Parking Lots
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| GET | `/lots` | Public | List all active lots |
+| GET | `/lots` | No | List active parking lots |
 | POST | `/lots` | Admin | Create new parking lot |
-| PUT | `/lots/{id}` | Admin | Update lot details |
-| PUT | `/lots/{id}/deactivate` | Admin | Deactivate a lot |
-
-### Parking Slots
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| GET | `/lots/{lotId}/slots` | User | Get slots for a lot |
-| POST | `/lots/{lotId}/slots` | Admin | Add a slot to a lot |
-| PUT | `/slots/{id}/out-of-service` | Admin | Mark slot out of service |
+| GET | `/lots/{lotId}/slots` | User | Get slots for a specific lot |
+| POST | `/lots/{lotId}/slots` | Admin | Add a slot to a parking lot |
 
 ### Reservations
-| Method | Endpoint | Auth | Description |
+| Method | Endpoint | Auth Required | Description |
 |---|---|---|---|
-| POST | `/reservations` | User | Create a reservation |
-| GET | `/reservations/me` | User | List own reservations |
-| GET | `/reservations/{id}` | User | Get single reservation |
+| POST | `/reservations` | User | Create a new reservation |
+| GET | `/reservations/me` | User | List user's reservations |
+| GET | `/reservations/{id}` | User | Get single reservation details |
 | PUT | `/reservations/{id}/cancel` | User | Cancel a reservation |
-| PUT | `/reservations/{id}/check-in` | User | Check in |
-| PUT | `/reservations/{id}/check-out` | User | Check out (triggers billing) |
-| DELETE | `/reservations/{id}/admin` | Admin | Admin cancel |
-
-### Billing
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| POST | `/billing/check-in/{reservationId}` | User | Create transaction on check-in |
-| POST | `/billing/check-out/{transactionId}` | User | Compute fee on check-out |
-| GET | `/billing/transactions/{id}` | User | Get a single receipt |
-| GET | `/billing/my` | User | List own transactions |
-
-### Reports (Admin Only)
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| GET | `/reports/revenue?from=&to=` | Admin | Revenue report for date range |
-| GET | `/reports/occupancy` | Admin | Live occupancy across all lots |
+| DELETE | `/reservations/{id}/admin` | Admin | Admin cancellation |
 
 ---
 
-## 🗂 Frontend Route Map
+## Frontend Routes
 
-| Route | Auth Guard | Component |
+| Route | Access | Component/Page |
 |---|---|---|
-| `/` | Public | `LandingPage` |
-| `/login` | Public | `LoginPage` |
-| `/register` | Public | `RegisterPage` |
-| `/dashboard` | User | `UserDashboard` |
-| `/profile` | User | `ProfilePage` |
-| `/parking` | User | `ParkingMapPage` |
-| `/reservations` | User | `ReservationsPage` |
-| `/billing` | User | `BillingPage` |
-| `/admin` | Admin | `AdminDashboard` |
-| `/admin/lots` | Admin | `AdminLotsPage` |
-| `/admin/slots` | Admin | `AdminSlotsPage` |
-| `/admin/reports` | Admin | `ReportsPage` |
+| `/` | Public | Landing Page |
+| `/login` | Public | Login Page |
+| `/register` | Public | Register Page |
+| `/dashboard` | User | User Dashboard |
+| `/parking` | User | Parking Selection |
+| `/reservations` | User | Reservations History |
+| `/admin` | Admin | Admin Dashboard |
 
 ---
 
-## 🎨 Design System
+## Building for Production
 
-The UI uses a **dark glassmorphism** aesthetic inspired by 21st.dev:
-
-- **Font:** Inter (Google Fonts)
-- **Primary colour:** Indigo `#6366f1` (brand-500)
-- **Background:** Deep navy `#050814`
-- **Glass cards:** `rgba(255,255,255,0.04)` + `backdrop-filter: blur(20px)`
-- **Border:** `rgba(255,255,255,0.10)`
-
-### Utility Classes (`src/index.css`)
-| Class | Purpose |
-|---|---|
-| `.card` | Glass morphism card surface |
-| `.input` | Styled glass input field |
-| `.btn-primary` | Indigo filled button |
-| `.btn-secondary` | Ghost/outline button |
-| `.btn-danger` | Red destructive action |
-| `.btn-success` | Emerald confirm action |
-| `.badge-*` | Status badges (active, pending, etc.) |
-| `.alert-*` | Alert banners (error, success, warning) |
-| `.table-dark` | Dark-themed data table |
-| `.sidebar-link` | Navigation link |
-| `.sidebar-link-active` | Active nav state |
-
----
-
-## 🏗 Building for Production
-
+### Frontend
 ```bash
-# Frontend production build
 cd frontend
 npm run build
-# Output in frontend/dist/
+```
+The production files will be output to `frontend/dist/`.
 
-# Backend production jar
+### Backend
+```bash
 cd backend
 mvn clean package -DskipTests
-# Output: backend/target/spms-*.jar
 ```
+The compiled JAR file will be output to the `backend/target/` directory.
 
 ---
 
-## 🔒 Security Notes
+## Security
 
-- Passwords are hashed with **BCrypt**
-- JWT tokens expire after 24 hours (configurable)
-- Accounts are locked after N failed login attempts
-- All admin endpoints require `ROLE_ADMIN`
-- CORS is locked to the frontend origin
+- Passwords are hashed using BCrypt.
+- Authentication relies on JWT tokens.
+- Administrative endpoints are restricted to users with the `ADMIN` role.
 
 ---
 
-## 📄 License
+## License
 
-MIT © 2026 — Smart Parking Management System
+MIT License - Smart Parking Management System
