@@ -18,6 +18,27 @@ import java.util.List;
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
     /**
+     * Double-booking prevention — checks whether any active reservation
+     * overlaps the requested time window on the same slot.
+     *
+     * Two intervals [A_start, A_end) and [B_start, B_end) overlap
+     * when A_start < B_end AND A_end > B_start.
+     */
+    @Query("SELECT COUNT(r) > 0 FROM Reservation r " +
+           "WHERE r.parkingSlot.id = :slotId " +
+           "AND r.status IN :activeStatuses " +
+           "AND r.startTime < :endTime " +
+           "AND r.endTime > :startTime")
+    boolean existsOverlapping(@Param("slotId") Long slotId,
+                              @Param("startTime") LocalDateTime startTime,
+                              @Param("endTime") LocalDateTime endTime,
+                              @Param("activeStatuses") List<ReservationStatus> activeStatuses);
+
+    /** User's own reservations, newest first. */
+    List<Reservation> findByUserIdOrderByCreatedDateDesc(Long userId);
+
+    /** All reservations for a specific slot (admin use). */
+    List<Reservation> findByParkingSlotIdOrderByStartTimeDesc(Long slotId);
      * Returns PENDING or CONFIRMED reservations on {@code slotId} whose time
      * window overlaps the requested [startTime, endTime) window.
      *

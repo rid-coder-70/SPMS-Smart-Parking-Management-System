@@ -92,6 +92,17 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
+    <div className="animate-fade-in">
+      <div className="mx-auto max-w-2xl space-y-6">
+
+        {/* ── User Info Card ────────────────────────────── */}
+        <div className="card animate-fade-in">
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-white">{user.username}</h1>
+              <p className="mt-1 text-sm text-white/60">{user.email}</p>
+            </div>
+            <div className="flex gap-2">
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
       
       {/* Header */}
@@ -110,6 +121,11 @@ export default function ProfilePage() {
         </div>
       </div>
 
+
+
+        {/* ── Update Profile Form ───────────────────────── */}
+        <div className="card animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          <h2 className="mb-6 text-xl font-bold text-white border-b border-white/10 pb-4">Update Profile</h2>
       <div className="grid md:grid-cols-2 gap-8">
         
         {/* Profile Settings Form */}

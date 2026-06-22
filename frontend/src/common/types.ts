@@ -91,6 +91,62 @@ export interface ParkingSlot {
   status: SlotStatus;
 }
 
+// ─── Reservation Module ──────────────────────────────────────
+
+export interface Reservation {
+  id:            number;
+  userId:        number;
+  slotId:        number;
+  slotNumber:    string;
+  lotName:       string;
+  startTime:     string;   // ISO 8601
+  endTime:       string;
+  status:        ReservationStatus;
+  vehicleNumber?: string;
+  createdDate:   string;
+}
+
+export interface CreateReservationPayload {
+  slotId:         number;
+  startTime:      string;
+  endTime:        string;
+  vehicleNumber?: string;
+}
+
+// ─── Billing Module ──────────────────────────────────────────
+
+export interface Transaction {
+  id:              number;
+  reservationId:   number;
+  userId:          number;
+  slotNumber:      string;
+  lotName:         string;
+  checkInTime:     string;
+  checkOutTime?:   string;
+  durationMinutes?: number;
+  amount?:         number;
+  paymentStatus:   PaymentStatus;
+  createdDate:     string;
+}
+
+// ─── Reporting Module ────────────────────────────────────────
+
+export interface RevenueReport {
+  totalRevenue:      number;
+  totalTransactions: number;
+  averageFee:        number;
+  fromDate:          string;
+  toDate:            string;
+}
+
+export interface OccupancyReport {
+  lotId:           number;
+  lotName:         string;
+  totalCapacity:   number;
+  occupiedSlots:   number;
+  availableSlots:  number;
+  occupancyPercent: number;
+}
 // ─── Reservation Module ───────────────────────────────────────
 
 export interface Reservation {

@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import api from '../../common/api';
+import { ParkingLot } from '../../common/types';
+import { ParkingCircle, Plus, Trash2 } from 'lucide-react';
 import { ParkingService } from './parking.service';
 import type { ParkingLot } from '../../common/types';
 import { PlusCircle, Trash2, MapPin, Hash, AlertCircle, RefreshCw } from 'lucide-react';
@@ -14,6 +17,7 @@ export const AdminLotsPage: React.FC = () => {
   
   const [adding, setAdding] = useState(false);
   const [addError, setAddError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
 
   const fetchLots = async () => {
     setLoading(true);
@@ -38,6 +42,7 @@ export const AdminLotsPage: React.FC = () => {
     
     setAdding(true);
     setAddError('');
+    setSuccessMsg('');
     try {
       await ParkingService.createLot({
         lotName,
@@ -47,6 +52,7 @@ export const AdminLotsPage: React.FC = () => {
       setLotName('');
       setLocation('');
       setTotalCapacity('');
+      setSuccessMsg('Parking lot added successfully!');
       fetchLots();
     } catch (err: any) {
       setAddError(err?.message || 'Failed to add lot');
@@ -58,6 +64,8 @@ export const AdminLotsPage: React.FC = () => {
   const handleDeactivate = async (id: number) => {
     if (!window.confirm('Are you sure you want to deactivate this parking lot?')) return;
     try {
+      await api.put(`/lots/${id}/deactivate`);
+      setSuccessMsg('Lot deactivated successfully.');
       await ParkingService.deleteLot(id);
       fetchLots();
     } catch (err: any) {
@@ -66,6 +74,24 @@ export const AdminLotsPage: React.FC = () => {
   };
 
   return (
+    <div className="animate-fade-in space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+          <ParkingCircle className="h-8 w-8 text-brand-400" />
+          Manage Parking Lots
+        </h1>
+        <p className="text-white/50 mt-1">Add new lots or deactivate existing ones.</p>
+      </div>
+
+      {/* Add Lot Form */}
+      <div className="card">
+        <h2 className="text-lg font-bold text-white mb-5 pb-4 border-b border-night-700">Add New Lot</h2>
+        {addError && <div className="alert-error mb-4">{addError}</div>}
+        {successMsg && <div className="alert-success mb-4">{successMsg}</div>}
+        
+        <form onSubmit={handleAddLot} className="flex flex-wrap gap-4 items-end">
+          <div className="flex-1 min-w-[200px]">
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -102,6 +128,7 @@ export const AdminLotsPage: React.FC = () => {
               placeholder="e.g. Main Lot A"
             />
           </div>
+          <div className="flex-1 min-w-[200px]">
           <div className="sm:col-span-1">
             <label className="label">Location</label>
             <input 
@@ -113,6 +140,7 @@ export const AdminLotsPage: React.FC = () => {
               placeholder="e.g. North Wing"
             />
           </div>
+          <div className="w-36">
           <div className="sm:col-span-1">
             <label className="label">Capacity</label>
             <input 
@@ -125,6 +153,14 @@ export const AdminLotsPage: React.FC = () => {
               placeholder="100"
             />
           </div>
+          <button 
+            type="submit" 
+            disabled={adding}
+            className="btn-primary"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {adding ? 'Adding...' : 'Add Lot'}
+          </button>
           <div className="sm:col-span-1">
             <button type="submit" disabled={adding} className="btn-primary w-full">
               {adding ? 'Adding...' : 'Add Lot'}
@@ -134,6 +170,18 @@ export const AdminLotsPage: React.FC = () => {
       </div>
 
       {/* Lots Table */}
+      <div className="card overflow-hidden p-0">
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <div className="h-6 w-6 animate-spin rounded-full border-4 border-brand-200 border-t-brand-600" />
+          </div>
+        ) : error ? (
+          <div className="p-12 text-center text-red-400 font-medium">{error}</div>
+        ) : lots.length === 0 ? (
+          <div className="p-12 text-center text-white/40">
+            <ParkingCircle className="h-10 w-10 mx-auto mb-3 text-white/20" />
+            <p>No active parking lots found.</p>
+          </div>
       <div className="card p-0 overflow-hidden">
         {loading ? (
           <div className="p-12 text-center flex flex-col items-center">
@@ -146,8 +194,34 @@ export const AdminLotsPage: React.FC = () => {
           <div className="p-12 text-center text-white/50">No active parking lots found.</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="table-dark">
               <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Lot Name</th>
+                  <th>Location</th>
+                  <th>Capacity</th>
+                  <th>Status</th>
+                  <th className="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lots.map(lot => (
+                  <tr key={lot.id} className="group">
+                    <td className="text-white/40 text-sm">#{lot.id}</td>
+                    <td className="font-semibold text-white">{lot.lotName}</td>
+                    <td className="text-white/60">{lot.location}</td>
+                    <td className="text-white/60 font-medium">{lot.totalCapacity}</td>
+                    <td>
+                      <span className="badge-active">{lot.status}</span>
+                    </td>
+                    <td className="text-right">
+                      <button 
+                        onClick={() => handleDeactivate(lot.id)}
+                        className="btn-danger text-xs py-1.5 px-3 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Trash2 className="h-3 w-3 mr-1.5" />
+                        Deactivate
                 <tr className="bg-night-900 border-b border-night-700 text-white/50 text-xs uppercase tracking-wider">
                   <th className="px-6 py-4 font-medium">ID</th>
                   <th className="px-6 py-4 font-medium">Lot Name</th>

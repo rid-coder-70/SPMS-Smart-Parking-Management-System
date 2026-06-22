@@ -55,6 +55,8 @@ export default function LandingPage() {
               </div>
               {user ? (
                 <>
+                  <Link to="/dashboard" className="text-sm font-medium text-white/80 hover:text-white transition-colors">
+                    Dashboard
                   <Link to="/reservations" className="text-sm font-medium text-white/80 hover:text-white transition-colors">
                     Reservations
                   </Link>
@@ -122,7 +124,7 @@ export default function LandingPage() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             {user ? (
-              <Link to="/profile" className="btn-primary group w-full sm:w-auto text-base px-8 py-4">
+              <Link to="/dashboard" className="btn-primary group w-full sm:w-auto text-base px-8 py-4">
                 Go to Dashboard
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
