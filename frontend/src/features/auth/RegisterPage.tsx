@@ -1,13 +1,20 @@
 import { useState, FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-import { Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, CheckCircle2, ParkingCircle, ArrowRight, Car, Zap, Shield } from 'lucide-react';
+import { motion } from 'framer-motion';
 import type { RegisterPayload, VehicleType } from '@/common/types';
 
-const VEHICLE_OPTIONS: { value: VehicleType; label: string }[] = [
-  { value: 'STANDARD',   label: 'Standard Car' },
-  { value: 'MOTORCYCLE', label: 'Motorcycle' },
-  { value: 'LARGE',      label: 'Large Vehicle (SUV / Van)' },
+const VEHICLE_OPTIONS: { value: VehicleType; label: string; desc: string; icon: string }[] = [
+  { value: 'STANDARD',   label: 'Standard Car',   desc: 'Sedan, hatchback',     icon: '🚗' },
+  { value: 'MOTORCYCLE', label: 'Motorcycle',      desc: 'Bike or scooter',      icon: '🏍️' },
+  { value: 'LARGE',      label: 'Large Vehicle',   desc: 'SUV, van or truck',    icon: '🚙' },
+];
+
+const FEATURES = [
+  { icon: <Zap className="h-4 w-4 text-brand-400" />,   text: 'Instant slot reservation' },
+  { icon: <Car className="h-4 w-4 text-blue-400" />,    text: 'One-tap check-in & check-out' },
+  { icon: <Shield className="h-4 w-4 text-violet-400" />, text: 'Secure JWT-authenticated sessions' },
 ];
 
 export default function RegisterPage() {
@@ -23,10 +30,10 @@ export default function RegisterPage() {
     vehicleNumber: '',
   });
 
-  const [error, setError] = useState<string | null>(null);
+  const [error,      setError]      = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [success,    setSuccess]    = useState(false);
+  const [showPwd,    setShowPwd]    = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -37,154 +44,274 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
-
     try {
       await register(formData);
       setSuccess(true);
-      setTimeout(() => navigate('/login'), 2000);
+      setTimeout(() => navigate('/login'), 2200);
     } catch (err: any) {
       if (err.status === 409) {
         setError('Username or email is already taken.');
       } else {
-        setError(err.message ?? 'Registration failed. Please check your inputs.');
+        setError(err.message ?? 'Registration failed. Please check your details.');
       }
     } finally {
       setSubmitting(false);
     }
   }
 
+  // ── Success screen ──────────────────────────────────────────────
   if (success) {
     return (
-      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-night-900 px-4">
-        <div className="card max-w-md w-full text-center py-12">
-          <div className="w-16 h-16 mx-auto rounded-full bg-green-500/10 border border-green-500/30 flex items-center justify-center mb-6">
-            <CheckCircle className="h-8 w-8 text-green-400" />
+      <div className="min-h-screen flex items-center justify-center" style={{
+        background: 'linear-gradient(180deg, #050814 0%, #080d1a 100%)',
+      }}>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center px-8"
+        >
+          <div className="w-16 h-16 mx-auto rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-5">
+            <CheckCircle2 className="h-8 w-8 text-emerald-400" />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">Registration Successful!</h2>
-          <p className="text-white/60">Redirecting to login...</p>
-        </div>
+          <h2 className="text-xl font-bold text-white mb-2">Account Created!</h2>
+          <p className="text-sm text-white/40">Redirecting you to sign in…</p>
+        </motion.div>
       </div>
     );
   }
 
+  // ── Main layout ─────────────────────────────────────────────────
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-night-900 px-4 py-12">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white tracking-tight">Create Account</h1>
-          <p className="mt-2 text-sm text-white/50">Join SPMS and book your parking slots</p>
+    <div
+      className="min-h-screen flex"
+      style={{ background: 'linear-gradient(180deg, #050814 0%, #080d1a 100%)' }}
+    >
+      {/* ── Left panel — branding (hidden on mobile) ── */}
+      <div className="hidden lg:flex lg:w-[45%] flex-col justify-between p-12 relative overflow-hidden border-r border-white/5 flex-shrink-0">
+        {/* Glow */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: 'radial-gradient(ellipse 70% 60% at 20% 60%, rgba(99,102,241,0.12) 0%, transparent 60%)',
+        }} />
+        <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
+
+        {/* Logo */}
+        <div className="relative flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-lg shadow-brand-500/30">
+            <ParkingCircle className="h-4 w-4 text-white" />
+          </div>
+          <span className="text-base font-bold text-white">SPMS</span>
         </div>
 
-        {error && (
-          <div className="alert-error mb-6">
-            <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
-            <p>{error}</p>
+        {/* Middle copy */}
+        <div className="relative">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-300 text-xs font-semibold mb-6 uppercase tracking-wider">
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse" />
+            Free to get started
           </div>
-        )}
+          <h2 className="text-4xl font-black text-white mb-4 leading-tight">
+            Your parking,<br />
+            <span className="text-gradient-indigo">automated.</span>
+          </h2>
+          <p className="text-sm text-white/45 leading-relaxed max-w-xs">
+            Join SPMS and manage parking reservations, billing, and check-in with a single account.
+          </p>
 
-        <form onSubmit={handleSubmit} className="card space-y-5">
-          <div>
-            <label className="label">Username *</label>
-            <input
-              name="username"
-              type="text"
-              required
-              className="input"
-              value={formData.username}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div>
-            <label className="label">Email Address *</label>
-            <input
-              name="email"
-              type="email"
-              required
-              className="input"
-              value={formData.email}
-              onChange={handleChange}
-            />
+          <div className="mt-8 space-y-3">
+            {FEATURES.map((f, i) => (
+              <div key={i} className="flex items-center gap-3 text-sm text-white/55">
+                <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center flex-shrink-0">
+                  {f.icon}
+                </div>
+                {f.text}
+              </div>
+            ))}
           </div>
 
-          <div>
-            <label className="label">Password *</label>
-            <div className="relative">
+          {/* Decorative stat row */}
+          <div className="mt-10 flex gap-6">
+            {[
+              { label: 'Active Lots',  value: '12+' },
+              { label: 'Slots',        value: '500+' },
+              { label: 'Uptime',       value: '99.9%' },
+            ].map(s => (
+              <div key={s.label}>
+                <p className="text-lg font-black text-white">{s.value}</p>
+                <p className="text-xs text-white/30 font-medium">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <p className="relative text-xs text-white/20">Smart Parking Management System</p>
+      </div>
+
+      {/* ── Right panel — form ── */}
+      <div className="flex-1 flex items-center justify-center px-4 py-10 overflow-y-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="w-full max-w-sm"
+        >
+          {/* Mobile logo */}
+          <div className="flex lg:hidden items-center gap-2 mb-8">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
+              <ParkingCircle className="h-3.5 w-3.5 text-white" />
+            </div>
+            <span className="text-sm font-bold text-white">SPMS</span>
+          </div>
+
+          {/* Heading */}
+          <div className="mb-7">
+            <h1 className="text-2xl font-bold text-white mb-1">Create your account</h1>
+            <p className="text-sm text-white/40">Fill in the details below to get started</p>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div className="alert-error mb-5">
+              <AlertCircle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
+              <p>{error}</p>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-3.5">
+
+            {/* ── Account credentials ── */}
+            <div>
+              <label className="label">Username</label>
               <input
-                name="password"
-                type={showPassword ? 'text' : 'password'}
+                id="reg-username"
+                name="username"
+                type="text"
                 required
-                className="input pr-10"
-                value={formData.password}
+                autoComplete="username"
+                className="input"
+                value={formData.username}
                 onChange={handleChange}
+                placeholder="your_username"
               />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-white/40 hover:text-white/60"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
             </div>
-          </div>
 
-          <div className="border-t border-night-700 my-4 pt-4">
-            <h3 className="text-sm font-medium text-white mb-4">Vehicle Details (Optional)</h3>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="label">Phone Number</label>
+            <div>
+              <label className="label">Email Address</label>
+              <input
+                id="reg-email"
+                name="email"
+                type="email"
+                required
+                autoComplete="email"
+                className="input"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="you@example.com"
+              />
+            </div>
+
+            <div>
+              <label className="label">Password</label>
+              <div className="relative">
                 <input
-                  name="phone"
-                  type="tel"
-                  className="input"
-                  value={formData.phone}
+                  id="reg-password"
+                  name="password"
+                  type={showPwd ? 'text' : 'password'}
+                  required
+                  autoComplete="new-password"
+                  minLength={8}
+                  className="input pr-10"
+                  value={formData.password}
                   onChange={handleChange}
+                  placeholder="Min. 8 characters"
                 />
-              </div>
-
-              <div>
-                <label className="label">Vehicle Type</label>
-                <select
-                  name="vehicleType"
-                  className="input"
-                  value={formData.vehicleType}
-                  onChange={handleChange}
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-white/30 hover:text-white/60 transition-colors"
+                  onClick={() => setShowPwd(!showPwd)}
                 >
-                  {VEHICLE_OPTIONS.map(opt => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="label">License Plate / Vehicle Number</label>
-                <input
-                  name="vehicleNumber"
-                  type="text"
-                  className="input"
-                  value={formData.vehicleNumber}
-                  onChange={handleChange}
-                />
+                  {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
             </div>
-          </div>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="btn-primary w-full mt-6"
-          >
-            {submitting ? 'Creating Account...' : 'Create Account'}
-          </button>
-        </form>
+            {/* ── Divider ── */}
+            <div className="flex items-center gap-3 py-0.5">
+              <div className="flex-1 h-px bg-white/5" />
+              <span className="text-[11px] text-white/25 font-medium flex items-center gap-1">
+                <Car className="h-3 w-3" /> Vehicle info
+                <span className="text-white/15">(optional)</span>
+              </span>
+              <div className="flex-1 h-px bg-white/5" />
+            </div>
 
-        <p className="mt-6 text-center text-sm text-white/50">
-          Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-brand-400 hover:text-brand-300 transition-colors">
-            Sign in
-          </Link>
-        </p>
+            {/* ── Vehicle details ── */}
+            <div>
+              <label className="label">Phone Number</label>
+              <input
+                id="reg-phone"
+                name="phone"
+                type="tel"
+                className="input"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="+880 1XXX-XXXXXX"
+              />
+            </div>
+
+            <div>
+              <label className="label">Vehicle Type</label>
+              <select
+                id="reg-vehicleType"
+                name="vehicleType"
+                className="input"
+                value={formData.vehicleType}
+                onChange={handleChange}
+              >
+                {VEHICLE_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value} className="bg-[#0f1629] text-white">
+                    {opt.icon}  {opt.label} — {opt.desc}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="label">License Plate</label>
+              <input
+                id="reg-vehicleNumber"
+                name="vehicleNumber"
+                type="text"
+                className="input"
+                value={formData.vehicleNumber}
+                onChange={handleChange}
+                placeholder="e.g. DHA-1234"
+              />
+            </div>
+
+            {/* ── Submit ── */}
+            <button
+              type="submit"
+              id="register-submit"
+              disabled={submitting}
+              className="btn-primary w-full py-2.5 mt-1"
+            >
+              {submitting ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+                  Creating account…
+                </span>
+              ) : (
+                <>Create Account <ArrowRight className="h-4 w-4" /></>
+              )}
+            </button>
+          </form>
+
+          <p className="mt-5 text-center text-sm text-white/35">
+            Already have an account?{' '}
+            <Link to="/login" className="font-semibold text-brand-400 hover:text-brand-300 transition-colors">
+              Sign in
+            </Link>
+          </p>
+        </motion.div>
       </div>
     </div>
   );

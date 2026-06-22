@@ -47,8 +47,8 @@ export default function ParkingMapPage() {
     try {
       const payload: CreateReservationPayload = {
         slotId: selectedSlot.id,
-        startTime: new Date(startTime).toISOString(),
-        endTime: new Date(endTime).toISOString(),
+        startTime: startTime.length === 16 ? `${startTime}:00` : startTime,
+        endTime: endTime.length === 16 ? `${endTime}:00` : endTime,
         vehicleNumber: vehicleNumber || undefined,
       };
       await api.post('/reservations', payload);

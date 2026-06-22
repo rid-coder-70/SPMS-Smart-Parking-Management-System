@@ -4,41 +4,22 @@ import { ProtectedRoute, AdminRoute } from '@/common/ProtectedRoute';
 import DashboardLayout from '@/common/DashboardLayout';
 
 // ── Public pages ────────────────────────────────────────────────
-import LandingPage   from '@/features/landing/LandingPage';
-import LoginPage     from '@/features/auth/LoginPage';
-import RegisterPage  from '@/features/auth/RegisterPage';
-import ProfilePage   from '@/features/auth/ProfilePage';
-
-// ── Authenticated pages ─────────────────────────────────────────
-import UserDashboard from '@/features/dashboard/UserDashboard';
-import ParkingMapPage from '@/features/parking/ParkingMapPage';
-import ReservationsPage from '@/features/reservations/ReservationsPage';
-import BillingPage from '@/features/billing/BillingPage';
-
-// ── Admin pages ─────────────────────────────────────────────────
-import { AdminLotsPage } from '@/features/parking/AdminLotsPage';
-import { AdminSlotsPage } from '@/features/parking/AdminSlotsPage';
-import AdminDashboard from '@/features/admin/AdminDashboard';
-import ReportsPage from '@/features/admin/ReportsPage';
 import LandingPage  from '@/features/landing/LandingPage';
 import LoginPage    from '@/features/auth/LoginPage';
 import RegisterPage from '@/features/auth/RegisterPage';
-import ProfilePage  from '@/features/auth/ProfilePage';
 
-// ── Module 2 — Parking ────────────────────────────────────────
+// ── Authenticated pages ─────────────────────────────────────────
+import ProfilePage    from '@/features/auth/ProfilePage';
+import UserDashboard  from '@/features/dashboard/UserDashboard';
+import ParkingMapPage from '@/features/parking/ParkingMapPage';
+import ReservationsPage from '@/features/reservations/ReservationsPage';
+import BillingPage    from '@/features/billing/BillingPage';
+
+// ── Admin pages ─────────────────────────────────────────────────
+import AdminDashboard from '@/features/admin/AdminDashboard';
+import ReportsPage    from '@/features/admin/ReportsPage';
 import { AdminLotsPage }  from '@/features/parking/AdminLotsPage';
 import { AdminSlotsPage } from '@/features/parking/AdminSlotsPage';
-
-// ── Module 3 — Reservations ───────────────────────────────────
-import ReservationsPage from '@/features/reservations/ReservationsPage';
-
-// Module 4 — Billing
-// import BillingPage from '@/features/billing/BillingPage';
-
-// Module 5 — Admin
-// import AdminDashboard from '@/features/admin/AdminDashboard';
-
-// ─────────────────────────────────────────────────────────────
 
 function App() {
   return (
@@ -46,12 +27,12 @@ function App() {
       <AuthProvider>
         <Routes>
 
-          {/* ── Public routes ────────────────────────────── */}
+          {/* ── Public routes ──────────────────────────────── */}
           <Route path="/"         element={<LandingPage />} />
           <Route path="/login"    element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
-          {/* ── Authenticated routes with sidebar layout ─── */}
+          {/* ── Authenticated routes (with sidebar layout) ── */}
           <Route element={<ProtectedRoute />}>
             <Route element={<DashboardLayout />}>
               <Route path="/dashboard"    element={<UserDashboard />} />
@@ -60,16 +41,9 @@ function App() {
               <Route path="/reservations" element={<ReservationsPage />} />
               <Route path="/billing"      element={<BillingPage />} />
             </Route>
-            <Route path="/profile"      element={<ProfilePage />} />
-
-            {/* Module 3 — Reservations */}
-            <Route path="/reservations" element={<ReservationsPage />} />
-
-            {/* Module 4 — Billing (uncomment when built) */}
-            {/* <Route path="/billing" element={<BillingPage />} /> */}
           </Route>
 
-          {/* ── Admin-only routes with sidebar layout ────── */}
+          {/* ── Admin-only routes (with sidebar layout) ───── */}
           <Route element={<AdminRoute />}>
             <Route element={<DashboardLayout />}>
               <Route path="/admin"         element={<AdminDashboard />} />
@@ -77,13 +51,9 @@ function App() {
               <Route path="/admin/slots"   element={<AdminSlotsPage />} />
               <Route path="/admin/reports" element={<ReportsPage />} />
             </Route>
-            {/* Module 5 — Admin (uncomment when built) */}
-            {/* <Route path="/admin" element={<AdminDashboard />} /> */}
-            <Route path="/admin/lots"  element={<AdminLotsPage />} />
-            <Route path="/admin/slots" element={<AdminSlotsPage />} />
           </Route>
 
-          {/* ── Fallback ─────────────────────────────────── */}
+          {/* ── Fallback ──────────────────────────────────── */}
           <Route path="*" element={<Navigate to="/" replace />} />
 
         </Routes>
@@ -93,4 +63,3 @@ function App() {
 }
 
 export default App;
-

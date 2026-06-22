@@ -218,7 +218,7 @@ const MyReservationsPage: React.FC = () => {
               <ReservationCard
                 key={r.id}
                 reservation={r}
-                onCancelled={(id, resp) => handleCancelled(id)}
+                onCancelled={(id) => handleCancelled(id)}
               />
             ))}
           </div>
@@ -243,7 +243,7 @@ const MyReservationsPage: React.FC = () => {
               <ReservationCard
                 key={r.id}
                 reservation={r}
-                onCancelled={(id, resp) => handleCancelled(id)}
+                onCancelled={(id) => handleCancelled(id)}
               />
             ))}
           </div>

@@ -1,32 +1,31 @@
 import { useState, FormEvent } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-import { Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, ParkingCircle, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function LoginPage() {
-  const { login }   = useAuth();
-  const navigate    = useNavigate();
-  const location    = useLocation();
+  const { login }  = useAuth();
+  const navigate   = useNavigate();
+  const location   = useLocation();
+  const from = (location.state as { from?: string })?.from ?? '/dashboard';
 
-  const from = (location.state as { from?: string })?.from ?? '/profile';
-
-  const [username,  setUsername]  = useState('');
-  const [password,  setPassword]  = useState('');
-  const [error,     setError]     = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [username,    setUsername]    = useState('');
+  const [password,    setPassword]    = useState('');
+  const [error,       setError]       = useState<string | null>(null);
+  const [submitting,  setSubmitting]  = useState(false);
+  const [showPwd,     setShowPwd]     = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
-
     try {
       await login(username, password);
       navigate(from, { replace: true });
     } catch (err: any) {
       if (err.status === 423) {
-        setError('Your account is temporarily locked due to too many failed attempts.');
+        setError('Account temporarily locked due to too many failed attempts.');
       } else if (err.status === 401) {
         setError('Invalid username or password.');
       } else {
@@ -38,69 +37,140 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-night-900 px-4 py-12">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white tracking-tight">Welcome Back</h1>
-          <p className="mt-2 text-sm text-white/50">Log in to manage your parking reservations</p>
+    <div className="min-h-screen flex" style={{
+      background: 'linear-gradient(180deg, #050814 0%, #080d1a 100%)',
+    }}>
+      {/* Left panel — branding */}
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden border-r border-white/5">
+        {/* Glow */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse 70% 60% at 30% 50%, rgba(99,102,241,0.12) 0%, transparent 60%)' }} />
+        <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
+
+        <div className="relative flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-lg shadow-brand-500/30">
+            <ParkingCircle className="h-4 w-4 text-white" />
+          </div>
+          <span className="text-base font-bold text-white">SPMS</span>
         </div>
 
-        {error && (
-          <div className="alert-error mb-6">
-            <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
-            <p>{error}</p>
-          </div>
-        )}
+        <div className="relative">
+          <h2 className="text-4xl font-black text-white mb-4 leading-tight">
+            Manage parking<br />
+            <span className="text-gradient-indigo">effortlessly.</span>
+          </h2>
+          <p className="text-sm text-white/45 leading-relaxed max-w-sm">
+            Real-time slot tracking, instant reservations, and automated billing — all in one place.
+          </p>
 
-        <form onSubmit={handleSubmit} className="card space-y-6">
-          <div>
-            <label className="label">Username</label>
-            <input
-              type="text"
-              required
-              className="input"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
-            />
+          <div className="mt-10 space-y-3">
+            {[
+              'Reserve slots in advance',
+              'One-tap check-in & check-out',
+              'Automatic fee calculation',
+              'Live occupancy dashboard',
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-2.5 text-sm text-white/55">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-400 flex-shrink-0" />
+                {item}
+              </div>
+            ))}
           </div>
+        </div>
 
-          <div>
-            <label className="label">Password</label>
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                required
-                className="input pr-10"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-              />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-white/40 hover:text-white/60"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
+        <p className="relative text-xs text-white/20">Smart Parking Management System</p>
+      </div>
+
+      {/* Right panel — form */}
+      <div className="flex-1 flex items-center justify-center px-4 py-12">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="w-full max-w-sm"
+        >
+          {/* Mobile logo */}
+          <div className="flex lg:hidden items-center gap-2 mb-8">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
+              <ParkingCircle className="h-3.5 w-3.5 text-white" />
             </div>
+            <span className="text-sm font-bold text-white">SPMS</span>
           </div>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="btn-primary w-full"
-          >
-            {submitting ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-white mb-1.5">Welcome back</h1>
+            <p className="text-sm text-white/40">Sign in to your account to continue</p>
+          </div>
 
-        <p className="mt-6 text-center text-sm text-white/50">
-          Don't have an account?{' '}
-          <Link to="/register" className="font-semibold text-brand-400 hover:text-brand-300 transition-colors">
-            Sign up
-          </Link>
-        </p>
+          {error && (
+            <div className="alert-error mb-6">
+              <AlertCircle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
+              <p>{error}</p>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="label">Username</label>
+              <input
+                id="username"
+                type="text"
+                required
+                autoComplete="username"
+                className="input"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                placeholder="your_username"
+              />
+            </div>
+
+            <div>
+              <label className="label">Password</label>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPwd ? 'text' : 'password'}
+                  required
+                  autoComplete="current-password"
+                  className="input pr-10"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-white/30 hover:text-white/60 transition-colors"
+                  onClick={() => setShowPwd(!showPwd)}
+                >
+                  {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              id="login-submit"
+              disabled={submitting}
+              className="btn-primary w-full mt-2 py-2.5"
+            >
+              {submitting ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+                  Signing in…
+                </span>
+              ) : (
+                <>Sign In <ArrowRight className="h-4 w-4" /></>
+              )}
+            </button>
+          </form>
+
+          <p className="mt-6 text-center text-sm text-white/35">
+            Don't have an account?{' '}
+            <Link to="/register" className="font-semibold text-brand-400 hover:text-brand-300 transition-colors">
+              Create one
+            </Link>
+          </p>
+        </motion.div>
       </div>
     </div>
   );

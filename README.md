@@ -1,146 +1,309 @@
-# Smart Parking Management System (SPMS)
+# SPMS — Smart Parking Management System
 
-A full-stack Smart Parking Management System built using a modular monolithic architecture.
+<div align="center">
+  <img src="https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?logo=spring" />
+  <img src="https://img.shields.io/badge/React-18-blue?logo=react" />
+  <img src="https://img.shields.io/badge/TypeScript-5-blue?logo=typescript" />
+  <img src="https://img.shields.io/badge/Tailwind%20CSS-3-38bdf8?logo=tailwindcss" />
+  <img src="https://img.shields.io/badge/JWT-Auth-orange?logo=jsonwebtokens" />
+  <img src="https://img.shields.io/badge/License-MIT-lightgrey" />
+</div>
 
-##  Tech Stack
+<br />
 
-**Frontend:**
-- React 18
-- TypeScript
-- Vite
-- Tailwind CSS 3
-- Axios
-- React Router 6
-
-**Backend:**
-- Java 17
-- Spring Boot 3
-- Spring Security 6 (Stateless JWT)
-- Spring Data JPA
-- H2 Database (in-memory, for local development)
-- Maven
+> A full-stack parking management platform with real-time slot tracking, advance reservations, automated billing, and an admin analytics dashboard.
 
 ---
 
-##  How to Run the Project (A to Z)
+## 📸 Screenshots
 
-You will need two terminal windows open: one for the backend, and one for the frontend.
+| Landing Page | Login (Split-Screen) | User Dashboard |
+|---|---|---|
+| Dark glassmorphism hero | Branded left panel + form | Live stats & quick actions |
+
+| Register Page | Admin Dashboard | Billing Page |
+|---|---|---|
+| Split-screen with feature list | Occupancy bars + management | Transaction history + checkout |
+
+---
+
+## 🏗 Architecture Overview
+
+```
+SPMS/
+├── backend/          # Spring Boot 3 REST API
+│   └── src/main/java/com/spms/
+│       ├── auth/         # Registration, login, JWT
+│       ├── parking/      # Lots & slots management
+│       ├── reservation/  # Reservation lifecycle
+│       ├── billing/      # Check-in/out & fee calculation
+│       └── reporting/    # Revenue & occupancy reports
+│
+└── frontend/         # Vite + React 18 + TypeScript
+    └── src/
+        ├── common/        # api.ts, types.ts, DashboardLayout
+        └── features/
+            ├── auth/          # Login, Register, Profile, AuthContext
+            ├── landing/       # Landing page
+            ├── dashboard/     # User dashboard
+            ├── parking/       # Slot grid, lot selector, admin pages
+            ├── reservations/  # Booking, my reservations, check-in/out
+            ├── billing/       # Transaction history
+            └── admin/         # Admin dashboard, reports
+```
+
+---
+
+## 🚀 Tech Stack
+
+### Backend
+| Technology | Purpose |
+|---|---|
+| Spring Boot 3 | REST API framework |
+| Spring Security | JWT authentication & RBAC |
+| Spring Data JPA | Database ORM |
+| PostgreSQL / H2 | Primary / test database |
+| Maven | Dependency management |
+
+### Frontend
+| Technology | Purpose |
+|---|---|
+| React 18 + TypeScript | UI framework |
+| Vite 5 | Build tool & dev server |
+| Tailwind CSS 3 | Utility-first styling |
+| Framer Motion | Animations |
+| Axios | HTTP client with JWT interceptor |
+| React Router v6 | Client-side routing |
+| Lucide React | Icon library |
+
+---
+
+## ⚙️ Environment Setup
 
 ### Prerequisites
-- **Java 17** installed (`java -version`)
-- **Node.js** (v18+) and **npm** installed (`node -v`)
+- **Java 17+**
+- **Node.js 18+** and npm
+- **PostgreSQL** (or use the embedded H2 for dev)
+- **Maven 3.8+**
 
----
-
-### Step 1: Start the Spring Boot Backend
-
-1. Open a terminal and navigate to the `backend` directory:
-   ```bash
-   cd SPMS-Smart-Parking-Management-System/backend
-   ```
-2. Run the application using the Maven wrapper:
-   - **Linux/Mac:** `./mvnw spring-boot:run`
-   - **Windows:** `mvnw.cmd spring-boot:run`
-   
-   *(Note: If you don't have Maven installed globally, the wrapper script will automatically download what it needs.)*
-   
-3. Wait for the Spring Boot logo to appear and look for this line at the bottom:
-   `Started SpmsApplication in X.XXX seconds`
-
-The backend is now running on **http://localhost:8080** and connected to an in-memory H2 database. 
-
-*Note: Because it uses H2 in-memory mode (`mem:spmsdb`), the database is completely wiped and reset every time you restart the backend.*
-
----
-
-### Step 2: Start the React Frontend
-
-1. Open a **second** terminal window and navigate to the `frontend` directory:
-   ```bash
-   cd SPMS-Smart-Parking-Management-System/frontend
-   ```
-2. Install the Node dependencies (only needed the first time):
-   ```bash
-   npm install
-   ```
-3. Start the Vite development server:
-   ```bash
-   npm run dev
-   ```
-4. Look for the local URL in your terminal:
-   `➜  Local:   http://localhost:5173/`
-
-### Step 3: View the App
-Open your browser and navigate to: **http://localhost:5173**
-
-You can immediately test the fully integrated system:
-1. **Admin Setup**: Log in with username `admin` and password `admin123`. Navigate to the **Admin Dashboard** and add a new Parking Lot and some Slots.
-2. **User Flow**: Register a new account, log in, and browse the **Parking Map**. Select an available slot to reserve it.
-3. **Billing Flow**: Navigate to **My Reservations** to check in, and then to **My Billing** to check out and pay.
-
----
-
-## Project Structure
-
-```
-SPMS-Smart-Parking-Management-System/
-├── backend/
-│   ├── mvnw               # Maven wrapper (run this!)
-│   ├── pom.xml
-│   └── src/main/java/com/spms/
-│       ├── auth/          # Module 1: Authentication & User Mgmt (Completed)
-│       ├── parking/       # Module 2: Parking Lots & Slots (Completed)
-│       ├── reservation/   # Module 3: Reservations (Completed)
-│       ├── billing/       # Module 4: Billing & Transactions (Completed)
-│       ├── reporting/     # Module 5: Admin Reports (Completed)
-│       └── common/        # Shared enums, exception handlers, JWT util
-│
-└── frontend/
-    ├── package.json
-    ├── vite.config.ts
-    └── src/
-        ├── common/        # Axios interceptors, protected routes, Dashboard layout
-        └── features/
-            ├── auth/      # Login, Register, Profile components
-            ├── parking/   # Parking Map, Lot Selector, Slot Grid, Admin Management
-            ├── reservations/ # Reservations Dashboard, Check-in flow
-            ├── billing/   # Transactions, Receipts, Check-out flow
-            ├── dashboard/ # User Dashboard
-            └── admin/     # Admin Dashboard, Revenue & Occupancy Reports
-```
-
----
-
-##  Team Members & Responsibilities
-
-| Name | Role | Responsibility |
-|------|------|----------------|
-| **Ridoy Baidya** | Backend Lead | Module 1: Auth, Security (JWT), RBAC |
-| **Priom Chakraborty** | Backend Dev | Module 2: Parking & Slot APIs |
-| **Nahid Gazi** | Frontend Lead | Dashboard & UI |
-| **Rahat Ahmed** | Backend Dev | Module 4/5: Reporting & Analytics APIs |
-| **Mahdiul Hasan** | Database Engineer | Schema Design, ER Model, JPA Entities |
-
----
-
-##  Branch Strategy
-
-We follow a **Feature Branch Workflow**:
-
-1. `main` → Production-ready code
-2. `develop` → Integration branch
-3. `feature/*` → Individual development branches
-
-**How to contribute:**
+### 1 — Clone the Repository
 ```bash
-git checkout develop
-git pull origin develop
-git checkout -b feature/your-feature-name
-
-# ... write code ...
-
-git add .
-git commit -m "Added new feature"
-git push origin feature/your-feature-name
+git clone https://github.com/your-username/SPMS-Smart-Parking-Management-System.git
+cd SPMS-Smart-Parking-Management-System
 ```
-Then create a Pull Request to merge into `develop`.
+
+### 2 — Backend Configuration
+```bash
+# Navigate to backend
+cd backend
+
+# Edit application.properties
+nano src/main/resources/application.properties
+```
+
+Key properties to set:
+```properties
+# Server
+server.port=8080
+
+# Database (PostgreSQL)
+spring.datasource.url=jdbc:postgresql://localhost:5432/spms_db
+spring.datasource.username=postgres
+spring.datasource.password=your_password
+
+# JPA
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+
+# JWT
+jwt.secret=your-256-bit-secret-key-here
+jwt.expiration=86400000
+
+# CORS
+cors.allowed-origins=http://localhost:5173
+```
+
+### 3 — Start the Backend
+```bash
+# From /backend directory
+mvn spring-boot:run
+
+# Or build and run the jar
+mvn clean package -DskipTests
+java -jar target/spms-*.jar
+```
+Backend runs on: **http://localhost:8080**
+
+### 4 — Frontend Configuration
+```bash
+# Navigate to frontend
+cd ../frontend
+
+# Install dependencies
+npm install
+```
+
+Verify the API base URL in `src/common/api.ts`:
+```typescript
+const BASE_URL = 'http://localhost:8080/api/v1';
+```
+
+### 5 — Start the Frontend
+```bash
+npm run dev
+```
+Frontend runs on: **http://localhost:5173**
+
+---
+
+## 🔑 Default Credentials (Seeded Data)
+
+If your backend seeds initial data, use these:
+
+| Role | Username | Password |
+|---|---|---|
+| Admin | `admin` | `admin123` |
+| User | `user1` | `password` |
+
+> **Note:** Create your own accounts via the Register page if no seed data exists.
+
+---
+
+## 📡 API Reference
+
+All endpoints are prefixed with `/api/v1`.
+
+### Auth
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/auth/register` | Public | Create new user account |
+| POST | `/auth/login` | Public | Login, returns JWT token |
+
+### Users
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/users/me` | User | Get own profile |
+| PUT | `/users/me` | User | Update profile |
+| PUT | `/users/me/password` | User | Change password |
+| GET | `/users` | Admin | List all users (paginated) |
+| PUT | `/users/{id}/activate` | Admin | Activate user account |
+| PUT | `/users/{id}/deactivate` | Admin | Deactivate user account |
+| PUT | `/users/{id}/reset-password` | Admin | Reset a user's password |
+
+### Parking Lots
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/lots` | Public | List all active lots |
+| POST | `/lots` | Admin | Create new parking lot |
+| PUT | `/lots/{id}` | Admin | Update lot details |
+| PUT | `/lots/{id}/deactivate` | Admin | Deactivate a lot |
+
+### Parking Slots
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/lots/{lotId}/slots` | User | Get slots for a lot |
+| POST | `/lots/{lotId}/slots` | Admin | Add a slot to a lot |
+| PUT | `/slots/{id}/out-of-service` | Admin | Mark slot out of service |
+
+### Reservations
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/reservations` | User | Create a reservation |
+| GET | `/reservations/me` | User | List own reservations |
+| GET | `/reservations/{id}` | User | Get single reservation |
+| PUT | `/reservations/{id}/cancel` | User | Cancel a reservation |
+| PUT | `/reservations/{id}/check-in` | User | Check in |
+| PUT | `/reservations/{id}/check-out` | User | Check out (triggers billing) |
+| DELETE | `/reservations/{id}/admin` | Admin | Admin cancel |
+
+### Billing
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/billing/check-in/{reservationId}` | User | Create transaction on check-in |
+| POST | `/billing/check-out/{transactionId}` | User | Compute fee on check-out |
+| GET | `/billing/transactions/{id}` | User | Get a single receipt |
+| GET | `/billing/my` | User | List own transactions |
+
+### Reports (Admin Only)
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/reports/revenue?from=&to=` | Admin | Revenue report for date range |
+| GET | `/reports/occupancy` | Admin | Live occupancy across all lots |
+
+---
+
+## 🗂 Frontend Route Map
+
+| Route | Auth Guard | Component |
+|---|---|---|
+| `/` | Public | `LandingPage` |
+| `/login` | Public | `LoginPage` |
+| `/register` | Public | `RegisterPage` |
+| `/dashboard` | User | `UserDashboard` |
+| `/profile` | User | `ProfilePage` |
+| `/parking` | User | `ParkingMapPage` |
+| `/reservations` | User | `ReservationsPage` |
+| `/billing` | User | `BillingPage` |
+| `/admin` | Admin | `AdminDashboard` |
+| `/admin/lots` | Admin | `AdminLotsPage` |
+| `/admin/slots` | Admin | `AdminSlotsPage` |
+| `/admin/reports` | Admin | `ReportsPage` |
+
+---
+
+## 🎨 Design System
+
+The UI uses a **dark glassmorphism** aesthetic inspired by 21st.dev:
+
+- **Font:** Inter (Google Fonts)
+- **Primary colour:** Indigo `#6366f1` (brand-500)
+- **Background:** Deep navy `#050814`
+- **Glass cards:** `rgba(255,255,255,0.04)` + `backdrop-filter: blur(20px)`
+- **Border:** `rgba(255,255,255,0.10)`
+
+### Utility Classes (`src/index.css`)
+| Class | Purpose |
+|---|---|
+| `.card` | Glass morphism card surface |
+| `.input` | Styled glass input field |
+| `.btn-primary` | Indigo filled button |
+| `.btn-secondary` | Ghost/outline button |
+| `.btn-danger` | Red destructive action |
+| `.btn-success` | Emerald confirm action |
+| `.badge-*` | Status badges (active, pending, etc.) |
+| `.alert-*` | Alert banners (error, success, warning) |
+| `.table-dark` | Dark-themed data table |
+| `.sidebar-link` | Navigation link |
+| `.sidebar-link-active` | Active nav state |
+
+---
+
+## 🏗 Building for Production
+
+```bash
+# Frontend production build
+cd frontend
+npm run build
+# Output in frontend/dist/
+
+# Backend production jar
+cd backend
+mvn clean package -DskipTests
+# Output: backend/target/spms-*.jar
+```
+
+---
+
+## 🔒 Security Notes
+
+- Passwords are hashed with **BCrypt**
+- JWT tokens expire after 24 hours (configurable)
+- Accounts are locked after N failed login attempts
+- All admin endpoints require `ROLE_ADMIN`
+- CORS is locked to the frontend origin
+
+---
+
+## 📄 License
+
+MIT © 2026 — Smart Parking Management System

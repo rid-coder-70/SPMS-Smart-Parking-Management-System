@@ -8,7 +8,6 @@ import React, {
 import { TOKEN_KEY } from '@/common/api';
 import { AuthService } from './auth.service';
 import type {
-  LoginPayload,
   RegisterPayload,
   User,
 } from '@/common/types';

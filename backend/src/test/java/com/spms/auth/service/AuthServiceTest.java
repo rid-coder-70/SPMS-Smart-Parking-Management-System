@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -50,6 +51,7 @@ class AuthServiceTest {
     @Mock private UserRepository  userRepository;
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private JwtUtil         jwtUtil;
+    @Mock private LoginLockService lockService;
 
     @InjectMocks
     private AuthService authService;
@@ -188,7 +190,6 @@ class AuthServiceTest {
             when(passwordEncoder.matches("secret123", user.getPasswordHash())).thenReturn(true);
             when(jwtUtil.generateToken(user)).thenReturn("jwt.token.here");
             when(jwtUtil.getExpirySeconds()).thenReturn(1800L);
-            when(userRepository.save(any())).thenReturn(user);
 
             AuthResponse response = authService.login(req);
 
@@ -196,7 +197,7 @@ class AuthServiceTest {
             assertThat(response.getTokenType()).isEqualTo("Bearer");
             assertThat(response.getExpiresIn()).isEqualTo(1800L);
             assertThat(response.getUser().getUsername()).isEqualTo("ridoy");
-            assertThat(user.getFailedLoginAttempts()).isEqualTo(0);
+            verify(lockService).resetFailedAttempts(user);
         }
 
         @Test
@@ -208,13 +209,11 @@ class AuthServiceTest {
 
             when(userRepository.findByUsername("ridoy")).thenReturn(Optional.of(user));
             when(passwordEncoder.matches("secret123", user.getPasswordHash())).thenReturn(false);
-            when(userRepository.save(any())).thenReturn(user);
+            doNothing().when(lockService).recordFailAndLockIfNeeded(user);
 
             catchThrowableOfType(() -> authService.login(req), SpmsException.class);
 
-            assertThat(user.getFailedLoginAttempts()).isEqualTo(2);
-            assertThat(user.getAccountStatus()).isEqualTo(AccountStatus.ACTIVE); // not yet locked
-            verify(userRepository).save(user);
+            verify(lockService).recordFailAndLockIfNeeded(user);
         }
 
         @Test
@@ -226,18 +225,16 @@ class AuthServiceTest {
 
             when(userRepository.findByUsername("ridoy")).thenReturn(Optional.of(user));
             when(passwordEncoder.matches("secret123", user.getPasswordHash())).thenReturn(false);
-            when(userRepository.save(any())).thenReturn(user);
+            
+            doThrow(new AccountLockedException(LocalDateTime.now().plusMinutes(15)))
+                .when(lockService).recordFailAndLockIfNeeded(user);
 
             // The 3rd failure should lock the account AND throw AccountLockedException
             AccountLockedException lockEx = catchThrowableOfType(
                     () -> authService.login(req), AccountLockedException.class);
 
             assertThat(lockEx).isNotNull();
-            assertThat(user.getAccountStatus()).isEqualTo(AccountStatus.LOCKED);
-            assertThat(user.getLockedUntil()).isNotNull();
-            assertThat(user.getLockedUntil()).isAfter(LocalDateTime.now());
-            assertThat(user.getFailedLoginAttempts()).isEqualTo(3);
-            verify(userRepository).save(user);
+            verify(lockService).recordFailAndLockIfNeeded(user);
         }
 
         @Test
@@ -251,11 +248,11 @@ class AuthServiceTest {
 
             when(userRepository.findByUsername("ridoy")).thenReturn(Optional.of(user));
 
-            AccountLockedException lockEx = catchThrowableOfType(
-                    () -> authService.login(req), AccountLockedException.class);
+            ResponseStatusException lockEx = catchThrowableOfType(
+                    () -> authService.login(req), ResponseStatusException.class);
 
             assertThat(lockEx).isNotNull();
-            assertThat(lockEx.getLockedUntil()).isAfter(LocalDateTime.now());
+            assertThat(lockEx.getStatusCode()).isEqualTo(HttpStatus.LOCKED);
 
             // Password check must never be reached
             verify(passwordEncoder, never()).matches(any(), any());
@@ -272,18 +269,17 @@ class AuthServiceTest {
             LoginRequest req = buildLoginRequest();
 
             when(userRepository.findByUsername("ridoy")).thenReturn(Optional.of(user));
+            doNothing().when(lockService).unlockExpired(user);
             when(passwordEncoder.matches("secret123", user.getPasswordHash())).thenReturn(true);
             when(jwtUtil.generateToken(user)).thenReturn("new.jwt.token");
             when(jwtUtil.getExpirySeconds()).thenReturn(1800L);
-            when(userRepository.save(any())).thenReturn(user);
 
             AuthResponse response = authService.login(req);
 
             // Should auto-unlock and succeed
             assertThat(response.getToken()).isEqualTo("new.jwt.token");
-            assertThat(user.getAccountStatus()).isEqualTo(AccountStatus.ACTIVE);
-            assertThat(user.getFailedLoginAttempts()).isEqualTo(0);
-            assertThat(user.getLockedUntil()).isNull();
+            verify(lockService).unlockExpired(user);
+            verify(lockService).resetFailedAttempts(user);
         }
     }
 }

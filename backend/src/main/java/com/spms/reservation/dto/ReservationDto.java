@@ -8,11 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
- * Response DTO for reservation data.
- * Includes denormalized slotNumber and lotName for frontend convenience.
- * Outbound DTO representing a reservation — returned by all read endpoints.
- */
 @Data
 @Builder
 @NoArgsConstructor
@@ -26,12 +21,8 @@ public class ReservationDto {
     private String lotName;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private LocalDateTime checkInTime;
     private ReservationStatus status;
     private String vehicleNumber;
-    private Long slotId;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private LocalDateTime checkInTime;  // null until checked in
-    private ReservationStatus status;
     private LocalDateTime createdDate;
 }

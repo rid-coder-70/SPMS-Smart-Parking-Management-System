@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ParkingService } from './parking.service';
 import type { ParkingSlot, VehicleType } from '../../common/types';
 import { LotSelector } from './LotSelector';
-import { Grid3X3, Plus, Wrench } from 'lucide-react';
-import { PlusCircle, Trash2, Hash, AlertCircle, RefreshCw } from 'lucide-react';
+import { LayoutGrid, Plus, Wrench, AlertCircle, CheckCircle2, RefreshCw } from 'lucide-react';
 
 const VEHICLE_OPTIONS: { value: VehicleType; label: string }[] = [
   { value: 'STANDARD',   label: 'Standard Car' },
@@ -11,113 +10,98 @@ const VEHICLE_OPTIONS: { value: VehicleType; label: string }[] = [
   { value: 'LARGE',      label: 'Large Vehicle (SUV / Van)' },
 ];
 
+const slotStatusBadge: Record<string, string> = {
+  AVAILABLE:      'badge-active',
+  RESERVED:       'badge-pending',
+  OCCUPIED:       'badge-cancelled',
+  OUT_OF_SERVICE: 'badge-inactive',
+};
+
 export const AdminSlotsPage: React.FC = () => {
   const [selectedLotId, setSelectedLotId] = useState<number | undefined>();
-  const [slots, setSlots] = useState<ParkingSlot[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const [slotNumber, setSlotNumber] = useState('');
-  const [slotType, setSlotType] = useState<VehicleType | ''>('');
-  
-  const [adding, setAdding] = useState(false);
-  const [addError, setAddError] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
+  const [slots,         setSlots]         = useState<ParkingSlot[]>([]);
+  const [loading,       setLoading]       = useState(false);
+  const [error,         setError]         = useState('');
+  const [slotNumber,    setSlotNumber]    = useState('');
+  const [slotType,      setSlotType]      = useState<VehicleType | ''>('');
+  const [adding,        setAdding]        = useState(false);
+  const [addError,      setAddError]      = useState('');
+  const [successMsg,    setSuccessMsg]    = useState('');
 
   const fetchSlots = async (lotId: number) => {
     setLoading(true);
+    setError('');
     try {
       const data = await ParkingService.getSlotsByLot(lotId);
       setSlots(data);
-      setError('');
-    } catch (err: any) {
-      setError(err?.message || 'Failed to fetch slots');
+    } catch (e: any) {
+      setError(e?.message ?? 'Failed to fetch slots');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (selectedLotId) {
-      fetchSlots(selectedLotId);
-    } else {
-      setSlots([]);
-    }
+    if (selectedLotId) fetchSlots(selectedLotId);
+    else setSlots([]);
   }, [selectedLotId]);
 
   const handleAddSlot = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedLotId || !slotNumber || !slotType) return;
-    
-    setAdding(true);
-    setAddError('');
-    setSuccessMsg('');
+    setAdding(true); setAddError(''); setSuccessMsg('');
     try {
-      await ParkingService.createSlot(selectedLotId, {
-        lotId: selectedLotId,
-        slotNumber,
-        slotType
-      });
-      setSlotNumber('');
-      setSlotType('');
+      await ParkingService.addSlot(selectedLotId, { slotNumber, slotType: slotType as VehicleType });
+      setSlotNumber(''); setSlotType('');
       setSuccessMsg(`Slot ${slotNumber} added successfully!`);
       fetchSlots(selectedLotId);
-    } catch (err: any) {
-      setAddError(err?.message || 'Failed to add slot');
+    } catch (e: any) {
+      setAddError(e?.message ?? 'Failed to add slot');
     } finally {
       setAdding(false);
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('Are you sure you want to delete this slot?')) return;
+  const handleMarkOutOfService = async (id: number) => {
+    if (!window.confirm('Mark this slot as out of service?')) return;
     try {
-      await api.put(`/slots/${slotId}/out-of-service`);
+      await ParkingService.markOutOfService(id);
       setSuccessMsg('Slot marked as out of service.');
-      await ParkingService.deleteSlot(id);
       if (selectedLotId) fetchSlots(selectedLotId);
-    } catch (err: any) {
-      alert(err?.message || 'Failed to delete slot');
+    } catch (e: any) {
+      alert(e?.message ?? 'Failed to update slot status');
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    const map: Record<string, string> = {
-      AVAILABLE: 'badge-active',
-      RESERVED: 'badge-pending',
-      OCCUPIED: 'badge-cancelled',
-      OUT_OF_SERVICE: 'badge-inactive',
-    };
-    return map[status] || 'badge-inactive';
-  };
-
   return (
-    <div className="animate-fade-in space-y-6">
+    <div className="space-y-6 animate-fade-in">
+
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-          <Grid3X3 className="h-8 w-8 text-blue-400" />
-          Manage Parking Slots
-        </h1>
-        <p className="text-white/50 mt-1">Select a lot to view and manage its slots.</p>
-      </div>
-
-      {/* Lot Selector */}
-      <div className="card">
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Manage Parking Slots</h1>
-          <p className="text-white/50 text-sm mt-1">Add slots to a parking lot and manage their status.</p>
+          <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
+            <LayoutGrid className="h-6 w-6 text-blue-400" />
+            Manage Parking Slots
+          </h1>
+          <p className="text-sm text-white/40 mt-1">Select a lot to view and manage its slots.</p>
         </div>
+        {selectedLotId && (
+          <button
+            onClick={() => fetchSlots(selectedLotId)}
+            className="btn-secondary text-xs px-3 py-2 gap-1.5"
+          >
+            <RefreshCw className="h-3.5 w-3.5" /> Refresh
+          </button>
+        )}
       </div>
 
-      <div className="card mb-8 p-6">
+      {/* Lot selector */}
+      <div className="card">
         <label className="label">Select Parking Lot</label>
-        <LotSelector 
-          value={selectedLotId} 
-          onChange={setSelectedLotId} 
-          className="w-full max-w-md input"
+        <LotSelector
+          value={selectedLotId}
+          onChange={setSelectedLotId}
+          className="w-full max-w-md"
         />
       </div>
 
@@ -125,104 +109,67 @@ export const AdminSlotsPage: React.FC = () => {
         <>
           {/* Add Slot Form */}
           <div className="card">
-            <h2 className="text-lg font-bold text-white mb-5 pb-4 border-b border-night-700">Add New Slot</h2>
-            {addError && <div className="alert-error mb-4">{addError}</div>}
-            {successMsg && <div className="alert-success mb-4">{successMsg}</div>}
-            
-            <form onSubmit={handleAddSlot} className="flex flex-wrap gap-4 items-end">
-              <div className="flex-1 min-w-[200px]">
-          <div className="card mb-8">
-            <h2 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
-              <PlusCircle className="h-5 w-5 text-brand-400" /> Add New Slot
+            <h2 className="text-sm font-bold text-white/60 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <Plus className="h-4 w-4" /> Add New Slot
             </h2>
-            
+
             {addError && (
-              <div className="alert-error mb-5">
-                <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
-                <p>{addError}</p>
+              <div className="alert-error mb-4">
+                <AlertCircle className="h-4 w-4 shrink-0" /> {addError}
               </div>
             )}
-            
-            <form onSubmit={handleAddSlot} className="grid sm:grid-cols-4 gap-4 items-end">
-              <div className="sm:col-span-1">
+            {successMsg && (
+              <div className="alert-success mb-4">
+                <CheckCircle2 className="h-4 w-4 shrink-0" /> {successMsg}
+              </div>
+            )}
+
+            <form onSubmit={handleAddSlot} className="grid sm:grid-cols-3 gap-3 items-end">
+              <div>
                 <label className="label">Slot Number</label>
-                <input 
-                  type="text" 
-                  required
-                  value={slotNumber}
-                  onChange={(e) => setSlotNumber(e.target.value)}
-                  className="input"
+                <input
+                  type="text" required className="input"
+                  value={slotNumber} onChange={e => setSlotNumber(e.target.value)}
                   placeholder="e.g. A-101"
                 />
               </div>
-              <div className="flex-1 min-w-[200px]">
-                <label className="label">Vehicle Type</label>
-                <select 
-                  required
-                  value={slotType}
-                  onChange={(e) => setSlotType(e.target.value as VehicleType)}
-                  className="input appearance-none"
-                >
-                  <option value="" disabled className="bg-night-800 text-white/50">Select Type</option>
-                  <option value="STANDARD" className="bg-night-800 text-white">Standard</option>
-                  <option value="MOTORCYCLE" className="bg-night-800 text-white">Motorcycle</option>
-                  <option value="LARGE" className="bg-night-800 text-white">Large</option>
-                </select>
-              </div>
-              
-              <button 
-                type="submit" 
-                disabled={adding}
-                className="btn-primary"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                {adding ? 'Adding...' : 'Add Slot'}
-              </button>
-              <div className="sm:col-span-2">
+              <div>
                 <label className="label">Vehicle Type</label>
                 <select
-                  required
+                  required className="input"
                   value={slotType}
-                  onChange={(e) => setSlotType(e.target.value as VehicleType)}
-                  className="input"
+                  onChange={e => setSlotType(e.target.value as VehicleType)}
                 >
-                  <option value="" disabled>Select vehicle type</option>
+                  <option value="" disabled className="bg-[#0f1629] text-white">Select type…</option>
                   {VEHICLE_OPTIONS.map(opt => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    <option key={opt.value} value={opt.value} className="bg-[#0f1629] text-white">{opt.label}</option>
                   ))}
                 </select>
               </div>
-              <div className="sm:col-span-1">
-                <button type="submit" disabled={adding} className="btn-primary w-full">
-                  {adding ? 'Adding...' : 'Add Slot'}
+              <div>
+                <button type="submit" disabled={adding} className="btn-primary w-full gap-2">
+                  {adding
+                    ? <span className="w-4 h-4 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+                    : <Plus className="h-4 w-4" />}
+                  {adding ? 'Adding…' : 'Add Slot'}
                 </button>
               </div>
             </form>
           </div>
 
           {/* Slots Table */}
-          <div className="card overflow-hidden p-0">
-            {loading ? (
-              <div className="flex justify-center py-12">
-                <div className="h-6 w-6 animate-spin rounded-full border-4 border-brand-200 border-t-brand-600" />
-              </div>
-            ) : error ? (
-              <div className="p-12 text-center text-red-400 font-medium">{error}</div>
-            ) : slots.length === 0 ? (
-              <div className="p-12 text-center text-white/40">
-                <Grid3X3 className="h-10 w-10 mx-auto mb-3 text-white/20" />
-                <p>No slots found in this lot. Add one above.</p>
-              </div>
           <div className="card p-0 overflow-hidden">
             {loading ? (
-              <div className="p-12 text-center flex flex-col items-center">
-                <RefreshCw className="h-8 w-8 text-brand-400 animate-spin mb-4" />
-                <p className="text-white/50 text-sm">Loading slots...</p>
+              <div className="flex justify-center py-12">
+                <div className="spinner" />
               </div>
             ) : error ? (
-              <div className="p-12 text-center text-red-400">{error}</div>
+              <div className="p-8 text-center text-red-400 text-sm">{error}</div>
             ) : slots.length === 0 ? (
-              <div className="p-12 text-center text-white/50">No slots found in this lot.</div>
+              <div className="p-12 text-center">
+                <LayoutGrid className="h-10 w-10 text-white/10 mx-auto mb-3" />
+                <p className="text-sm text-white/30">No slots in this lot. Add one above.</p>
+              </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="table-dark">
@@ -238,60 +185,23 @@ export const AdminSlotsPage: React.FC = () => {
                   <tbody>
                     {slots.map(slot => (
                       <tr key={slot.id} className="group">
-                        <td className="text-white/40 text-sm">#{slot.id}</td>
-                        <td className="font-semibold text-white">{slot.slotNumber}</td>
-                        <td className="text-white/60 font-medium">{slot.slotType}</td>
+                        <td className="text-white/30 mono text-xs">#{slot.id}</td>
+                        <td className="font-semibold text-white mono text-xs">{slot.slotNumber}</td>
+                        <td className="text-white/55 text-xs">{slot.slotType}</td>
                         <td>
-                          <span className={getStatusBadge(slot.status)}>
+                          <span className={slotStatusBadge[slot.status] ?? 'badge-inactive'}>
                             {slot.status.replace(/_/g, ' ')}
                           </span>
                         </td>
                         <td className="text-right">
                           {slot.status !== 'OUT_OF_SERVICE' && (
-                            <button 
+                            <button
                               onClick={() => handleMarkOutOfService(slot.id)}
-                              className="btn-danger text-xs py-1.5 px-3 opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="btn-danger text-xs py-1.5 px-3 opacity-0 group-hover:opacity-100 transition-opacity gap-1.5"
                             >
-                              <Wrench className="h-3 w-3 mr-1.5" />
-                              Out of Service
+                              <Wrench className="h-3 w-3" /> Out of Service
                             </button>
                           )}
-                    <tr className="bg-night-900 border-b border-night-700 text-white/50 text-xs uppercase tracking-wider">
-                      <th className="px-6 py-4 font-medium">Slot Number</th>
-                      <th className="px-6 py-4 font-medium">Type</th>
-                      <th className="px-6 py-4 font-medium">Status</th>
-                      <th className="px-6 py-4 font-medium text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-night-700">
-                    {slots.map(slot => (
-                      <tr key={slot.id} className="hover:bg-white/5 transition-colors group">
-                        <td className="px-6 py-4 font-semibold text-white">
-                          <div className="flex items-center gap-2">
-                            <Hash className="h-4 w-4 text-brand-400" />
-                            {slot.slotNumber}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-white/70 text-sm">
-                          {slot.slotType.replace('_', ' ')}
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`badge ${
-                            slot.status === 'AVAILABLE' ? 'badge-active' :
-                            slot.status === 'OCCUPIED' ? 'badge-locked' :
-                            slot.status === 'RESERVED' ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-300' :
-                            'badge-inactive'
-                          }`}>
-                            {slot.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <button 
-                            onClick={() => handleDelete(slot.id)}
-                            className="text-sm font-medium text-red-400 hover:text-red-300 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 ml-auto"
-                          >
-                            <Trash2 className="h-4 w-4" /> Delete
-                          </button>
                         </td>
                       </tr>
                     ))}
@@ -301,6 +211,13 @@ export const AdminSlotsPage: React.FC = () => {
             )}
           </div>
         </>
+      )}
+
+      {!selectedLotId && (
+        <div className="card text-center py-16 border-dashed">
+          <LayoutGrid className="h-10 w-10 text-white/10 mx-auto mb-3" />
+          <p className="text-sm text-white/30">Select a parking lot above to view its slots</p>
+        </div>
       )}
     </div>
   );

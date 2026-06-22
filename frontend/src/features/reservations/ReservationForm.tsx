@@ -43,11 +43,15 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ onSuccess }) => {
     if (!startTime)     { setError('Please pick a start time.');     return; }
 
     const startISO = `${date}T${startTime}:00`;
+    const startObj = new Date(startISO);
+    startObj.setMinutes(startObj.getMinutes() + durationMinutes);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const endISO = `${startObj.getFullYear()}-${pad(startObj.getMonth() + 1)}-${pad(startObj.getDate())}T${pad(startObj.getHours())}:${pad(startObj.getMinutes())}:00`;
 
     const payload: CreateReservationPayload = {
-      slotId: selectedSlot.id,
+      slotId:    selectedSlot.id,
       startTime: startISO,
-      durationMinutes,
+      endTime:   endISO,
     };
 
     setSubmitting(true);
@@ -188,7 +192,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ onSuccess }) => {
                   onChange={(e) => setDurationMinutes(Number(e.target.value))}
                 >
                   {DURATION_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    <option key={opt.value} value={opt.value} className="bg-[#0f1629] text-white">{opt.label}</option>
                   ))}
                 </select>
               </div>

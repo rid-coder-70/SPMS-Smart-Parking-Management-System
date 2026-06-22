@@ -9,62 +9,50 @@ export interface LotSelectorProps {
 }
 
 export const LotSelector: React.FC<LotSelectorProps> = ({ value, onChange, className = '' }) => {
-  const [lots, setLots] = useState<ParkingLot[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [lots,    setLots]    = useState<ParkingLot[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchLots = async () => {
-      try {
-        const data = await ParkingService.getAllLots();
-        setLots(data);
-      } catch (err: any) {
-        setError(err?.message || 'Failed to fetch parking lots');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchLots();
+    ParkingService.getAllLots()
+      .then(data => setLots(data))
+      .catch((e: any) => setError(e?.message ?? 'Failed to fetch lots'))
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
     return (
-      <select disabled className={`input appearance-none opacity-50 ${className}`}>
       <select disabled className={`input opacity-50 cursor-not-allowed ${className}`}>
-        <option>Loading lots...</option>
+        <option className="bg-[#0f1629] text-white">Loading lots…</option>
       </select>
     );
   }
 
   if (error) {
     return (
-      <select disabled className={`input appearance-none border-red-500/30 text-red-400 ${className}`}>
-      <select disabled className={`input border-red-500/50 text-red-400 ${className}`}>
-        <option>Error loading lots</option>
+      <select disabled className={`input border-red-500/30 text-red-400 ${className}`}>
+        <option className="bg-[#0f1629] text-white">Error: {error}</option>
       </select>
     );
   }
 
   if (lots.length === 0) {
     return (
-      <select disabled className={`input appearance-none opacity-50 ${className}`}>
       <select disabled className={`input opacity-50 cursor-not-allowed ${className}`}>
-        <option>No active lots available</option>
+        <option className="bg-[#0f1629] text-white">No active lots available</option>
       </select>
     );
   }
 
   return (
     <select
-      className={`input appearance-none ${className}`}
       className={`input ${className}`}
-      value={value || ''}
-      onChange={(e) => onChange(Number(e.target.value))}
+      value={value ?? ''}
+      onChange={e => onChange(Number(e.target.value))}
     >
-      <option value="" disabled className="bg-night-800 text-white/50">Select a parking lot</option>
-      {lots.map((lot) => (
-        <option key={lot.id} value={lot.id} className="bg-night-800 text-white">
+      <option value="" disabled className="bg-[#0f1629] text-white">Select a parking lot…</option>
+      {lots.map(lot => (
+        <option key={lot.id} value={lot.id} className="bg-[#0f1629] text-white">
           {lot.lotName} — {lot.location} (Capacity: {lot.totalCapacity})
         </option>
       ))}
