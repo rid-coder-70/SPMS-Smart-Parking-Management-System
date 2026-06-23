@@ -23,15 +23,15 @@ export const LotSelector: React.FC<LotSelectorProps> = ({ value, onChange, class
   if (loading) {
     return (
       <select disabled className={`input opacity-50 cursor-not-allowed ${className}`}>
-        <option className="bg-[#0f1629] text-white">Loading lots…</option>
+        <option>Loading lots…</option>
       </select>
     );
   }
 
   if (error) {
     return (
-      <select disabled className={`input border-red-500/30 text-red-400 ${className}`}>
-        <option className="bg-[#0f1629] text-white">Error: {error}</option>
+      <select disabled className={`input border-red-200 text-red-500 ${className}`}>
+        <option>Error: {error}</option>
       </select>
     );
   }
@@ -39,7 +39,7 @@ export const LotSelector: React.FC<LotSelectorProps> = ({ value, onChange, class
   if (lots.length === 0) {
     return (
       <select disabled className={`input opacity-50 cursor-not-allowed ${className}`}>
-        <option className="bg-[#0f1629] text-white">No active lots available</option>
+        <option>No active lots available</option>
       </select>
     );
   }
@@ -50,9 +50,9 @@ export const LotSelector: React.FC<LotSelectorProps> = ({ value, onChange, class
       value={value ?? ''}
       onChange={e => onChange(Number(e.target.value))}
     >
-      <option value="" disabled className="bg-[#0f1629] text-white">Select a parking lot…</option>
+      <option value="" disabled>Select a parking lot…</option>
       {lots.map(lot => (
-        <option key={lot.id} value={lot.id} className="bg-[#0f1629] text-white">
+        <option key={lot.id} value={lot.id}>
           {lot.lotName} — {lot.location} (Capacity: {lot.totalCapacity})
         </option>
       ))}

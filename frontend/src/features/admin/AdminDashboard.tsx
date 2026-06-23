@@ -8,6 +8,7 @@ import {
   LayoutGrid,
   ArrowRight,
   Layers,
+  Home,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -40,14 +41,14 @@ export default function AdminDashboard() {
     {
       label: 'Active Lots',
       value: lots.length,
-      icon: <ParkingCircle className="h-4 w-4 text-brand-400" />,
-      bg: 'bg-brand-500/8', border: 'border-brand-500/15',
+      icon: <ParkingCircle className="h-4 w-4 text-orange-500" />,
+      bg: 'bg-orange-50', border: 'border-orange-200',
     },
     {
       label: 'Total Capacity',
       value: totalCap,
-      icon: <Layers className="h-4 w-4 text-blue-400" />,
-      bg: 'bg-blue-500/8', border: 'border-blue-500/15',
+      icon: <Layers className="h-4 w-4 text-yellow-600" />,
+      bg: 'bg-yellow-50', border: 'border-yellow-200',
     },
   ];
 
@@ -55,12 +56,21 @@ export default function AdminDashboard() {
     <div className="space-y-8 animate-fade-in">
 
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
-          <LayoutDashboard className="h-6 w-6 text-brand-400" />
-          Admin Dashboard
-        </h1>
-        <p className="text-sm text-white/40 mt-1">System overview and quick management actions.</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2.5">
+            <LayoutDashboard className="h-6 w-6 text-orange-500" />
+            Admin Dashboard
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">System overview and quick management actions.</p>
+        </div>
+        <Link
+          to="/"
+          className="btn-secondary text-sm gap-2"
+        >
+          <Home className="h-4 w-4" />
+          Back to Home
+        </Link>
       </div>
 
       {/* Stats */}
@@ -73,52 +83,52 @@ export default function AdminDashboard() {
             transition={{ delay: i * 0.07 }}
             className={`stat-card border ${s.border} ${s.bg}`}
           >
-            <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center mb-3">
+            <div className="w-8 h-8 rounded-lg bg-white border border-orange-100 flex items-center justify-center mb-3">
               {s.icon}
             </div>
-            <p className="text-2xl font-bold text-white mb-0.5">{s.value}</p>
-            <p className="text-xs text-white/40 font-medium">{s.label}</p>
+            <p className="text-2xl font-bold text-gray-900 mb-0.5">{s.value}</p>
+            <p className="text-xs text-gray-500 font-medium">{s.label}</p>
           </motion.div>
         ))}
       </div>
 
       {/* Quick management actions */}
       <div>
-        <h2 className="text-sm font-semibold text-white/35 uppercase tracking-wider mb-3">Management</h2>
+        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Management</h2>
         <div className="grid sm:grid-cols-3 gap-3">
           {[
             {
               to: '/admin/lots',
               label: 'Manage Lots',
               desc: 'Add, edit, or deactivate parking lots',
-              icon: <ParkingCircle className="h-5 w-5 text-brand-400" />,
-              border: 'hover:border-brand-500/20',
-              hover:  'hover:bg-brand-500/3',
-              arrow:  'group-hover:text-brand-400',
+              icon: <ParkingCircle className="h-5 w-5 text-orange-500" />,
+              hoverBorder: 'hover:border-orange-300',
+              hoverBg:     'hover:shadow-orange',
+              arrow:       'group-hover:text-orange-500',
             },
             {
               to: '/admin/slots',
               label: 'Manage Slots',
               desc: 'Add slots and mark out-of-service',
-              icon: <LayoutGrid className="h-5 w-5 text-blue-400" />,
-              border: 'hover:border-blue-500/20',
-              hover:  'hover:bg-blue-500/3',
-              arrow:  'group-hover:text-blue-400',
+              icon: <LayoutGrid className="h-5 w-5 text-yellow-600" />,
+              hoverBorder: 'hover:border-yellow-300',
+              hoverBg:     'hover:shadow-yellow',
+              arrow:       'group-hover:text-yellow-600',
             },
           ].map(item => (
             <Link
               key={item.to}
               to={item.to}
-              className={`card group cursor-pointer flex items-center gap-4 transition-all ${item.border} ${item.hover}`}
+              className={`card group cursor-pointer flex items-center gap-4 transition-all ${item.hoverBorder} ${item.hoverBg}`}
             >
-              <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+              <div className="w-11 h-11 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                 {item.icon}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-white">{item.label}</p>
-                <p className="text-xs text-white/40 mt-0.5">{item.desc}</p>
+                <p className="text-sm font-semibold text-gray-800">{item.label}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
               </div>
-              <ArrowRight className={`h-4 w-4 text-white/20 ${item.arrow} group-hover:translate-x-0.5 transition-all`} />
+              <ArrowRight className={`h-4 w-4 text-gray-300 ${item.arrow} group-hover:translate-x-0.5 transition-all`} />
             </Link>
           ))}
         </div>

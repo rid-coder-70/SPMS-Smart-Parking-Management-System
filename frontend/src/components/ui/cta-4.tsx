@@ -1,4 +1,4 @@
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -7,10 +7,10 @@ interface Cta4Props {
   title?: string;
   description?: string;
   buttonText?: string;
-  /** Use `to` for internal react-router links, `href` for external */
   to?: string;
   href?: string;
   items?: string[];
+  showSecondaryButton?: boolean;
 }
 
 const defaultItems = [
@@ -29,6 +29,7 @@ export const Cta4 = ({
   to = "/register",
   href,
   items = defaultItems,
+  showSecondaryButton = true,
 }: Cta4Props) => {
   return (
     <section className="py-16 px-4">
@@ -67,8 +68,8 @@ export const Cta4 = ({
 
               {/* Left: text + CTA */}
               <div className="relative md:w-1/2">
-                <span className="mb-4 inline-block rounded-full bg-orange-100 border border-orange-200 px-3 py-1 text-xs font-bold uppercase tracking-wider text-orange-600">
-                  🚀 Get Started Today
+                <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-orange-100 border border-orange-200 px-3 py-1 text-xs font-bold uppercase tracking-wider text-orange-600">
+                  <Rocket className="h-3.5 w-3.5" /> Get Started Today
                 </span>
                 <h4 className="mb-3 text-2xl font-black text-gray-900 md:text-3xl leading-tight">
                   {title}
@@ -91,9 +92,11 @@ export const Cta4 = ({
                       </Link>
                     </Button>
                   )}
-                  <Button variant="outline" size="lg" asChild>
-                    <Link to="/login">Sign In</Link>
-                  </Button>
+                  {showSecondaryButton && (
+                    <Button variant="outline" size="lg" asChild>
+                      <Link to="/login">Sign In</Link>
+                    </Button>
+                  )}
                 </div>
               </div>
 

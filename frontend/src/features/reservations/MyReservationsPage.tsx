@@ -6,14 +6,13 @@ import {
   RotateCcw, ChevronRight, Ban
 } from 'lucide-react';
 
-// ── Status badge styling ──────────────────────────────────────────────────────
 
 const STATUS_STYLES: Record<string, string> = {
-  PENDING:   'bg-yellow-500/10 border-yellow-500/30 text-yellow-300',
-  CONFIRMED: 'bg-blue-500/10  border-blue-500/30  text-blue-300',
-  CANCELLED: 'bg-gray-500/10  border-gray-500/30  text-gray-400',
-  COMPLETED: 'bg-green-500/10 border-green-500/30 text-green-300',
-  NO_SHOW:   'bg-red-500/10   border-red-500/30   text-red-400',
+  PENDING:   'bg-yellow-50  border-yellow-200  text-yellow-700',
+  CONFIRMED: 'bg-blue-50    border-blue-200    text-blue-700',
+  CANCELLED: 'bg-gray-50    border-gray-200    text-gray-500',
+  COMPLETED: 'bg-green-50   border-green-200   text-green-700',
+  NO_SHOW:   'bg-red-50     border-red-200     text-red-600',
 };
 
 const STATUS_ICONS: Record<string, React.ReactNode> = {
@@ -24,7 +23,6 @@ const STATUS_ICONS: Record<string, React.ReactNode> = {
   NO_SHOW:   <XCircle className="h-3.5 w-3.5" />,
 };
 
-// ── ReservationCard ────────────────────────────────────────────────────────────
 
 interface ReservationCardProps {
   reservation: Reservation;
@@ -57,16 +55,15 @@ const ReservationCard: React.FC<ReservationCardProps> = ({ reservation, onCancel
     new Date(iso).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
 
   return (
-    <div className="card border-night-700 hover:border-night-600 transition-all duration-200 group">
-      {/* Header */}
+    <div className="card hover:border-orange-200 hover:shadow-md transition-all duration-200 group">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-night-900 border border-night-700 flex items-center justify-center group-hover:border-brand-500/30 transition-colors">
-            <span className="text-brand-400 font-bold text-sm">#{reservation.slotId}</span>
+          <div className="w-10 h-10 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-center group-hover:border-orange-300 transition-colors">
+            <span className="text-orange-500 font-bold text-sm">#{reservation.slotId}</span>
           </div>
           <div>
-            <p className="font-semibold text-white text-sm">Slot {reservation.slotId}</p>
-            <p className="text-xs text-white/40">Reservation #{reservation.id}</p>
+            <p className="font-semibold text-gray-800 text-sm">Slot {reservation.slotId}</p>
+            <p className="text-xs text-gray-400">Reservation #{reservation.id}</p>
           </div>
         </div>
         <span className={`badge flex items-center gap-1.5 ${STATUS_STYLES[reservation.status] ?? ''}`}>
@@ -75,48 +72,44 @@ const ReservationCard: React.FC<ReservationCardProps> = ({ reservation, onCancel
         </span>
       </div>
 
-      {/* Time Window */}
       <div className="grid grid-cols-2 gap-3 mb-4">
-        <div className="bg-night-900 rounded-lg p-3 border border-night-700">
-          <p className="text-xs text-white/40 mb-1 flex items-center gap-1">
-            <ChevronRight className="h-3 w-3 text-brand-400" /> Start
+        <div className="bg-orange-50/60 rounded-lg p-3 border border-orange-100">
+          <p className="text-xs text-gray-400 mb-1 flex items-center gap-1">
+            <ChevronRight className="h-3 w-3 text-orange-400" /> Start
           </p>
-          <p className="text-sm font-medium text-white">{fmt(reservation.startTime)}</p>
+          <p className="text-sm font-medium text-gray-800">{fmt(reservation.startTime)}</p>
         </div>
-        <div className="bg-night-900 rounded-lg p-3 border border-night-700">
-          <p className="text-xs text-white/40 mb-1 flex items-center gap-1">
-            <ChevronRight className="h-3 w-3 text-brand-400" /> End
+        <div className="bg-orange-50/60 rounded-lg p-3 border border-orange-100">
+          <p className="text-xs text-gray-400 mb-1 flex items-center gap-1">
+            <ChevronRight className="h-3 w-3 text-orange-400" /> End
           </p>
-          <p className="text-sm font-medium text-white">{fmt(reservation.endTime)}</p>
+          <p className="text-sm font-medium text-gray-800">{fmt(reservation.endTime)}</p>
         </div>
       </div>
 
-      {/* Check-in time (if checked in) */}
       {reservation.checkInTime && (
-        <div className="bg-blue-500/5 border border-blue-500/20 rounded-lg px-3 py-2 mb-4 text-xs text-blue-300">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 mb-4 text-xs text-blue-700">
           <span className="font-medium">Checked in:</span> {fmt(reservation.checkInTime)}
         </div>
       )}
 
-      {/* Fee warning */}
       {feeWarning && (
-        <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-2 mb-4 text-xs text-yellow-300">
+        <div className="flex items-start gap-2 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2 mb-4 text-xs text-yellow-700">
           <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
           <p>{feeWarning}</p>
         </div>
       )}
 
-      {/* Cancel Button */}
       {isActive && (
         <button
           id={`cancel-reservation-${reservation.id}`}
           onClick={handleCancel}
           disabled={cancelling}
-          className="btn-secondary w-full text-sm mt-2 border-red-500/20 text-red-400 hover:bg-red-500/10 hover:border-red-500/30"
+          className="btn-secondary w-full text-sm mt-2 border-red-200 text-red-500 hover:bg-red-50 hover:border-red-300"
         >
           {cancelling ? (
             <span className="flex items-center gap-2">
-              <span className="h-3.5 w-3.5 border-2 border-red-400/30 border-t-red-400 rounded-full animate-spin" />
+              <span className="h-3.5 w-3.5 border-2 border-red-300 border-t-red-500 rounded-full animate-spin" />
               Cancelling...
             </span>
           ) : (
@@ -130,7 +123,6 @@ const ReservationCard: React.FC<ReservationCardProps> = ({ reservation, onCancel
   );
 };
 
-// ── MyReservationsPage ────────────────────────────────────────────────────────
 
 const MyReservationsPage: React.FC = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -160,14 +152,13 @@ const MyReservationsPage: React.FC = () => {
   const upcoming = reservations.filter((r) => r.status === 'PENDING' || r.status === 'CONFIRMED');
   const history  = reservations.filter((r) => r.status !== 'PENDING' && r.status !== 'CONFIRMED');
 
-  // ── Render ──────────────────────────────────────────────────────────────────
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-24">
         <div className="flex flex-col items-center gap-4">
-          <RotateCcw className="h-8 w-8 text-brand-400 animate-spin" />
-          <p className="text-white/50 text-sm">Loading your reservations…</p>
+          <RotateCcw className="h-8 w-8 text-orange-500 animate-spin" />
+          <p className="text-gray-500 text-sm">Loading your reservations…</p>
         </div>
       </div>
     );
@@ -176,7 +167,7 @@ const MyReservationsPage: React.FC = () => {
   if (error) {
     return (
       <div className="alert-error max-w-lg mx-auto mt-12">
-        <XCircle className="h-5 w-5 text-red-400 shrink-0" />
+        <XCircle className="h-5 w-5 text-red-500 shrink-0" />
         <p>{error}</p>
       </div>
     );
@@ -185,11 +176,10 @@ const MyReservationsPage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-10">
 
-      {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">My Reservations</h1>
-          <p className="text-white/50 text-sm mt-1">{reservations.length} total reservation{reservations.length !== 1 ? 's' : ''}</p>
+          <h1 className="text-2xl font-bold text-gray-900">My Reservations</h1>
+          <p className="text-gray-500 text-sm mt-1">{reservations.length} total reservation{reservations.length !== 1 ? 's' : ''}</p>
         </div>
         <button
           id="refresh-reservations"
@@ -200,17 +190,16 @@ const MyReservationsPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Upcoming */}
       <section>
         <div className="flex items-center gap-3 mb-4">
-          <Calendar className="h-5 w-5 text-brand-400" />
-          <h2 className="text-lg font-semibold text-white">Upcoming</h2>
-          <span className="badge bg-brand-500/10 border-brand-500/20 text-brand-400">{upcoming.length}</span>
+          <Calendar className="h-5 w-5 text-orange-500" />
+          <h2 className="text-lg font-semibold text-gray-900">Upcoming</h2>
+          <span className="badge bg-orange-50 border-orange-200 text-orange-600">{upcoming.length}</span>
         </div>
         {upcoming.length === 0 ? (
-          <div className="card border-dashed border-night-700 text-center py-12">
-            <Calendar className="h-10 w-10 text-white/20 mx-auto mb-3" />
-            <p className="text-white/40 text-sm">No upcoming reservations.</p>
+          <div className="card border-dashed text-center py-12">
+            <Calendar className="h-10 w-10 text-gray-200 mx-auto mb-3" />
+            <p className="text-gray-400 text-sm">No upcoming reservations.</p>
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 gap-4">
@@ -224,18 +213,16 @@ const MyReservationsPage: React.FC = () => {
           </div>
         )}
       </section>
-
-      {/* History */}
       <section>
         <div className="flex items-center gap-3 mb-4">
-          <Clock className="h-5 w-5 text-white/40" />
-          <h2 className="text-lg font-semibold text-white">History</h2>
-          <span className="badge bg-gray-500/10 border-gray-500/20 text-gray-400">{history.length}</span>
+          <Clock className="h-5 w-5 text-gray-400" />
+          <h2 className="text-lg font-semibold text-gray-900">History</h2>
+          <span className="badge bg-gray-50 border-gray-200 text-gray-500">{history.length}</span>
         </div>
         {history.length === 0 ? (
-          <div className="card border-dashed border-night-700 text-center py-12">
-            <Clock className="h-10 w-10 text-white/20 mx-auto mb-3" />
-            <p className="text-white/40 text-sm">No past reservations yet.</p>
+          <div className="card border-dashed text-center py-12">
+            <Clock className="h-10 w-10 text-gray-200 mx-auto mb-3" />
+            <p className="text-gray-400 text-sm">No past reservations yet.</p>
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 gap-4">

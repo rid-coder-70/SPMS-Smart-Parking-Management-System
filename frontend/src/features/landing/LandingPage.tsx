@@ -13,11 +13,10 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { useAuth } from '@/features/auth/AuthContext';
-import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 import { Cta4 } from '@/components/ui/cta-4';
 import { Button } from '@/components/ui/button';
+import { ParticleBackground } from '@/components/ui/particle-background';
 
-// ─── Feature data ──────────────────────────────────────────────────────
 const features = [
   {
     icon: <MapPin className="h-5 w-5 text-orange-500" />,
@@ -84,7 +83,6 @@ const ctaItems = [
   '24/7 Availability',
 ];
 
-// ─── Component ─────────────────────────────────────────────────────────
 export default function LandingPage() {
   const { user, logout } = useAuth();
   const [time, setTime] = useState(new Date());
@@ -105,14 +103,8 @@ export default function LandingPage() {
       className="min-h-screen overflow-hidden relative"
       style={{ background: '#FFFFFF' }}
     >
-      {/* Subtle warm dot pattern */}
-      <div
-        className="fixed inset-0 pointer-events-none opacity-30"
-        style={{
-          backgroundImage: 'radial-gradient(circle, #f97316 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
-        }}
-      />
+      {/* Animated network particle background */}
+      <ParticleBackground />
 
       {/* Top warm glow */}
       <div
@@ -291,42 +283,6 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* ── ContainerScroll Hero Section ─────────────────────────── */}
-        <ContainerScroll
-          titleComponent={
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="mb-6"
-            >
-              <p className="text-sm font-semibold text-orange-500 uppercase tracking-widest mb-3">
-                See it in action
-              </p>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 leading-tight">
-                Your entire parking operation,{' '}
-                <span
-                  style={{
-                    background: 'linear-gradient(135deg, #f97316, #facc15)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}
-                >
-                  one dashboard.
-                </span>
-              </h2>
-            </motion.div>
-          }
-        >
-          <img
-            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1400&q=80"
-            alt="SPMS Dashboard Preview — analytics and data visualization"
-            className="mx-auto rounded-2xl object-cover h-full w-full object-top"
-            draggable={false}
-          />
-        </ContainerScroll>
-
         {/* ── Stats strip ──────────────────────────────────────────── */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 pb-24">
           <motion.div
@@ -371,24 +327,29 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
               {features.map((f, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.45, delay: 0.7 + i * 0.07 }}
-                  className={`group rounded-2xl border p-6 transition-all duration-200 cursor-default ${f.bg}`}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  className="group relative overflow-hidden rounded-3xl border border-gray-200/60 bg-white/60 p-8 shadow-sm backdrop-blur-md transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-100 cursor-default"
                 >
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 bg-white border border-gray-100 shadow-sm group-hover:scale-105 transition-transform">
-                    {f.icon}
+                  <div className={`absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-10 ${f.bg.split(' ')[0]}`} />
+                  
+                  <div className="relative z-10">
+                    <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-md border border-gray-100 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+                      {f.icon}
+                    </div>
+                    <h3 className="mb-3 text-lg font-bold text-gray-900 tracking-tight">
+                      {f.title}
+                    </h3>
+                    <p className="text-sm leading-relaxed text-gray-500">
+                      {f.description}
+                    </p>
                   </div>
-                  <h3 className="text-sm font-bold text-gray-800 mb-2">
-                    {f.title}
-                  </h3>
-                  <p className="text-xs text-gray-500 leading-relaxed">
-                    {f.description}
-                  </p>
                 </motion.div>
               ))}
             </div>
@@ -403,6 +364,7 @@ export default function LandingPage() {
                 buttonText="Open Dashboard"
                 to="/dashboard"
                 items={ctaItems}
+                showSecondaryButton={false}
               />
             ) : (
               <Cta4

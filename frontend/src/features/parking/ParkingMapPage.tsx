@@ -63,37 +63,32 @@ export default function ParkingMapPage() {
 
   return (
     <div className="animate-fade-in space-y-6">
-      {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-          <MapPin className="h-8 w-8 text-brand-400" />
+        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+          <MapPin className="h-8 w-8 text-orange-500" />
           Parking Map
         </h1>
-        <p className="text-white/50 mt-1">Browse available lots and click a slot to reserve it.</p>
+        <p className="text-gray-500 mt-1">Browse available lots and click a slot to reserve it.</p>
       </div>
-
-      {/* Legend */}
       <div className="card flex flex-wrap gap-4 items-center">
-        <span className="text-sm font-medium text-white/50">Status:</span>
+        <span className="text-sm font-medium text-gray-500">Status:</span>
         <div className="flex items-center gap-2">
-          <span className="w-4 h-4 rounded bg-green-500/50 border border-green-500"></span>
-          <span className="text-sm text-white/70">Available</span>
+          <span className="w-4 h-4 rounded bg-green-100 border border-green-400"></span>
+          <span className="text-sm text-gray-600">Available</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-4 h-4 rounded bg-yellow-500/50 border border-yellow-500"></span>
-          <span className="text-sm text-white/70">Reserved</span>
+          <span className="w-4 h-4 rounded bg-yellow-100 border border-yellow-400"></span>
+          <span className="text-sm text-gray-600">Reserved</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-4 h-4 rounded bg-red-500/50 border border-red-500"></span>
-          <span className="text-sm text-white/70">Occupied</span>
+          <span className="w-4 h-4 rounded bg-red-100 border border-red-400"></span>
+          <span className="text-sm text-gray-600">Occupied</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-4 h-4 rounded bg-gray-500/50 border border-gray-500"></span>
-          <span className="text-sm text-white/70">Maintenance</span>
+          <span className="w-4 h-4 rounded bg-gray-100 border border-gray-300"></span>
+          <span className="text-sm text-gray-600">Maintenance</span>
         </div>
       </div>
-
-      {/* Lot Selector */}
       <div className="card">
         <label className="label">Select a Parking Lot</label>
         <LotSelector
@@ -103,12 +98,11 @@ export default function ParkingMapPage() {
         />
       </div>
 
-      {/* Slot Grid */}
       {selectedLotId ? (
         <div className="card p-4">
           <div className="flex items-center gap-2 px-4 pt-2 pb-4">
-            <Info className="h-4 w-4 text-brand-400" />
-            <span className="text-sm text-white/50">Click on a <span className="text-green-400 font-medium">green slot</span> to make a reservation</span>
+            <Info className="h-4 w-4 text-orange-500" />
+            <span className="text-sm text-gray-500">Click on a <span className="text-green-600 font-medium">green slot</span> to make a reservation</span>
           </div>
           <SlotGrid
             lotId={selectedLotId}
@@ -118,29 +112,28 @@ export default function ParkingMapPage() {
         </div>
       ) : (
         <div className="card text-center py-16">
-          <MapPin className="h-12 w-12 text-white/20 mx-auto mb-4" />
-          <p className="text-white/40 text-lg">Select a parking lot to view available slots</p>
+          <MapPin className="h-12 w-12 text-gray-200 mx-auto mb-4" />
+          <p className="text-gray-400 text-lg">Select a parking lot to view available slots</p>
         </div>
       )}
 
-      {/* Reservation Modal */}
       {selectedSlot && (
         <div className="modal-overlay" onClick={() => setSelectedSlot(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setSelectedSlot(null)}
-              className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition-colors"
             >
               <X className="h-5 w-5" />
             </button>
 
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center">
-                <CalendarCheck className="h-6 w-6 text-brand-400" />
+              <div className="w-12 h-12 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-center">
+                <CalendarCheck className="h-6 w-6 text-orange-500" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white">Reserve Slot {selectedSlot.slotNumber}</h3>
-                <p className="text-sm text-white/50">{selectedSlot.slotType} slot</p>
+                <h3 className="text-xl font-bold text-gray-900">Reserve Slot {selectedSlot.slotNumber}</h3>
+                <p className="text-sm text-gray-500">{selectedSlot.slotType} slot</p>
               </div>
             </div>
 

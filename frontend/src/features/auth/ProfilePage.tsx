@@ -83,12 +83,12 @@ export default function ProfilePage() {
 
       {/* Header / user card */}
       <div className="card flex items-center gap-4">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-500/30 to-violet-500/30 border border-white/10 flex items-center justify-center flex-shrink-0">
-          <UserIcon className="h-7 w-7 text-white/70" />
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-100 to-yellow-100 border border-orange-200 flex items-center justify-center flex-shrink-0">
+          <UserIcon className="h-7 w-7 text-orange-600" />
         </div>
         <div className="flex-1 min-w-0">
-          <h1 className="text-xl font-bold text-white truncate">{user.username}</h1>
-          <p className="text-sm text-white/40 truncate">{user.email}</p>
+          <h1 className="text-xl font-bold text-gray-900 truncate">{user.username}</h1>
+          <p className="text-sm text-gray-500 truncate">{user.email}</p>
         </div>
         <div className="flex gap-2 flex-wrap justify-end">
           <span className={`badge ${user.role === 'ADMIN' ? 'badge-admin' : 'badge-user'}`}>
@@ -111,7 +111,7 @@ export default function ProfilePage() {
 
         {/* Update Profile */}
         <div className="card">
-          <h2 className="text-sm font-bold text-white/50 uppercase tracking-wider mb-5 flex items-center gap-2">
+          <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-5 flex items-center gap-2">
             <UserIcon className="h-4 w-4" /> Profile Details
           </h2>
 
@@ -143,10 +143,10 @@ export default function ProfilePage() {
               />
             </div>
 
-            <div className="pt-3 border-t border-white/5">
+            <div className="pt-3 border-t border-orange-100">
               <div className="flex items-center gap-2 mb-3">
-                <Car className="h-4 w-4 text-white/40" />
-                <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider">Vehicle Info</h3>
+                <Car className="h-4 w-4 text-gray-400" />
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Vehicle Info</h3>
               </div>
               <div className="space-y-3">
                 <div>
@@ -157,7 +157,7 @@ export default function ProfilePage() {
                     onChange={e => setProfileForm({ ...profileForm, vehicleType: e.target.value as VehicleType })}
                   >
                     {VEHICLE_OPTIONS.map(opt => (
-                      <option key={opt.value} value={opt.value} className="bg-[#0f1629] text-white">{opt.label}</option>
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                   </select>
                 </div>
@@ -183,7 +183,7 @@ export default function ProfilePage() {
 
         {/* Change Password */}
         <div className="card">
-          <h2 className="text-sm font-bold text-white/50 uppercase tracking-wider mb-5 flex items-center gap-2">
+          <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-5 flex items-center gap-2">
             <Lock className="h-4 w-4" /> Change Password
           </h2>
 
@@ -207,7 +207,7 @@ export default function ProfilePage() {
                   onChange={e => setPwForm({ ...pwForm, currentPassword: e.target.value })}
                 />
                 <button type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-white/30 hover:text-white/60 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-orange-500 transition-colors"
                   onClick={() => setShowCurrentPw(!showCurrentPw)}>
                   {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -224,7 +224,7 @@ export default function ProfilePage() {
                   onChange={e => setPwForm({ ...pwForm, newPassword: e.target.value })}
                 />
                 <button type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-white/30 hover:text-white/60 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-orange-500 transition-colors"
                   onClick={() => setShowNewPw(!showNewPw)}>
                   {showNewPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>

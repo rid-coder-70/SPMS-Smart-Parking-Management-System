@@ -10,6 +10,7 @@ import {
   ArrowRight,
   ParkingCircle,
   Plus,
+  Home,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -66,34 +67,37 @@ export default function UserDashboard() {
       label:  'Active Reservations',
       value:  activeCount,
       icon:   <CalendarCheck className="h-4 w-4" />,
-      color:  'blue',
-      bg:     'bg-blue-500/8',
-      border: 'border-blue-500/15',
-      text:   'text-blue-400',
+      bg:     'bg-orange-50',
+      border: 'border-orange-200',
+      text:   'text-orange-500',
     },
     {
       label:  'Parking Lots',
       value:  availableLots,
       icon:   <ParkingCircle className="h-4 w-4" />,
-      color:  'violet',
-      bg:     'bg-violet-500/8',
-      border: 'border-violet-500/15',
-      text:   'text-violet-400',
+      bg:     'bg-yellow-50',
+      border: 'border-yellow-200',
+      text:   'text-yellow-600',
     },
   ];
 
   return (
     <div className="space-y-8 animate-fade-in">
-
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-white">
-          Good day, <span className="text-brand-400">{user?.username}</span> 👋
-        </h1>
-        <p className="text-sm text-white/40 mt-1">Here's an overview of your parking activity.</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Good day, <span className="text-orange-500">{user?.username}</span>
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">Here's an overview of your parking activity.</p>
+        </div>
+        <Link
+          to="/"
+          className="btn-secondary text-sm gap-2"
+        >
+          <Home className="h-4 w-4" />
+          Back to Home
+        </Link>
       </div>
-
-      {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {statCards.map((s, i) => (
           <motion.div
@@ -103,58 +107,55 @@ export default function UserDashboard() {
             transition={{ duration: 0.35, delay: i * 0.07 }}
             className={`stat-card border ${s.border} ${s.bg}`}
           >
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-3 bg-white/5 border border-white/8 ${s.text}`}>
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-3 bg-white border border-orange-100 ${s.text}`}>
               {s.icon}
             </div>
-            <p className={`text-2xl font-bold text-white mb-0.5`}>{s.value}</p>
-            <p className="text-xs text-white/40 font-medium">{s.label}</p>
+            <p className="text-2xl font-bold text-gray-900 mb-0.5">{s.value}</p>
+            <p className="text-xs text-gray-500 font-medium">{s.label}</p>
           </motion.div>
         ))}
       </div>
-
-      {/* Quick actions */}
       <div>
-        <h2 className="text-sm font-semibold text-white/40 uppercase tracking-wider mb-3">Quick Actions</h2>
+        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Quick Actions</h2>
         <div className="grid sm:grid-cols-2 gap-3">
           <Link to="/parking"
-            className="card group hover:border-blue-500/20 hover:bg-blue-500/3 cursor-pointer flex items-center gap-4 transition-all">
-            <div className="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/15 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-              <MapPin className="h-5 w-5 text-blue-400" />
+            className="card group hover:border-orange-300 hover:shadow-orange cursor-pointer flex items-center gap-4 transition-all">
+            <div className="w-11 h-11 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+              <MapPin className="h-5 w-5 text-orange-500" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white group-hover:text-blue-300 transition-colors">Find a Parking Spot</p>
-              <p className="text-xs text-white/40 mt-0.5">Browse lots & reserve a slot</p>
+              <p className="text-sm font-semibold text-gray-800 group-hover:text-orange-600 transition-colors">Find a Parking Spot</p>
+              <p className="text-xs text-gray-400 mt-0.5">Browse lots & reserve a slot</p>
             </div>
-            <ArrowRight className="h-4 w-4 text-white/20 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-all" />
+            <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-orange-500 group-hover:translate-x-0.5 transition-all" />
           </Link>
 
           <Link to="/reservations"
-            className="card group hover:border-violet-500/20 hover:bg-violet-500/3 cursor-pointer flex items-center gap-4 transition-all">
-            <div className="w-11 h-11 rounded-xl bg-violet-500/10 border border-violet-500/15 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-              <CalendarCheck className="h-5 w-5 text-violet-400" />
+            className="card group hover:border-yellow-300 hover:shadow-yellow cursor-pointer flex items-center gap-4 transition-all">
+            <div className="w-11 h-11 rounded-xl bg-yellow-50 border border-yellow-200 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+              <CalendarCheck className="h-5 w-5 text-yellow-600" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white group-hover:text-violet-300 transition-colors">My Reservations</p>
-              <p className="text-xs text-white/40 mt-0.5">View, check-in, or cancel</p>
+              <p className="text-sm font-semibold text-gray-800 group-hover:text-yellow-600 transition-colors">My Reservations</p>
+              <p className="text-xs text-gray-400 mt-0.5">View, check-in, or cancel</p>
             </div>
-            <ArrowRight className="h-4 w-4 text-white/20 group-hover:text-violet-400 group-hover:translate-x-0.5 transition-all" />
+            <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-yellow-500 group-hover:translate-x-0.5 transition-all" />
           </Link>
         </div>
       </div>
 
-      {/* Recent reservations */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-white/40 uppercase tracking-wider">Recent Reservations</h2>
-          <Link to="/reservations" className="text-xs text-brand-400 hover:text-brand-300 transition-colors flex items-center gap-1">
+          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Recent Reservations</h2>
+          <Link to="/reservations" className="text-xs text-orange-500 hover:text-orange-600 transition-colors flex items-center gap-1">
             View all <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
 
         {reservations.length === 0 ? (
           <div className="card text-center py-12 border-dashed">
-            <CalendarCheck className="h-10 w-10 text-white/10 mx-auto mb-3" />
-            <p className="text-sm text-white/30 mb-1">No reservations yet</p>
+            <CalendarCheck className="h-10 w-10 text-gray-200 mx-auto mb-3" />
+            <p className="text-sm text-gray-400 mb-1">No reservations yet</p>
             <Link to="/parking" className="btn-primary text-xs px-4 py-2 mt-3">
               <Plus className="h-3.5 w-3.5" /> Book a slot
             </Link>
@@ -174,9 +175,9 @@ export default function UserDashboard() {
                 <tbody>
                   {reservations.slice(0, 5).map(r => (
                     <tr key={r.id}>
-                      <td className="font-mono font-semibold text-white text-xs">{r.slotNumber}</td>
-                      <td className="text-white/55">{r.lotName}</td>
-                      <td className="text-white/45 text-xs">{formatDate(r.startTime)}</td>
+                      <td className="font-mono font-semibold text-gray-800 text-xs">{r.slotNumber}</td>
+                      <td className="text-gray-600">{r.lotName}</td>
+                      <td className="text-gray-500 text-xs">{formatDate(r.startTime)}</td>
                       <td><span className={statusBadgeClass[r.status] ?? 'badge-inactive'}>{r.status}</span></td>
                     </tr>
                   ))}

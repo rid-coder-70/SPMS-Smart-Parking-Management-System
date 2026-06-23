@@ -17,7 +17,7 @@
 
   body {
     font-family: 'Inter', system-ui, sans-serif;
-    background-color: #ffffff;
+    background-color: #FFFBF5;
     color: #111827;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
@@ -48,61 +48,46 @@
 
 @layer components {
   /* ──────────────────────────────────────────────
-     INPUT SYSTEM
+     INPUT SYSTEM — warm cream theme
   ────────────────────────────────────────────── */
   .input {
-    @apply w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm
-           text-white placeholder-white/25 outline-none
-           focus:border-indigo-500/60 focus:bg-white/5 focus:ring-2 focus:ring-indigo-500/20
+    @apply w-full rounded-xl border border-orange-200 bg-white px-4 py-3 text-sm
+           text-gray-800 placeholder-gray-400 outline-none
+           focus:border-orange-400 focus:ring-2 focus:ring-orange-300/30
            disabled:cursor-not-allowed disabled:opacity-40
            transition-all duration-200;
-    backdrop-filter: blur(12px);
   }
 
   .input:hover:not(:focus):not(:disabled) {
-    @apply border-white/20 bg-white/5;
+    @apply border-orange-300 bg-orange-50/40;
   }
 
   .label {
-    @apply block text-xs font-semibold text-white/60 mb-1.5 ml-0.5 uppercase tracking-wider;
+    @apply block text-xs font-semibold text-gray-500 mb-1.5 ml-0.5 uppercase tracking-wider;
   }
 
   /* ──────────────────────────────────────────────
-     BUTTON SYSTEM — all buttons have lift + glow hover
+     BUTTON SYSTEM — orange primary, cream secondary
   ────────────────────────────────────────────── */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-xl
-           bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white
-           hover:bg-indigo-500 active:scale-[0.97]
+           bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white
+           hover:bg-orange-600 active:scale-[0.97]
            disabled:opacity-40 disabled:cursor-not-allowed
-           shadow-lg shadow-indigo-500/20
-           focus:outline-none focus:ring-2 focus:ring-indigo-500/50;
+           shadow-lg shadow-orange-500/20
+           focus:outline-none focus:ring-2 focus:ring-orange-400/50;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .btn-primary:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(99, 102, 241, 0.45),
-                0 0 0 1px rgba(99, 102, 241, 0.10);
+    box-shadow: 0 8px 28px rgba(249, 115, 22, 0.4),
+                0 0 0 1px rgba(249, 115, 22, 0.10);
   }
 
-  /* ── Light-mode orange brand buttons ── */
+  /* ── Light-mode orange brand buttons (alias) ── */
   .btn-primary-light {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl
-           bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white
-           active:scale-[0.97]
-           disabled:opacity-40 disabled:cursor-not-allowed
-           shadow-lg
-           focus:outline-none focus:ring-2 focus:ring-orange-400/50;
-    box-shadow: 0 4px 14px rgba(249,115,22,0.3);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .btn-primary-light:hover:not(:disabled) {
-    background-color: #ea580c;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(249,115,22,0.5),
-                0 0 0 1px rgba(249,115,22,0.12);
+    @apply btn-primary;
   }
 
   .btn-secondary-light {
@@ -124,68 +109,64 @@
 
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 rounded-xl
-           border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/80
-           hover:bg-white/10 hover:border-white/20 hover:text-white active:scale-[0.97]
+           border border-orange-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-600
+           hover:bg-orange-50 hover:border-orange-300 hover:text-orange-700 active:scale-[0.97]
            disabled:opacity-40 disabled:cursor-not-allowed;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .btn-secondary:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255,255,255,0.08);
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.12);
   }
 
   .btn-danger {
     @apply inline-flex items-center justify-center gap-2 rounded-xl
-           bg-red-500/10 border border-red-500/20 px-4 py-2 text-sm font-semibold text-red-400
+           bg-red-50 border border-red-200 px-4 py-2 text-sm font-semibold text-red-600
            active:scale-[0.97]
            disabled:opacity-40 disabled:cursor-not-allowed;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .btn-danger:hover:not(:disabled) {
-    background-color: rgba(239, 68, 68, 0.2);
-    border-color: rgba(239, 68, 68, 0.4);
+    background-color: #fef2f2;
+    border-color: #fca5a5;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.25);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.2);
   }
 
   .btn-success {
     @apply inline-flex items-center justify-center gap-2 rounded-xl
-           bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 text-sm font-semibold text-emerald-400
+           bg-emerald-50 border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-600
            active:scale-[0.97]
            disabled:opacity-40 disabled:cursor-not-allowed;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .btn-success:hover:not(:disabled) {
-    background-color: rgba(52, 211, 153, 0.2);
-    border-color: rgba(52, 211, 153, 0.4);
+    background-color: #ecfdf5;
+    border-color: #6ee7b7;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(52, 211, 153, 0.25);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.2);
   }
 
   /* ──────────────────────────────────────────────
-     CARD SYSTEM
+     CARD SYSTEM — cream with orange border accent
   ────────────────────────────────────────────── */
   .card {
-    @apply rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl transition-all duration-200;
-    backdrop-filter: blur(20px);
-    background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+    @apply rounded-2xl border border-orange-100 bg-white p-6 shadow-sm transition-all duration-200;
   }
 
   .card:hover {
-    @apply border-white/10;
+    @apply border-orange-200 shadow-md;
   }
 
   .stat-card {
-    @apply rounded-2xl border border-white/10 p-5 transition-all duration-200 cursor-default;
-    background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.015) 100%);
-    backdrop-filter: blur(20px);
+    @apply rounded-2xl border border-orange-100 bg-white p-5 transition-all duration-200 cursor-default shadow-sm;
   }
 
   .stat-card:hover {
-    @apply border-white/10;
+    @apply border-orange-200 shadow-md;
     transform: translateY(-1px);
   }
 
@@ -193,31 +174,27 @@
      ALERT SYSTEM
   ────────────────────────────────────────────── */
   .alert-error {
-    @apply rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300
+    @apply rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700
            flex items-start gap-3;
-    backdrop-filter: blur(12px);
   }
 
   .alert-success {
-    @apply rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300
+    @apply rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700
            flex items-start gap-3;
-    backdrop-filter: blur(12px);
   }
 
   .alert-warning {
-    @apply rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-300
+    @apply rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700
            flex items-start gap-3;
-    backdrop-filter: blur(12px);
   }
 
   .alert-info {
-    @apply rounded-xl border border-blue-500/20 bg-blue-500/10 px-4 py-3 text-sm text-blue-300
+    @apply rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700
            flex items-start gap-3;
-    backdrop-filter: blur(12px);
   }
 
   /* ──────────────────────────────────────────────
-     BADGE SYSTEM
+     BADGE SYSTEM — warm light palette
   ────────────────────────────────────────────── */
   .badge {
     @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold
@@ -225,33 +202,33 @@
   }
 
   /* User/Account */
-  .badge-active   { @apply badge bg-emerald-500/10 border-emerald-500/20 text-emerald-400; }
-  .badge-inactive { @apply badge bg-slate-500/10  border-slate-500/20  text-slate-400; }
-  .badge-locked   { @apply badge bg-red-500/10    border-red-500/20    text-red-400; }
-  .badge-admin    { @apply badge bg-violet-500/10 border-violet-500/20 text-violet-400; }
-  .badge-user     { @apply badge bg-blue-500/10   border-blue-500/20   text-blue-400; }
+  .badge-active   { @apply badge bg-emerald-50  border-emerald-200 text-emerald-700; }
+  .badge-inactive { @apply badge bg-gray-50     border-gray-200    text-gray-500; }
+  .badge-locked   { @apply badge bg-red-50      border-red-200     text-red-600; }
+  .badge-admin    { @apply badge bg-violet-50   border-violet-200  text-violet-700; }
+  .badge-user     { @apply badge bg-blue-50     border-blue-200    text-blue-700; }
 
   /* Reservation status */
-  .badge-confirmed  { @apply badge bg-blue-500/10    border-blue-500/20    text-blue-400; }
-  .badge-pending    { @apply badge bg-amber-500/10   border-amber-500/20   text-amber-400; }
-  .badge-cancelled  { @apply badge bg-slate-500/10  border-slate-500/20   text-slate-400; }
-  .badge-completed  { @apply badge bg-emerald-500/10 border-emerald-500/20 text-emerald-400; }
-  .badge-no-show    { @apply badge bg-red-500/10    border-red-500/20     text-red-400; }
+  .badge-confirmed  { @apply badge bg-blue-50     border-blue-200     text-blue-700; }
+  .badge-pending    { @apply badge bg-amber-50    border-amber-200    text-amber-700; }
+  .badge-cancelled  { @apply badge bg-gray-50     border-gray-200     text-gray-500; }
+  .badge-completed  { @apply badge bg-emerald-50  border-emerald-200  text-emerald-700; }
+  .badge-no-show    { @apply badge bg-red-50      border-red-200      text-red-600; }
 
   /* Payment status */
-  .badge-paid     { @apply badge bg-emerald-500/10 border-emerald-500/20 text-emerald-400; }
-  .badge-failed   { @apply badge bg-red-500/10    border-red-500/20     text-red-400; }
-  .badge-refunded { @apply badge bg-purple-500/10 border-purple-500/20  text-purple-400; }
+  .badge-paid     { @apply badge bg-emerald-50  border-emerald-200 text-emerald-700; }
+  .badge-failed   { @apply badge bg-red-50      border-red-200     text-red-600; }
+  .badge-refunded { @apply badge bg-purple-50   border-purple-200  text-purple-700; }
 
   /* ──────────────────────────────────────────────
-     TABLE SYSTEM
+     TABLE SYSTEM — warm light
   ────────────────────────────────────────────── */
   .table-dark {
     @apply w-full text-left border-collapse;
   }
 
   .table-dark thead tr {
-    @apply border-b border-white/5 text-white/30 text-xs uppercase tracking-widest font-semibold;
+    @apply border-b border-orange-100 text-gray-400 text-xs uppercase tracking-widest font-semibold;
   }
 
   .table-dark thead th {
@@ -259,7 +236,7 @@
   }
 
   .table-dark tbody tr {
-    @apply border-b border-white/5 hover:bg-white/5 transition-colors duration-150;
+    @apply border-b border-orange-50 hover:bg-orange-50/60 transition-colors duration-150;
   }
 
   .table-dark tbody td {
@@ -267,46 +244,45 @@
   }
 
   /* ──────────────────────────────────────────────
-     MODAL SYSTEM
+     MODAL SYSTEM — warm light
   ────────────────────────────────────────────── */
   .modal-overlay {
-    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/70;
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/30;
     backdrop-filter: blur(8px);
   }
 
   .modal-content {
-    @apply relative w-full max-w-lg mx-4 rounded-2xl border border-white/10 p-7 shadow-2xl;
-    background: linear-gradient(145deg, #0f1629 0%, #0d1117 100%);
+    @apply relative w-full max-w-lg mx-4 rounded-2xl border border-orange-100 bg-white p-7 shadow-2xl;
   }
 
   /* ──────────────────────────────────────────────
-     SIDEBAR / NAVIGATION
+     SIDEBAR / NAVIGATION — warm cream
   ────────────────────────────────────────────── */
   .sidebar-link {
-    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/50
-           hover:text-white hover:bg-white/5 transition-all duration-150;
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-400
+           hover:text-orange-700 hover:bg-orange-50 transition-all duration-150;
   }
 
   .sidebar-link-active {
     @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold
-           text-indigo-300 bg-indigo-500/10 border border-indigo-500/20;
+           text-orange-700 bg-orange-100 border border-orange-200;
   }
 
   /* ──────────────────────────────────────────────
-     GLASS SURFACE
+     GLASS SURFACE — warm glass
   ────────────────────────────────────────────── */
   .glass {
-    background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.07);
+    border: 1px solid rgba(249, 115, 22, 0.12);
   }
 
   /* ──────────────────────────────────────────────
-     GLOW EFFECTS
+     GLOW EFFECTS — orange/yellow
   ────────────────────────────────────────────── */
   .glow-indigo {
-    box-shadow: 0 0 30px -5px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 0 30px -5px rgba(249, 115, 22, 0.35);
   }
 
   .glow-emerald {
@@ -314,29 +290,29 @@
   }
 
   /* ──────────────────────────────────────────────
-     MESH BACKGROUND
+     MESH BACKGROUND — cream warm
   ────────────────────────────────────────────── */
   .mesh-bg {
-    background-color: #050814;
+    background-color: #FFFBF5;
     background-image:
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99,102,241,0.15) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(167,139,250,0.08) 0%, transparent 50%);
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(249,115,22,0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(250,204,21,0.06) 0%, transparent 50%);
   }
 
   /* ──────────────────────────────────────────────
-     GRID PATTERN
+     GRID PATTERN — warm dots
   ────────────────────────────────────────────── */
   .grid-pattern {
-    background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-image: linear-gradient(rgba(249,115,22,0.04) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(249,115,22,0.04) 1px, transparent 1px);
     background-size: 40px 40px;
   }
 
   /* ──────────────────────────────────────────────
-     LOADING SPINNER
+     LOADING SPINNER — orange
   ────────────────────────────────────────────── */
   .spinner {
-    @apply h-8 w-8 animate-spin rounded-full border-2 border-white/10 border-t-indigo-500;
+    @apply h-8 w-8 animate-spin rounded-full border-2 border-orange-100 border-t-orange-500;
   }
 
   .loader {
@@ -346,7 +322,7 @@
   }
 
   .loader .box {
-    @apply relative h-16 w-16 rounded-2xl bg-white/10 border border-white/20;
+    @apply relative h-16 w-16 rounded-2xl bg-orange-50 border border-orange-200;
     animation-duration: 1.6s;
     animation-timing-function: ease-in-out;
     animation-iteration-count: infinite;
@@ -393,14 +369,6 @@
 }
 
 @layer utilities {
-  /* Kept for backwards compat in dashboard */
-  .text-gradient-indigo {
-    background: linear-gradient(135deg, #818cf8, #6366f1, #a78bfa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
   /* Primary brand gradient: orange → yellow */
   .text-gradient-brand {
     background: linear-gradient(135deg, #f97316, #fb923c, #facc15);
@@ -409,7 +377,14 @@
     background-clip: text;
   }
 
-  /* Alias for landing */
+  /* Alias kept for compatibility */
+  .text-gradient-indigo {
+    background: linear-gradient(135deg, #f97316, #fb923c, #facc15);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
   .text-gradient-orange {
     background: linear-gradient(135deg, #f97316, #facc15);
     -webkit-background-clip: text;
@@ -418,7 +393,7 @@
   }
 
   .border-subtle {
-    border-color: rgba(255,255,255,0.06);
+    border-color: rgba(249, 115, 22, 0.08);
   }
 
   .animate-fade-in {
@@ -458,8 +433,8 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 15px rgba(99,102,241,0.2); }
-  50%       { box-shadow: 0 0 30px rgba(99,102,241,0.5); }
+  0%, 100% { box-shadow: 0 0 15px rgba(249,115,22,0.2); }
+  50%       { box-shadow: 0 0 30px rgba(249,115,22,0.5); }
 }
 
 @keyframes from-left {

@@ -75,15 +75,13 @@ export const AdminSlotsPage: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
-            <LayoutGrid className="h-6 w-6 text-blue-400" />
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2.5">
+            <LayoutGrid className="h-6 w-6 text-yellow-600" />
             Manage Parking Slots
           </h1>
-          <p className="text-sm text-white/40 mt-1">Select a lot to view and manage its slots.</p>
+          <p className="text-sm text-gray-500 mt-1">Select a lot to view and manage its slots.</p>
         </div>
         {selectedLotId && (
           <button
@@ -94,8 +92,6 @@ export const AdminSlotsPage: React.FC = () => {
           </button>
         )}
       </div>
-
-      {/* Lot selector */}
       <div className="card">
         <label className="label">Select Parking Lot</label>
         <LotSelector
@@ -109,7 +105,7 @@ export const AdminSlotsPage: React.FC = () => {
         <>
           {/* Add Slot Form */}
           <div className="card">
-            <h2 className="text-sm font-bold text-white/60 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
               <Plus className="h-4 w-4" /> Add New Slot
             </h2>
 
@@ -140,9 +136,9 @@ export const AdminSlotsPage: React.FC = () => {
                   value={slotType}
                   onChange={e => setSlotType(e.target.value as VehicleType)}
                 >
-                  <option value="" disabled className="bg-[#0f1629] text-white">Select type…</option>
+                  <option value="" disabled>Select type…</option>
                   {VEHICLE_OPTIONS.map(opt => (
-                    <option key={opt.value} value={opt.value} className="bg-[#0f1629] text-white">{opt.label}</option>
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
                   ))}
                 </select>
               </div>
@@ -164,11 +160,11 @@ export const AdminSlotsPage: React.FC = () => {
                 <div className="spinner" />
               </div>
             ) : error ? (
-              <div className="p-8 text-center text-red-400 text-sm">{error}</div>
+              <div className="p-8 text-center text-red-500 text-sm">{error}</div>
             ) : slots.length === 0 ? (
               <div className="p-12 text-center">
-                <LayoutGrid className="h-10 w-10 text-white/10 mx-auto mb-3" />
-                <p className="text-sm text-white/30">No slots in this lot. Add one above.</p>
+                <LayoutGrid className="h-10 w-10 text-gray-200 mx-auto mb-3" />
+                <p className="text-sm text-gray-400">No slots in this lot. Add one above.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -185,9 +181,9 @@ export const AdminSlotsPage: React.FC = () => {
                   <tbody>
                     {slots.map(slot => (
                       <tr key={slot.id} className="group">
-                        <td className="text-white/30 mono text-xs">#{slot.id}</td>
-                        <td className="font-semibold text-white mono text-xs">{slot.slotNumber}</td>
-                        <td className="text-white/55 text-xs">{slot.slotType}</td>
+                        <td className="text-gray-400 mono text-xs">#{slot.id}</td>
+                        <td className="font-semibold text-gray-800 mono text-xs">{slot.slotNumber}</td>
+                        <td className="text-gray-600 text-xs">{slot.slotType}</td>
                         <td>
                           <span className={slotStatusBadge[slot.status] ?? 'badge-inactive'}>
                             {slot.status.replace(/_/g, ' ')}
@@ -215,8 +211,8 @@ export const AdminSlotsPage: React.FC = () => {
 
       {!selectedLotId && (
         <div className="card text-center py-16 border-dashed">
-          <LayoutGrid className="h-10 w-10 text-white/10 mx-auto mb-3" />
-          <p className="text-sm text-white/30">Select a parking lot above to view its slots</p>
+          <LayoutGrid className="h-10 w-10 text-gray-200 mx-auto mb-3" />
+          <p className="text-sm text-gray-400">Select a parking lot above to view its slots</p>
         </div>
       )}
     </div>

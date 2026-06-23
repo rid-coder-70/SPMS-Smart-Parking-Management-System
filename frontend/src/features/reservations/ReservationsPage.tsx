@@ -18,18 +18,15 @@ export default function ReservationsPage() {
 
   return (
     <div className="space-y-0 animate-fade-in">
-
-      {/* Page header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
-          <CalendarCheck className="h-6 w-6 text-blue-400" />
+        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2.5">
+          <CalendarCheck className="h-6 w-6 text-orange-500" />
           Parking Reservations
         </h1>
-        <p className="text-sm text-white/40 mt-1">Book slots and view your reservations.</p>
+        <p className="text-sm text-gray-500 mt-1">Book slots and view your reservations.</p>
       </div>
 
-      {/* Tab navigation */}
-      <div className="flex gap-1 border-b border-white/5 mb-6">
+      <div className="flex gap-1 border-b border-orange-100 mb-6">
         {TABS.map(tab => (
           <button
             key={tab.id}
@@ -38,8 +35,8 @@ export default function ReservationsPage() {
             className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-xl
               border-b-2 transition-all duration-150 -mb-px
               ${activeTab === tab.id
-                ? 'border-brand-500 text-brand-400 bg-brand-500/5'
-                : 'border-transparent text-white/40 hover:text-white/70 hover:bg-white/3'
+                ? 'border-orange-500 text-orange-600 bg-orange-50'
+                : 'border-transparent text-gray-400 hover:text-gray-700 hover:bg-orange-50/60'
               }`}
           >
             {tab.icon}
@@ -48,7 +45,6 @@ export default function ReservationsPage() {
         ))}
       </div>
 
-      {/* Tab content */}
       <div>
         {activeTab === 'book'    && <ReservationForm onSuccess={handleBookSuccess} />}
         {activeTab === 'my'      && <MyReservationsPage />}

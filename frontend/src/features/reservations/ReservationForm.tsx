@@ -80,14 +80,12 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ onSuccess }) => {
 
   return (
     <div className="space-y-8">
-
-      {/* Success Banner */}
       {success && (
         <div className="alert-success animate-fade-in">
-          <CheckCircle className="h-5 w-5 text-green-400 shrink-0 mt-0.5" />
+          <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
           <div>
-            <p className="font-semibold text-green-300">Reservation Created!</p>
-            <p className="text-xs mt-0.5 text-green-400/80">
+            <p className="font-semibold text-green-700">Reservation Created!</p>
+            <p className="text-xs mt-0.5 text-green-600">
               Slot #{success.slotId} · {new Date(success.startTime).toLocaleString()} →{' '}
               {new Date(success.endTime).toLocaleString()}
             </p>
@@ -95,42 +93,38 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ onSuccess }) => {
         </div>
       )}
 
-      {/* Error Banner */}
       {error && (
         <div className="alert-error animate-fade-in">
-          <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+          <AlertCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
           <p>{error}</p>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-
-        {/* Step 1 — Pick Lot */}
         <div className="card">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 rounded-full bg-brand-500/20 border border-brand-500/30 flex items-center justify-center text-brand-400 font-bold text-sm">1</div>
-            <h3 className="font-semibold text-white">Select a Parking Lot</h3>
+            <div className="w-8 h-8 rounded-full bg-orange-100 border border-orange-200 flex items-center justify-center text-orange-600 font-bold text-sm">1</div>
+            <h3 className="font-semibold text-gray-900">Select a Parking Lot</h3>
           </div>
           <LotSelector
             value={lotId ?? undefined}
             onChange={(id) => { setLotId(id); setSelectedSlot(null); setError(null); }}
-            className="w-full bg-night-900 border-night-700 text-white rounded-xl px-4 py-3"
+            className="w-full"
           />
         </div>
 
-        {/* Step 2 — Pick Slot */}
         {lotId && (
           <div className="card">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 rounded-full bg-brand-500/20 border border-brand-500/30 flex items-center justify-center text-brand-400 font-bold text-sm">2</div>
-              <h3 className="font-semibold text-white">Choose a Slot</h3>
+              <div className="w-8 h-8 rounded-full bg-orange-100 border border-orange-200 flex items-center justify-center text-orange-600 font-bold text-sm">2</div>
+              <h3 className="font-semibold text-gray-900">Choose a Slot</h3>
               {selectedSlot && (
-                <span className="ml-auto badge bg-brand-500/20 border-brand-500/30 text-brand-300">
+                <span className="ml-auto badge bg-orange-50 border-orange-200 text-orange-600">
                   ✓ Slot {selectedSlot.slotNumber} selected
                 </span>
               )}
             </div>
-            <p className="text-xs text-white/50 mb-3">Click an <span className="text-green-400 font-medium">AVAILABLE</span> slot to select it.</p>
+            <p className="text-xs text-gray-500 mb-3">Click an <span className="text-green-600 font-medium">AVAILABLE</span> slot to select it.</p>
             <SlotGrid
               lotId={lotId}
               selectable
@@ -139,19 +133,17 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ onSuccess }) => {
           </div>
         )}
 
-        {/* Step 3 — Date / Time / Duration */}
         {selectedSlot && (
           <div className="card">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-8 rounded-full bg-brand-500/20 border border-brand-500/30 flex items-center justify-center text-brand-400 font-bold text-sm">3</div>
-              <h3 className="font-semibold text-white">Set Date, Time & Duration</h3>
+              <div className="w-8 h-8 rounded-full bg-orange-100 border border-orange-200 flex items-center justify-center text-orange-600 font-bold text-sm">3</div>
+              <h3 className="font-semibold text-gray-900">Set Date, Time & Duration</h3>
             </div>
 
             <div className="grid sm:grid-cols-3 gap-4">
-              {/* Date */}
               <div>
                 <label className="label flex items-center gap-1.5">
-                  <CalendarDays className="h-4 w-4 text-brand-400" /> Date
+                  <CalendarDays className="h-4 w-4 text-orange-500" /> Date
                 </label>
                 <input
                   id="reservation-date"
@@ -165,10 +157,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ onSuccess }) => {
                 />
               </div>
 
-              {/* Start Time */}
               <div>
                 <label className="label flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-brand-400" /> Start Time
+                  <Clock className="h-4 w-4 text-orange-500" /> Start Time
                 </label>
                 <input
                   id="reservation-start-time"
@@ -179,11 +170,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ onSuccess }) => {
                   required
                 />
               </div>
-
-              {/* Duration */}
               <div>
                 <label className="label flex items-center gap-1.5">
-                  <Timer className="h-4 w-4 text-brand-400" /> Duration
+                  <Timer className="h-4 w-4 text-orange-500" /> Duration
                 </label>
                 <select
                   id="reservation-duration"
@@ -192,7 +181,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ onSuccess }) => {
                   onChange={(e) => setDurationMinutes(Number(e.target.value))}
                 >
                   {DURATION_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value} className="bg-[#0f1629] text-white">{opt.label}</option>
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
                   ))}
                 </select>
               </div>
@@ -206,7 +195,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ onSuccess }) => {
             >
               {submitting ? (
                 <span className="flex items-center gap-2">
-                  <span className="h-4 w-4 border-2 border-night-900/30 border-t-night-900 rounded-full animate-spin" />
+                  <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Booking...
                 </span>
               ) : 'Confirm Reservation'}

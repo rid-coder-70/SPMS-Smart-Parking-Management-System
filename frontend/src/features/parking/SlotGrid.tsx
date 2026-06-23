@@ -11,10 +11,10 @@ export interface SlotGridProps {
 }
 
 const slotColors: Record<string, string> = {
-  AVAILABLE:      'bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/18',
-  RESERVED:       'bg-amber-500/10  border-amber-500/30  text-amber-300',
-  OCCUPIED:       'bg-red-500/10    border-red-500/30    text-red-300',
-  OUT_OF_SERVICE: 'bg-white/4       border-white/8       text-white/30',
+  AVAILABLE:      'bg-green-50  border-green-300  text-green-700  hover:bg-green-100',
+  RESERVED:       'bg-amber-50  border-amber-300  text-amber-700',
+  OCCUPIED:       'bg-red-50    border-red-300    text-red-700',
+  OUT_OF_SERVICE: 'bg-gray-50   border-gray-200   text-gray-400',
 };
 
 export const SlotGrid: React.FC<SlotGridProps> = ({ lotId, onSlotClick, selectable = false }) => {
@@ -44,7 +44,7 @@ export const SlotGrid: React.FC<SlotGridProps> = ({ lotId, onSlotClick, selectab
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <div className="spinner mb-3" />
-        <p className="text-xs text-white/30">Loading slots…</p>
+        <p className="text-xs text-gray-400">Loading slots…</p>
       </div>
     );
   }
@@ -63,8 +63,8 @@ export const SlotGrid: React.FC<SlotGridProps> = ({ lotId, onSlotClick, selectab
 
   if (slots.length === 0) {
     return (
-      <div className="text-center py-10 border border-dashed border-white/8 rounded-xl">
-        <p className="text-sm text-white/30">No slots found for this lot.</p>
+      <div className="text-center py-10 border border-dashed border-orange-200 rounded-xl">
+        <p className="text-sm text-gray-400">No slots found for this lot.</p>
       </div>
     );
   }
@@ -101,16 +101,16 @@ export const SlotGrid: React.FC<SlotGridProps> = ({ lotId, onSlotClick, selectab
               className={`
                 p-3 rounded-xl border flex flex-col items-center justify-center text-center
                 transition-colors duration-150 select-none relative overflow-hidden
-                ${slotColors[slot.status] ?? 'bg-white/4 border-white/8 text-white/30'}
+                ${slotColors[slot.status] ?? 'bg-gray-50 border-gray-200 text-gray-400'}
                 ${isClickable
-                  ? 'cursor-pointer hover:shadow-lg hover:shadow-emerald-500/15'
+                  ? 'cursor-pointer hover:shadow-md hover:shadow-green-200/50'
                   : 'cursor-default'}
                 ${selectable && slot.status !== 'AVAILABLE' ? 'opacity-60' : ''}
               `}
             >
               {/* Background glow for available slots */}
               {isClickable && (
-                <div className="absolute inset-0 bg-emerald-400/5 opacity-0 hover:opacity-100 transition-opacity pointer-events-none" />
+                <div className="absolute inset-0 bg-green-100/0 hover:bg-green-100/40 transition-colors pointer-events-none" />
               )}
               
               {getVehicleIcon(slot.slotType)}
@@ -118,7 +118,7 @@ export const SlotGrid: React.FC<SlotGridProps> = ({ lotId, onSlotClick, selectab
               <span className="text-[9px] uppercase tracking-wider font-semibold opacity-60 leading-none mb-1.5 z-10">
                 {slot.slotType}
               </span>
-              <span className="text-[8px] uppercase tracking-widest font-bold bg-black/20 px-1.5 py-0.5 rounded-full z-10">
+              <span className="text-[8px] uppercase tracking-widest font-bold bg-white/60 border border-current/10 px-1.5 py-0.5 rounded-full z-10">
                 {slot.status.replace(/_/g, ' ')}
               </span>
             </motion.div>

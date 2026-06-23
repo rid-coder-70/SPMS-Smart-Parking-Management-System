@@ -68,24 +68,21 @@ export const AdminLotsPage: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
-            <ParkingCircle className="h-6 w-6 text-brand-400" />
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2.5">
+            <ParkingCircle className="h-6 w-6 text-orange-500" />
             Manage Parking Lots
           </h1>
-          <p className="text-sm text-white/40 mt-1">Add new lots or deactivate existing ones.</p>
+          <p className="text-sm text-gray-500 mt-1">Add new lots or deactivate existing ones.</p>
         </div>
         <button onClick={fetchLots} className="btn-secondary text-xs px-3 py-2 gap-1.5">
           <RefreshCw className="h-3.5 w-3.5" /> Refresh
         </button>
       </div>
 
-      {/* Add Lot Form */}
       <div className="card">
-        <h2 className="text-sm font-bold text-white/60 uppercase tracking-wider mb-4 flex items-center gap-2">
+        <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
           <Plus className="h-4 w-4" /> Add New Lot
         </h2>
 
@@ -137,18 +134,17 @@ export const AdminLotsPage: React.FC = () => {
         </form>
       </div>
 
-      {/* Lots Table */}
       <div className="card p-0 overflow-hidden">
         {loading ? (
           <div className="flex justify-center py-12">
             <div className="spinner" />
           </div>
         ) : error ? (
-          <div className="p-8 text-center text-red-400 text-sm">{error}</div>
+          <div className="p-8 text-center text-red-500 text-sm">{error}</div>
         ) : lots.length === 0 ? (
           <div className="p-12 text-center">
-            <ParkingCircle className="h-10 w-10 text-white/10 mx-auto mb-3" />
-            <p className="text-sm text-white/30">No active parking lots found.</p>
+            <ParkingCircle className="h-10 w-10 text-gray-200 mx-auto mb-3" />
+            <p className="text-sm text-gray-400">No active parking lots found.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -166,14 +162,14 @@ export const AdminLotsPage: React.FC = () => {
               <tbody>
                 {lots.map(lot => (
                   <tr key={lot.id} className="group">
-                    <td className="text-white/30 mono text-xs">#{lot.id}</td>
-                    <td className="font-semibold text-white">{lot.lotName}</td>
-                    <td className="text-white/55">
+                    <td className="text-gray-400 mono text-xs">#{lot.id}</td>
+                    <td className="font-semibold text-gray-800">{lot.lotName}</td>
+                    <td className="text-gray-600">
                       <span className="flex items-center gap-1.5">
-                        <MapPin className="h-3.5 w-3.5 text-white/30" /> {lot.location}
+                        <MapPin className="h-3.5 w-3.5 text-gray-400" /> {lot.location}
                       </span>
                     </td>
-                    <td className="text-white/55 font-medium">{lot.totalCapacity}</td>
+                    <td className="text-gray-600 font-medium">{lot.totalCapacity}</td>
                     <td>
                       <span className="badge-active">{lot.status}</span>
                     </td>
