@@ -26,7 +26,6 @@ public class ParkingSlotController {
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public ParkingSlotDto addSlot(@PathVariable Long lotId, @Valid @RequestBody CreateSlotRequest request) {
-        request.setLotId(lotId);
         return parkingSlotService.addSlot(lotId, request);
     }
 

@@ -1,4 +1,4 @@
-package com.spms.parking.enums;
+package com.spms.common.enums;
 
 public enum LotStatus {
     ACTIVE,

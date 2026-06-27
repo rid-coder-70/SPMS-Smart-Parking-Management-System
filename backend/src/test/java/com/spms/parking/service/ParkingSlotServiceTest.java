@@ -36,7 +36,6 @@ public class ParkingSlotServiceTest {
         // Arrange
         Long lotId = 1L;
         CreateSlotRequest request = CreateSlotRequest.builder()
-                .lotId(lotId)
                 .slotNumber("A-101")
                 .slotType(VehicleType.STANDARD)
                 .build();

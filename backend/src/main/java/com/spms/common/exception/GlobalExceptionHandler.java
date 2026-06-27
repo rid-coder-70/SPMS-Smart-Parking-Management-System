@@ -1,6 +1,6 @@
 package com.spms.common.exception;
 
-import jakarta.persistence.EntityNotFoundException;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,13 +69,7 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("FORBIDDEN", "You do not have permission to access this resource"));
     }
 
-    // ── 404 Not Found ─────────────────────────────────────────
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(EntityNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponse("NOT_FOUND", ex.getMessage()));
-    }
 
     // ── 423 Locked (via ResponseStatusException) ──────────────
 
@@ -89,13 +83,7 @@ public class GlobalExceptionHandler {
                         ? ex.getReason() : ex.getMessage()));
     }
 
-    // ── 423 Locked (via AccountLockedException) ───────────────
 
-    @ExceptionHandler(AccountLockedException.class)
-    public ResponseEntity<ErrorResponse> handleAccountLocked(AccountLockedException ex) {
-        return ResponseEntity.status(HttpStatus.LOCKED)
-                .body(new ErrorResponse("ACCOUNT_LOCKED", ex.getMessage()));
-    }
 
     // ── 500 Internal Server Error ─────────────────────────────
 

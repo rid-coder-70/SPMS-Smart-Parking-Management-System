@@ -1,6 +1,6 @@
 package com.spms.parking.dto;
 
-import com.spms.parking.enums.LotStatus;
+import com.spms.common.enums.LotStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

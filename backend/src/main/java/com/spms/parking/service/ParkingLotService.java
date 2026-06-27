@@ -6,7 +6,7 @@ import com.spms.parking.dto.CreateLotRequest;
 import com.spms.parking.dto.ParkingLotDto;
 import com.spms.parking.entity.ParkingLot;
 import com.spms.parking.entity.ParkingSlot;
-import com.spms.parking.enums.LotStatus;
+import com.spms.common.enums.LotStatus;
 import com.spms.parking.repository.ParkingLotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

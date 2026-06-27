@@ -3,7 +3,7 @@ package com.spms.parking.service;
 import com.spms.common.enums.SlotStatus;
 import com.spms.parking.entity.ParkingLot;
 import com.spms.parking.entity.ParkingSlot;
-import com.spms.parking.enums.LotStatus;
+import com.spms.common.enums.LotStatus;
 import com.spms.parking.repository.ParkingLotRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

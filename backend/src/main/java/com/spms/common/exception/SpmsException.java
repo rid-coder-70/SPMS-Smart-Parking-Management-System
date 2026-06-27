@@ -24,6 +24,10 @@ public class SpmsException extends RuntimeException {
         return new SpmsException(entity + " not found with id: " + id, HttpStatus.NOT_FOUND);
     }
 
+    public static SpmsException notFound(String entity, String identifier) {
+        return new SpmsException(entity + " not found: " + identifier, HttpStatus.NOT_FOUND);
+    }
+
     public static SpmsException conflict(String message) {
         return new SpmsException(message, HttpStatus.CONFLICT);
     }

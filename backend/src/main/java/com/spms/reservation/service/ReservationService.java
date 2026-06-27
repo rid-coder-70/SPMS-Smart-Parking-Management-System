@@ -1,7 +1,6 @@
 package com.spms.reservation.service;
 
-import com.spms.auth.entity.User;
-import com.spms.auth.repository.UserRepository;
+
 import com.spms.common.enums.ReservationStatus;
 import com.spms.common.enums.SlotStatus;
 import com.spms.common.exception.SpmsException;
@@ -36,7 +35,6 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final ParkingSlotRepository parkingSlotRepository;
     private final ParkingSlotService parkingSlotService;
-    private final UserRepository userRepository;
 
     @Transactional
     public ReservationDto createReservation(Long userId, CreateReservationRequest req) {

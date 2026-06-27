@@ -8,7 +8,7 @@ import com.spms.auth.entity.User;
 import com.spms.auth.repository.UserRepository;
 import com.spms.common.enums.AccountStatus;
 import com.spms.common.enums.Role;
-import com.spms.common.exception.AccountLockedException;
+
 import com.spms.common.exception.SpmsException;
 import com.spms.common.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -226,12 +226,12 @@ class AuthServiceTest {
             when(userRepository.findByUsername("ridoy")).thenReturn(Optional.of(user));
             when(passwordEncoder.matches("secret123", user.getPasswordHash())).thenReturn(false);
             
-            doThrow(new AccountLockedException(LocalDateTime.now().plusMinutes(15)))
+            doThrow(new ResponseStatusException(HttpStatus.LOCKED, "Account locked"))
                 .when(lockService).recordFailAndLockIfNeeded(user);
 
-            // The 3rd failure should lock the account AND throw AccountLockedException
-            AccountLockedException lockEx = catchThrowableOfType(
-                    () -> authService.login(req), AccountLockedException.class);
+            // The 3rd failure should lock the account AND throw ResponseStatusException
+            ResponseStatusException lockEx = catchThrowableOfType(
+                    () -> authService.login(req), ResponseStatusException.class);
 
             assertThat(lockEx).isNotNull();
             verify(lockService).recordFailAndLockIfNeeded(user);

@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateSlotRequest {
-    private Long lotId;
 
     @NotBlank(message = "Slot number is required")
     private String slotNumber;

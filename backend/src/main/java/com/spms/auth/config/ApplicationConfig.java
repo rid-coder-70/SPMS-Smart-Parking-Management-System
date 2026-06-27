@@ -12,10 +12,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.boot.CommandLineRunner;
-import com.spms.auth.entity.User;
-import com.spms.common.enums.Role;
-import com.spms.common.enums.AccountStatus;
 
 /**
  * Bean definitions that don't belong in SecurityConfig (avoids circular deps).
@@ -52,21 +48,5 @@ public class ApplicationConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration cfg)
             throws Exception {
         return cfg.getAuthenticationManager();
-    }
-
-    @Bean
-    public CommandLineRunner initAdmin(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        return args -> {
-            if (!userRepository.existsByUsername("admin")) {
-                User admin = User.builder()
-                        .username("admin")
-                        .email("admin@spms.com")
-                        .passwordHash(passwordEncoder.encode("admin123"))
-                        .role(Role.ADMIN)
-                        .accountStatus(AccountStatus.ACTIVE)
-                        .build();
-                userRepository.save(admin);
-            }
-        };
     }
 }

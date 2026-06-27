@@ -1,6 +1,6 @@
 package com.spms.parking.entity;
 
-import com.spms.parking.enums.LotStatus;
+import com.spms.common.enums.LotStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

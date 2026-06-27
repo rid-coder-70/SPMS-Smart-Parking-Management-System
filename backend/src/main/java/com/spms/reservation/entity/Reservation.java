@@ -47,7 +47,4 @@ public class Reservation {
     @Builder.Default
     private LocalDateTime createdDate = LocalDateTime.now();
 
-    public Long getSlotId() {
-        return parkingSlot != null ? parkingSlot.getId() : null;
-    }
 }
