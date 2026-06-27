@@ -2,6 +2,7 @@ package com.spms.parking.service;
 
 import com.spms.common.enums.SlotStatus;
 import com.spms.common.exception.SpmsException;
+import com.spms.parking.dto.BulkCreateSlotsRequest;
 import com.spms.parking.dto.CreateSlotRequest;
 import com.spms.parking.dto.ParkingSlotDto;
 import com.spms.parking.entity.ParkingLot;
@@ -12,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +46,45 @@ public class ParkingSlotService {
                 .build();
 
         return mapToDto(parkingSlotRepository.save(slot));
+    }
+
+    @Transactional
+    public List<ParkingSlotDto> bulkAddSlots(Long lotId, BulkCreateSlotsRequest request) {
+        ParkingLot lot = parkingLotRepository.findById(lotId)
+                .orElseThrow(() -> SpmsException.notFound("ParkingLot", lotId));
+
+        int currentSlotCount = lot.getSlots() != null ? lot.getSlots().size() : 0;
+        if (currentSlotCount + request.getCount() > lot.getTotalCapacity()) {
+            throw SpmsException.badRequest("Cannot add slots; total capacity would be exceeded.");
+        }
+
+        String prefix = request.getPrefix() != null ? request.getPrefix() : "";
+        List<ParkingSlot> newSlots = new ArrayList<>();
+
+        Set<String> existingNumbers = parkingSlotRepository.findByParkingLotId(lotId).stream()
+                .map(ParkingSlot::getSlotNumber)
+                .collect(Collectors.toSet());
+
+        int added = 0;
+        int index = 1;
+        while (added < request.getCount()) {
+            String slotNum = prefix + index;
+            if (!existingNumbers.contains(slotNum)) {
+                ParkingSlot slot = ParkingSlot.builder()
+                        .parkingLot(lot)
+                        .slotNumber(slotNum)
+                        .slotType(request.getSlotType())
+                        .status(SlotStatus.AVAILABLE)
+                        .build();
+                newSlots.add(slot);
+                added++;
+            }
+            index++;
+        }
+
+        return parkingSlotRepository.saveAll(newSlots).stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

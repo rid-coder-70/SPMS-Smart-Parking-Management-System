@@ -22,8 +22,9 @@ export const AdminSlotsPage: React.FC = () => {
   const [slots,         setSlots]         = useState<ParkingSlot[]>([]);
   const [loading,       setLoading]       = useState(false);
   const [error,         setError]         = useState('');
-  const [slotNumber,    setSlotNumber]    = useState('');
-  const [slotType,      setSlotType]      = useState<VehicleType | ''>('');
+  const [bulkCount,    setBulkCount]    = useState<number | ''>('');
+  const [bulkPrefix,   setBulkPrefix]   = useState('A-');
+  const [bulkSlotType, setBulkSlotType] = useState<VehicleType | ''>('');
   const [adding,        setAdding]        = useState(false);
   const [addError,      setAddError]      = useState('');
   const [successMsg,    setSuccessMsg]    = useState('');
@@ -46,17 +47,21 @@ export const AdminSlotsPage: React.FC = () => {
     else setSlots([]);
   }, [selectedLotId]);
 
-  const handleAddSlot = async (e: React.FormEvent) => {
+  const handleBulkAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedLotId || !slotNumber || !slotType) return;
+    if (!selectedLotId || !bulkCount || !bulkSlotType) return;
     setAdding(true); setAddError(''); setSuccessMsg('');
     try {
-      await ParkingService.addSlot(selectedLotId, { slotNumber, slotType: slotType as VehicleType });
-      setSlotNumber(''); setSlotType('');
-      setSuccessMsg(`Slot ${slotNumber} added successfully!`);
+      await ParkingService.bulkAddSlots(selectedLotId, { 
+        count: Number(bulkCount), 
+        prefix: bulkPrefix, 
+        slotType: bulkSlotType as VehicleType 
+      });
+      setBulkCount(''); 
+      setSuccessMsg(`${bulkCount} slots added successfully!`);
       fetchSlots(selectedLotId);
     } catch (e: any) {
-      setAddError(e?.message ?? 'Failed to add slot');
+      setAddError(e?.message ?? 'Failed to generate slots');
     } finally {
       setAdding(false);
     }
@@ -106,7 +111,7 @@ export const AdminSlotsPage: React.FC = () => {
           {/* Add Slot Form */}
           <div className="card">
             <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-              <Plus className="h-4 w-4" /> Add New Slot
+              <Plus className="h-4 w-4" /> Bulk Generate Slots
             </h2>
 
             {addError && (
@@ -120,21 +125,29 @@ export const AdminSlotsPage: React.FC = () => {
               </div>
             )}
 
-            <form onSubmit={handleAddSlot} className="grid sm:grid-cols-3 gap-3 items-end">
+            <form onSubmit={handleBulkAdd} className="grid sm:grid-cols-4 gap-3 items-end">
               <div>
-                <label className="label">Slot Number</label>
+                <label className="label">Prefix (Optional)</label>
                 <input
-                  type="text" required className="input"
-                  value={slotNumber} onChange={e => setSlotNumber(e.target.value)}
-                  placeholder="e.g. A-101"
+                  type="text" className="input"
+                  value={bulkPrefix} onChange={e => setBulkPrefix(e.target.value)}
+                  placeholder="e.g. A-"
+                />
+              </div>
+              <div>
+                <label className="label">Count</label>
+                <input
+                  type="number" required min="1" className="input"
+                  value={bulkCount} onChange={e => setBulkCount(e.target.value ? Number(e.target.value) : '')}
+                  placeholder="e.g. 10"
                 />
               </div>
               <div>
                 <label className="label">Vehicle Type</label>
                 <select
                   required className="input"
-                  value={slotType}
-                  onChange={e => setSlotType(e.target.value as VehicleType)}
+                  value={bulkSlotType}
+                  onChange={e => setBulkSlotType(e.target.value as VehicleType)}
                 >
                   <option value="" disabled>Select type…</option>
                   {VEHICLE_OPTIONS.map(opt => (
@@ -147,7 +160,7 @@ export const AdminSlotsPage: React.FC = () => {
                   {adding
                     ? <span className="w-4 h-4 rounded-full border-2 border-white/20 border-t-white animate-spin" />
                     : <Plus className="h-4 w-4" />}
-                  {adding ? 'Adding…' : 'Add Slot'}
+                  {adding ? 'Generating…' : 'Generate Slots'}
                 </button>
               </div>
             </form>

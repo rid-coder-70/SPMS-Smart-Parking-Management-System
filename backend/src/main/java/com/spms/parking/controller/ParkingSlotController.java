@@ -1,5 +1,6 @@
 package com.spms.parking.controller;
 
+import com.spms.parking.dto.BulkCreateSlotsRequest;
 import com.spms.parking.dto.CreateSlotRequest;
 import com.spms.parking.dto.ParkingSlotDto;
 import com.spms.parking.service.ParkingSlotService;
@@ -27,6 +28,13 @@ public class ParkingSlotController {
     @ResponseStatus(HttpStatus.CREATED)
     public ParkingSlotDto addSlot(@PathVariable Long lotId, @Valid @RequestBody CreateSlotRequest request) {
         return parkingSlotService.addSlot(lotId, request);
+    }
+
+    @PostMapping("/lots/{lotId}/slots/bulk")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<ParkingSlotDto> bulkAddSlots(@PathVariable Long lotId, @Valid @RequestBody BulkCreateSlotsRequest request) {
+        return parkingSlotService.bulkAddSlots(lotId, request);
     }
 
     @PutMapping("/slots/{id}/out-of-service")

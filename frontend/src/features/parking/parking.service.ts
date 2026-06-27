@@ -7,6 +7,12 @@ import type {
   CreateParkingSlotPayload,
 } from '@/common/types';
 
+export interface BulkCreateSlotPayload {
+  count: number;
+  prefix?: string;
+  slotType: 'STANDARD' | 'MOTORCYCLE' | 'LARGE';
+}
+
 /**
  * ParkingService — wraps all /lots and /slots endpoints.
  *
@@ -39,6 +45,9 @@ export const ParkingService = {
 
   addSlot: (lotId: number, payload: CreateParkingSlotPayload) =>
     api.post<ParkingSlot>(`/lots/${lotId}/slots`, payload).then(res => res.data),
+
+  bulkAddSlots: (lotId: number, payload: BulkCreateSlotPayload) =>
+    api.post<ParkingSlot[]>(`/lots/${lotId}/slots/bulk`, payload).then(res => res.data),
 
   markOutOfService: (slotId: number) =>
     api.put(`/slots/${slotId}/out-of-service`).then(res => res.data),
