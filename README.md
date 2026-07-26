@@ -65,11 +65,20 @@ The recommended way to run the complete SPMS application (backend, frontend, and
 - Docker Desktop or Docker Engine with Docker Compose plugin
 
 ### Execution Command
-Run the following single command from the project root directory:
+First, clone the repository and navigate into the project directory:
 
 ```bash
-docker compose up --build
+git clone https://github.com/rid-coder-70/SPMS-Smart-Parking-Management-System.git
+cd SPMS-Smart-Parking-Management-System
 ```
+
+Then, run the following single command (the `-d` flag runs it in the background):
+
+```bash
+sudo docker compose up --build -d
+```
+
+*To stop the application later, run:* `sudo docker compose down`
 
 ### Application URLs
 - Frontend Web App: `http://localhost` (or `http://localhost:3000`)
@@ -133,6 +142,10 @@ The system applies automated fee calculation upon check-out based on the followi
   - Large Vehicle (SUV/Truck/Van): 1.5x (150%)
 - **Partial Hour Rounding**: Any fraction of an hour is rounded up to the next full hour.
 - **Daily Cap**: Maximum charge is capped at ৳300.00 per continuous 24-hour period.
+
+### Payment Processing & Checkout
+
+The system currently simulates a physical "Cash counter" or "Point of Sale (POS)" checkout at the parking facility's exit. When a vehicle checks out, the backend automatically calculates the tiered fee, records the transaction, and immediately marks it as `PAID`. **There is no external digital payment gateway (e.g., Stripe, PayPal, bKash) integrated by default.**
 
 ---
 
@@ -218,8 +231,5 @@ All REST endpoints are prefixed with `/api/v1`.
 - Role-Based Access Control (RBAC) enforced on backend controllers and frontend routes.
 - Parameterized JPA database queries to prevent SQL injection.
 
+
 ---
-
-## License
-
-MIT License - Smart Parking Management System

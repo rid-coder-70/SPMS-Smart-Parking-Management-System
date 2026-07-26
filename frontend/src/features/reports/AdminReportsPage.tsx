@@ -9,10 +9,12 @@ export default function AdminReportsPage() {
   const [selectedLot, setSelectedLot] = useState<number | undefined>(undefined);
 
   const now = new Date();
-  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const offset = now.getTimezoneOffset() * 60000;
+  const localNow = new Date(now.getTime() - offset);
+  const localThirtyDaysAgo = new Date(localNow.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-  const [from, setFrom] = useState(thirtyDaysAgo.toISOString().slice(0, 16));
-  const [to, setTo] = useState(now.toISOString().slice(0, 16));
+  const [from, setFrom] = useState(localThirtyDaysAgo.toISOString().slice(0, 16));
+  const [to, setTo] = useState(localNow.toISOString().slice(0, 16));
 
   const [utilization, setUtilization] = useState<UtilizationReport | null>(null);
   const [revenue, setRevenue] = useState<RevenueReport | null>(null);
