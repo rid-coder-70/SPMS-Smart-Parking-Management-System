@@ -1,51 +1,53 @@
-# SPMS Backend
+# SPMS Backend REST API
 
-Built with:
-- Spring Boot 3+ (Java 17)
-- Spring Security (JWT-based)
-- Spring Data JPA
-- MySQL
-- RESTful APIs
+The Spring Boot backend service for the Smart Parking Management System handles authentication, lot and slot management, reservation processing, automated fee billing in BDT (৳), reporting analytics, and audit logging.
 
-##  Architecture (Microservice-Ready)
+---
 
-Even as a monolith, we follow a domain-driven, layered approach to make it microservice-ready:
+## Technical Specifications
 
-```
-src/main/java/com/spms/api/
+- **Framework**: Spring Boot 3.2 (Java 17)
+- **Security**: Spring Security with JWT (stateless sessions) & BCrypt password hashing
+- **Data Access**: Spring Data JPA with Hibernate ORM
+- **Database Support**: Embedded H2 (development) / PostgreSQL or MySQL (production)
+- **Architecture**: Layered domain-driven design
 
- core/
-    security/        # JWT, Role management, BCrypt
-    config/          # Bean, DB, CORS, Swagger configs
-    exceptions/      # Global handler, Custom exceptions
-    util/            # Helpers, Constants
+---
 
- modules/ (Feature-Based Modules)
-    auth/            # Controllers, Services, Repos
-    reservation/     # Entities, Billing logic
-    parking/         # Slot tracking logic
-    billing/         # Revenue & payment processing
+## Package Architecture
 
- dto/                 # Data Transfer Objects
- mapper/              # Object mapping logic
+```text
+src/main/java/com/spms/
+├── audit/          # Administrative action audit logging
+├── auth/           # User authentication, JWT filter, and user management
+├── billing/        # Fee calculation engine, pricing config, transactions, payments
+├── common/         # Security configuration, exception handling, and utilities
+├── parking/        # Parking lot and parking slot domain logic
+├── report/         # Utilization, revenue, and peak-hours analytics
+└── reservation/    # Booking lifecycle, check-in, and check-out logic
 ```
 
-##  Run Application
+---
 
+## Running the Backend
+
+### Via Maven
 ```bash
 ./mvnw spring-boot:run
 ```
+The server listens on `http://localhost:8080/api/v1`.
 
-Runs on:
-[http://localhost:8080](http://localhost:8080)
+### Via Docker
+```bash
+docker compose up --build
+```
 
-##  API Base URL
+---
 
-`/api/v1/`
+## Key Features
 
-##  Core Modules
-
--  Authentication & RBAC Module
--  Parking Reservation & Billing
--  Admin Reporting & Analytics
--  User & Profile management
+- JWT Authentication with 3-strike account lockout protection.
+- Check-in and check-out endpoints with automated tiered fee calculation (BDT ৳).
+- Dynamic pricing configuration managed by administrators.
+- Reporting analytics for utilization, daily revenue, and peak hours.
+- Administrative audit trail recording system actions.

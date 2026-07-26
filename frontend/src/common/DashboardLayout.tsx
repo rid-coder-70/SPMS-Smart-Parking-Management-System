@@ -13,7 +13,10 @@ import {
   ChevronRight,
   User,
   Shield,
-  Bell,
+  Users,
+  DollarSign,
+  BarChart3,
+  ShieldCheck,
 } from 'lucide-react';
 
 interface NavItem {
@@ -30,8 +33,12 @@ const USER_NAV: NavItem[] = [
 
 const ADMIN_NAV: NavItem[] = [
   { to: '/admin',         label: 'Overview',       icon: <LayoutDashboard className="h-4 w-4" /> },
-  { to: '/admin/lots',   label: 'Manage Lots',     icon: <ParkingCircle className="h-4 w-4" /> },
-  { to: '/admin/slots',  label: 'Manage Slots',    icon: <LayoutGrid className="h-4 w-4" /> },
+  { to: '/admin/lots',    label: 'Manage Lots',    icon: <ParkingCircle className="h-4 w-4" /> },
+  { to: '/admin/slots',   label: 'Manage Slots',   icon: <LayoutGrid className="h-4 w-4" /> },
+  { to: '/admin/users',   label: 'Manage Users',   icon: <Users className="h-4 w-4" /> },
+  { to: '/admin/pricing', label: 'Pricing Config', icon: <DollarSign className="h-4 w-4" /> },
+  { to: '/admin/reports', label: 'Reports',        icon: <BarChart3 className="h-4 w-4" /> },
+  { to: '/admin/audit',   label: 'Audit Trail',    icon: <ShieldCheck className="h-4 w-4" /> },
 ];
 
 export default function DashboardLayout() {
@@ -64,7 +71,6 @@ export default function DashboardLayout() {
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      {/* Logo */}
       <div className="flex items-center gap-3 px-5 py-5 border-b border-orange-100">
         <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-orange-400/30">
           <ParkingCircle className="h-4 w-4 text-white" />
@@ -75,7 +81,6 @@ export default function DashboardLayout() {
         </div>
       </div>
 
-      {/* Role badge */}
       {isAdmin && (
         <div className="mx-4 mt-4 px-3 py-2 rounded-lg bg-violet-50 border border-violet-200 flex items-center gap-2">
           <Shield className="h-3.5 w-3.5 text-violet-600" />
@@ -83,26 +88,13 @@ export default function DashboardLayout() {
         </div>
       )}
 
-      {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
         <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest px-3 mb-2 pt-1">
           {isAdmin ? 'Admin Panel' : 'Navigation'}
         </p>
         {navItems.map(item => <NavLink key={item.to} item={item} />)}
-
-
       </nav>
 
-      {/* Notification bell (decorative) */}
-      <div className="px-4 pb-2">
-        <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-orange-600 hover:bg-orange-50 transition-all duration-150">
-          <Bell className="h-4 w-4" />
-          <span>Notifications</span>
-          <span className="ml-auto w-5 h-5 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-[10px] font-bold text-orange-500">0</span>
-        </button>
-      </div>
-
-      {/* User footer */}
       <div className="border-t border-orange-100 p-3">
         <Link
           to="/profile"
@@ -131,13 +123,10 @@ export default function DashboardLayout() {
 
   return (
     <div className="min-h-screen flex" style={{ background: '#FFFBF5' }}>
-
-      {/* Desktop Sidebar */}
       <aside className="hidden lg:flex lg:flex-col w-60 border-r border-orange-100 flex-shrink-0 sticky top-0 h-screen bg-white">
         <SidebarContent />
       </aside>
 
-      {/* Mobile overlay */}
       {mobileOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div
@@ -157,10 +146,7 @@ export default function DashboardLayout() {
         </div>
       )}
 
-      {/* Main content */}
       <div className="flex-1 flex flex-col min-h-screen min-w-0">
-
-        {/* Mobile header */}
         <header className="lg:hidden flex items-center gap-4 px-4 py-3.5 border-b border-orange-100 sticky top-0 z-30"
           style={{ background: 'rgba(255,251,245,0.92)', backdropFilter: 'blur(20px)' }}>
           <button
@@ -182,7 +168,6 @@ export default function DashboardLayout() {
           </div>
         </header>
 
-        {/* Page content */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
           <Outlet />
         </main>

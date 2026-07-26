@@ -1,96 +1,77 @@
-# SPMS — Smart Parking Management System
-## End-to-End Testing Guide (A to Z)
+# SPMS - Smart Parking Management System
+## System Verification & Testing Guide
 
-This guide provides step-by-step instructions for starting the backend, starting the frontend, and testing the entire Authentication & User Profile flow (Module 1) with the new UI/UX.
+This guide provides step-by-step instructions for running, testing, and verifying the complete Smart Parking Management System (SPMS), including Docker deployment, user workflows, check-in/out processing, fee calculations, and administrative analytics.
 
 ---
 
-### Phase 1: Start the Backend (Spring Boot)
+### Execution Option A: Docker Compose (Single Command)
 
-1. Open a new terminal window.
-2. Navigate to the backend directory:
+1. Open a terminal window in the project root directory.
+2. Run the following command:
    ```bash
-   cd ~/Desktop/SPMS-Smart-Parking-Management-System/backend
+   docker compose up --build
    ```
-3. Run the Spring Boot application using Maven:
+3. Wait for the containers to build and start.
+4. Access the web application at `http://localhost` (or `http://localhost:3000`).
+
+---
+
+### Execution Option B: Local Manual Start
+
+#### 1. Start the Backend
+1. Open a terminal and navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Launch Spring Boot:
    ```bash
    ./mvnw spring-boot:run
    ```
-4. Wait for the application to start. You should see `Started SpmsApplication` in the logs. The backend is now running on `http://localhost:8080`.
+3. Backend starts at `http://localhost:8080/api/v1`.
 
----
-
-### Phase 2: Start the Frontend (React / Vite)
-
-1. Open a **second** new terminal window.
-2. Navigate to the frontend directory:
+#### 2. Start the Frontend
+1. Open a second terminal window and navigate to the frontend directory:
    ```bash
-   cd ~/Desktop/SPMS-Smart-Parking-Management-System/frontend
+   cd frontend
    ```
-3. Make sure all dependencies are installed:
+2. Install dependencies and launch Vite:
    ```bash
    npm install
-   ```
-4. Start the Vite development server:
-   ```bash
    npm run dev
    ```
-5. Look at the terminal output. It will say `Local: http://localhost:5173/` (or `5174` if `5173` was busy). 
-6. Ctrl+Click the link in the terminal to open the SPMS application in your browser.
-
-> **Note:** If you experience any weird UI caching issues or missing colors, press `Ctrl + C` in the frontend terminal and run `npm run dev` again to ensure a clean build.
+3. Frontend starts at `http://localhost:5173`.
 
 ---
 
-### Phase 3: Testing the User Interface & Flow
+### Testing Workflows
 
-#### 1. The Landing Page
-- **Action:** Open `http://localhost:5173/` (or your active port) in your browser.
-- **Expected:** You should see a stunning dark-themed landing page with floating animations, a glassmorphism navigation bar, and sections for Features.
-- **Action:** Click the "Get Started" or "Sign In" button in the top right.
-- **Expected:** You are redirected to the Login page (`/login`).
+#### 1. User Registration & Authentication
+- **Registration**: Navigate to `/register` and submit the form with valid details (username, email, password, phone, vehicle type, and plate number). Verify inline validation works on invalid entries.
+- **Login**: Navigate to `/login` and sign in with your credentials. Verify JWT token issuance and automatic redirect to `/dashboard`.
+- **Brute-Force Protection**: Attempt to log in with an invalid password 3 consecutive times. Verify that on the 3rd failed attempt, the account enters a 15-minute locked state.
 
-#### 2. Registration (Sign Up)
-- **Action:** On the Login page, click the "Sign up here" link at the bottom.
-- **Expected:** You are redirected to the Registration page (`/register`).
-- **Action:** Try to submit the form empty.
-- **Expected:** Inline red validation errors should appear (e.g., "Username is required").
-- **Action:** Fill out the form with valid details:
-  - Username: `testuser`
-  - Email: `testuser@example.com`
-  - Password: `password123`
-  - Confirm: `password123`
-  - Vehicle Type: `Standard Car`
-  - License Plate: `ABC-1234`
-- **Action:** Click "Join SPMS".
-- **Expected:** You are redirected back to the Login page with a green success message at the top saying "Account created! Please sign in."
+#### 2. Slot Selection & Reservation
+- **Parking Map**: Go to `/parking`, select a parking lot, and choose an `AVAILABLE` (green) slot.
+- **Booking**: Pick a date, start time, and duration (minimum 30 minutes, up to 30 days in advance). Submit the booking.
+- **Conflict Prevention**: Try booking the exact same time window on the same slot with another account to confirm overlap rejection.
 
-#### 3. Login & JWT Authentication
-- **Action:** On the Login page, enter:
-  - Username: `testuser`
-  - Password: `password123`
-- **Action:** Click "Sign In".
-- **Expected:** The frontend sends a request to the backend, receives a JWT token, saves it in `localStorage`, and instantly redirects you to the Profile dashboard (`/profile`).
+#### 3. Check-In & Check-Out Operations
+- **Check-In**: Open `/reservations`, locate the active reservation, and click **Check In**. Verify that the slot status changes to `OCCUPIED` (red).
+- **Check-Out & Receipt**: Click **Check Out & Pay**. Verify that:
+  - Total parking duration is rounded up to the nearest hour.
+  - Base hourly rate (৳40/hr for first 3h) and extended rate (৳30/hr) are applied.
+  - Vehicle type multiplier (Motorcycle 0.5x, Standard 1.0x, Large 1.5x) is factored in.
+  - An itemized digital receipt modal appears displaying the total fee in BDT (৳).
+  - Slot status returns to `AVAILABLE` (green).
 
-#### 4. The Profile Dashboard
-- **Action:** Once logged in, view the `/profile` page.
-- **Expected:** You should see a beautiful dark-mode glass card containing your User ID, Username, Email, Phone, Vehicle Type, and Plate Number.
-- **Action:** In the "Update Profile" section, change your phone number to `+8801999999999` and click "Save Changes".
-- **Expected:** A green success message appears, and the User Info Card at the top instantly updates with your new phone number.
+#### 4. Administrative Features
+- **Login as Admin**: Sign in using username `admin` and password `admin123`.
+- **Manage Lots & Slots**: Access `/admin/lots` and `/admin/slots` to create lots, add single or bulk slots, and set slots out-of-service.
+- **Manage Users**: Access `/admin/users` to search accounts, toggle active/inactive status, or execute password resets.
+- **Dynamic Pricing Configuration**: Access `/admin/pricing` to view and update base rates, extended rates, multipliers, and daily caps in BDT (৳).
+- **Reporting & Analytics**: Access `/admin/reports` to inspect utilization metrics, revenue distribution, and 24-hour peak usage patterns.
+- **Audit Logs**: Access `/admin/audit` to verify that administrative actions are recorded with timestamps and admin IDs.
 
-#### 5. Security & Account Lockout
-- **Action:** Click the red **"Sign out"** button. You will be redirected to the Login page.
-- **Action:** Try to log in with the wrong password (`wrongpass`) **3 times in a row**.
-- **Expected:** 
-  - Attempt 1: "Invalid username or password."
-  - Attempt 2: "Invalid username or password."
-  - Attempt 3: "Invalid username or password."
-  - Attempt 4: "User account is locked. Please try again after 15 minutes." (This tests the transaction-safe brute force protection we built!).
-- **Action:** Log in with the actual Admin account if you want to bypass the lock, or wait 15 minutes to try again.
-
----
-
-### Phase 4: Validating Security
-
-- Try manually changing the URL to `http://localhost:5173/profile` without being logged in.
-- **Expected:** The `ProtectedRoute` instantly redirects you back to `/login` because there is no valid JWT token in your `localStorage`.
+#### 5. Session Timeout Verification
+- Remain inactive without mouse or keyboard input on an authenticated session for 30 minutes. Verify that the session automatically expires and redirects to the login screen.

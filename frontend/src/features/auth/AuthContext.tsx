@@ -4,15 +4,11 @@ import React, {
   useContext,
   useEffect,
   useState,
+  useRef,
 } from 'react';
 import { TOKEN_KEY } from '@/common/api';
 import { AuthService } from './auth.service';
-import type {
-  RegisterPayload,
-  User,
-} from '@/common/types';
-
-// ─── Context shape ────────────────────────────────────────────
+import type { RegisterPayload, User } from '@/common/types';
 
 interface AuthContextValue {
   user:     User | null;
@@ -25,23 +21,41 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-// ─── Provider ─────────────────────────────────────────────────
+const INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes (FR-1.6)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user,    setUser]    = useState<User | null>(null);
   const [token,   setToken]   = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const inactivityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // ── Rehydrate from localStorage on mount ─────────────────
+  const logout = useCallback(() => {
+    localStorage.removeItem(TOKEN_KEY);
+    setToken(null);
+    setUser(null);
+    if (inactivityTimerRef.current) {
+      clearTimeout(inactivityTimerRef.current);
+    }
+  }, []);
+
+  const resetInactivityTimer = useCallback(() => {
+    if (inactivityTimerRef.current) {
+      clearTimeout(inactivityTimerRef.current);
+    }
+    if (token) {
+      inactivityTimerRef.current = setTimeout(() => {
+        logout();
+      }, INACTIVITY_TIMEOUT_MS);
+    }
+  }, [token, logout]);
+
   useEffect(() => {
     const storedToken = localStorage.getItem(TOKEN_KEY);
     if (storedToken) {
       setToken(storedToken);
-      // Fetch current user profile to rehydrate user state
       AuthService.getMe()
         .then((data) => setUser(data))
         .catch(() => {
-          // Token expired / invalid — clear it
           localStorage.removeItem(TOKEN_KEY);
           setToken(null);
         })
@@ -51,7 +65,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // ── login ─────────────────────────────────────────────────
+  useEffect(() => {
+    if (!token) return;
+
+    resetInactivityTimer();
+
+    const events = ['mousemove', 'keydown', 'click', 'scroll'];
+    const handleActivity = () => resetInactivityTimer();
+
+    events.forEach(event => window.addEventListener(event, handleActivity));
+
+    return () => {
+      events.forEach(event => window.removeEventListener(event, handleActivity));
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+      }
+    };
+  }, [token, resetInactivityTimer]);
+
   const login = useCallback(async (username: string, password: string) => {
     const data = await AuthService.login({ username, password });
     localStorage.setItem(TOKEN_KEY, data.token);
@@ -59,18 +90,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(data.user);
   }, []);
 
-  // ── register ──────────────────────────────────────────────
   const register = useCallback(async (payload: RegisterPayload) => {
-    // POST /auth/register — returns UserSummaryDto (no token)
-    // Caller is responsible for navigating to /login afterwards
     await AuthService.register(payload);
-  }, []);
-
-  // ── logout ────────────────────────────────────────────────
-  const logout = useCallback(() => {
-    localStorage.removeItem(TOKEN_KEY);
-    setToken(null);
-    setUser(null);
   }, []);
 
   return (
@@ -80,12 +101,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ─── Hook ─────────────────────────────────────────────────────
-
-/**
- * Usage: const { user, login, logout } = useAuth();
- * Must be used inside <AuthProvider>.
- */
 export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);
   if (!ctx) {

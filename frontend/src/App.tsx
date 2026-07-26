@@ -3,21 +3,22 @@ import { AuthProvider } from '@/features/auth/AuthContext';
 import { ProtectedRoute, AdminRoute } from '@/common/ProtectedRoute';
 import DashboardLayout from '@/common/DashboardLayout';
 
-// ── Public pages ────────────────────────────────────────────────
 import LandingPage  from '@/features/landing/LandingPage';
 import LoginPage    from '@/features/auth/LoginPage';
 import RegisterPage from '@/features/auth/RegisterPage';
 
-// ── Authenticated pages ─────────────────────────────────────────
 import ProfilePage    from '@/features/auth/ProfilePage';
 import UserDashboard  from '@/features/dashboard/UserDashboard';
 import ParkingMapPage from '@/features/parking/ParkingMapPage';
 import ReservationsPage from '@/features/reservations/ReservationsPage';
 
-// ── Admin pages ─────────────────────────────────────────────────
 import AdminDashboard from '@/features/admin/AdminDashboard';
 import { AdminLotsPage }  from '@/features/parking/AdminLotsPage';
 import { AdminSlotsPage } from '@/features/parking/AdminSlotsPage';
+import AdminUsersPage from '@/features/admin/AdminUsersPage';
+import AdminPricingPage from '@/features/parking/AdminPricingPage';
+import AdminReportsPage from '@/features/reports/AdminReportsPage';
+import AdminAuditLogsPage from '@/features/admin/AdminAuditLogsPage';
 
 function App() {
   return (
@@ -25,12 +26,10 @@ function App() {
       <AuthProvider>
         <Routes>
 
-          {/* ── Public routes ──────────────────────────────── */}
           <Route path="/"         element={<LandingPage />} />
           <Route path="/login"    element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
-          {/* ── Authenticated routes (with sidebar layout) ── */}
           <Route element={<ProtectedRoute />}>
             <Route element={<DashboardLayout />}>
               <Route path="/dashboard"    element={<UserDashboard />} />
@@ -40,16 +39,18 @@ function App() {
             </Route>
           </Route>
 
-          {/* ── Admin-only routes (with sidebar layout) ───── */}
           <Route element={<AdminRoute />}>
             <Route element={<DashboardLayout />}>
               <Route path="/admin"         element={<AdminDashboard />} />
               <Route path="/admin/lots"    element={<AdminLotsPage />} />
               <Route path="/admin/slots"   element={<AdminSlotsPage />} />
+              <Route path="/admin/users"   element={<AdminUsersPage />} />
+              <Route path="/admin/pricing" element={<AdminPricingPage />} />
+              <Route path="/admin/reports" element={<AdminReportsPage />} />
+              <Route path="/admin/audit"   element={<AdminAuditLogsPage />} />
             </Route>
           </Route>
 
-          {/* ── Fallback ──────────────────────────────────── */}
           <Route path="*" element={<Navigate to="/" replace />} />
 
         </Routes>

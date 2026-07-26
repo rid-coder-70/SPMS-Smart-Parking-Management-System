@@ -35,6 +35,9 @@ public class Reservation {
     @Column
     private LocalDateTime checkInTime;
 
+    @Column
+    private LocalDateTime checkOutTime;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     @Builder.Default

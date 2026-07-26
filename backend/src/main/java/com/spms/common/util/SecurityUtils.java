@@ -21,12 +21,27 @@ public final class SecurityUtils {
     public static Long getCurrentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) {
-            throw new IllegalStateException("No authenticated user in SecurityContext");
+            return null;
         }
         Object principal = auth.getPrincipal();
         if (principal instanceof User user) {
             return user.getId();
         }
-        throw new IllegalStateException("Principal is not a User instance: " + principal.getClass());
+        return null;
+    }
+
+    public static String getCurrentUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return "SYSTEM";
+        }
+        Object principal = auth.getPrincipal();
+        if (principal instanceof User user) {
+            return user.getUsername();
+        }
+        if (principal instanceof String s) {
+            return s;
+        }
+        return "SYSTEM";
     }
 }

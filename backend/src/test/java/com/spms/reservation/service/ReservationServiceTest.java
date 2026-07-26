@@ -40,6 +40,9 @@ class ReservationServiceTest {
     @Mock private ParkingSlotService    parkingSlotService;
     @Mock private ParkingSlotRepository parkingSlotRepository;
     @Mock private UserRepository        userRepository;
+    @Mock private com.spms.billing.repository.TransactionRepository transactionRepository;
+    @Mock private com.spms.billing.repository.PaymentRepository     paymentRepository;
+    @Mock private com.spms.billing.service.BillingService          billingService;
 
 
     @InjectMocks

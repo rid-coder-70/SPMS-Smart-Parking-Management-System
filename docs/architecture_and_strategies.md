@@ -1,101 +1,99 @@
-#  SPMS Architectural Strategy & Roadmap
+# SPMS Architectural Strategy & Roadmap
 
-As a senior software architect, I've outlined the following strategies for the Smart Parking Management System (SPMS). These follow industry-level clean architecture and SOLID principles.
+This document outlines the architectural strategy and technical roadmap for the Smart Parking Management System (SPMS), adhering to clean architecture standards and SOLID design principles.
 
 ---
-##  1. Professional Full-Stack Folder Structure
 
-We organize the project as a monorepo for easier management during the MVP phase while keeping frontend and backend decoupled for independent deployment.
+## 1. Full-Stack Directory Structure
 
-```
+The project is organized to decouple presentation and business logic layers while preserving deployment independence.
+
+```text
 SPMS/
- backend/                # Spring Boot (API)
- frontend/               # Next.js (Client)
- database/               # SQL & Liquibase/Flyway migrations
- docs/                   # Diagrams, SRS, and API Docs
- infrastructure/         # Docker, CI/CD, Nginx configs
- README.md
+├── backend/                # Spring Boot REST API
+├── frontend/               # Vite + React Client
+├── docs/                   # System specifications and architectural docs
+└── docker-compose.yml      # Orchestration configuration
 ```
 
 ---
 
-##  2. Monolithic Backend Architecture
+## 2. Monolithic Backend Architecture
 
-We build a cohesive monolithic Spring Boot application with clear modular boundaries and clean architecture. This approach reduces operational complexity for MVP while preserving ability to evolve to a microservices model later.
+The Spring Boot backend utilizes a layered, domain-driven structure with clear modular boundaries:
 
-- **Presentation Layer**: Controllers handling HTTP requests.
-- **Service Layer**: Business logic (transactional boundaries).
-- **Repository Layer**: Data access via JPA.
-- **Security Layer**: Custom filters, JWT logic, and RBAC.
+- **Presentation Layer**: Controllers handling HTTP REST requests and input validation.
+- **Service Layer**: Transactional business logic, reservation validation, and fee billing.
+- **Repository Layer**: Data persistence and database queries via Spring Data JPA.
+- **Security Layer**: Custom JWT filters, BCrypt password encoders, and RBAC rules.
 
 ---
 
-##  3. Frontend Feature-Based Architecture
+## 3. Frontend Feature-Based Architecture
 
-We follow a modular **Feature-First** approach in Next.js to ensure components are scoped correctly.
+The frontend follows a modular feature-first organization:
 
-```
+```text
 frontend/src/features/
- auth/            # Login, Signup, Role-based route guards
- reservation/     # Booking slot, viewing calendars
- slots/           # Real-time slot status, maps
- admin-panel/     # User/Slot management, Reporting
+├── admin/            # Admin management, users, and audit trail
+├── auth/             # Authentication flows and profile management
+├── billing/          # Dynamic BDT pricing configuration
+├── dashboard/        # User dashboard overview
+├── landing/          # System landing page
+├── parking/          # Parking map and lot/slot controls
+├── reports/          # Analytics dashboard and charts
+└── reservations/     # Booking, check-in/out, and receipt modal
 ```
 
 ---
 
-##  4. REST API Endpoint Structure (v1)
+## 4. REST API Endpoint Structure
 
-We use standardized RESTful naming and versioning for longevity.
+All API endpoints are versioned under `/api/v1`:
 
-###  Authentication
+### Authentication & Users
 - `POST /api/v1/auth/register`
 - `POST /api/v1/auth/login`
-- `GET /api/v1/auth/me` (Profile)
+- `GET /api/v1/users/me`
+- `GET /api/v1/users` (Admin)
 
-###  Parking Slots
-- `GET /api/v1/slots` (List all)
-- `GET /api/v1/slots/{id}/status`
-- `PATCH /api/v1/slots/{id}` (Admin only)
+### Parking Lots & Slots
+- `GET /api/v1/lots`
+- `POST /api/v1/lots` (Admin)
+- `GET /api/v1/lots/{lotId}/slots`
+- `POST /api/v1/lots/{lotId}/slots` (Admin)
 
-###  Reservations
-- `POST /api/v1/reservations` (Create)
-- `GET /api/v1/reservations/{id}`
-- `DELETE /api/v1/reservations/{id}` (Cancel)
+### Reservations & Check-In/Out
+- `POST /api/v1/reservations`
+- `GET /api/v1/reservations/me`
+- `PUT /api/v1/reservations/{id}/check-in`
+- `PUT /api/v1/reservations/{id}/check-out`
+- `PUT /api/v1/reservations/{id}/cancel`
 
-###  Billing & Reports
-- `POST /api/v1/billing/pay`
-- `GET /api/v1/reports/revenue` (Admin only)
-
----
-
-##  5. Team Task Distribution (Role-Based)
-
-- **Backend Lead (Ridoy)**: Core security (JWT/RBAC), Framework setup, Exception handling.
-- **Backend Dev (Priom)**: Reservation logic, Slot management, Billing algorithms.
-- **Frontend Lead (Nahid)**: Layouts, Global state (Zustand/Redux), Auth integration.
-- **Analytics Dev (Rahat)**: PDF/Excel report export, Complex analytics queries.
-- **DB Engineer (Mahdiul)**: Schema optimization, Indexing, JPA entity relationships.
+### Admin Controls & Analytics
+- `GET /api/v1/admin/pricing` (Admin)
+- `PUT /api/v1/admin/pricing` (Admin)
+- `GET /api/v1/reports/utilization` (Admin)
+- `GET /api/v1/reports/revenue` (Admin)
+- `GET /api/v1/reports/peak-hours` (Admin)
+- `GET /api/v1/admin/audit-logs` (Admin)
 
 ---
 
-##  6. Security Best Practices
+## 5. Security & Persistence Specifications
 
-1.  **Stateless JWT**: Short-lived access tokens with secure HTTP-only cookies for refresh.
-2.  **password Hashing**: BCrypt with high cost factor.
-3.  **CORS & CSRF**: Strictly defined whitelists and Next.js CSRF protection.
-4.  **Rate Limiting**: Throttling login attempts to prevent brute force.
-5.  **Audit Logs**: Recording every administrative action in the DB.
-
----
-
-##  7. Scalability & Deployment Readiness
-
-- **Containerization**: Use `docker-compose` for local dev (MySQL + Backend + Frontend).
-- **Caching**: Implement **Redis** for frequently accessed slot statuses.
-- **CDN**: Serve static assets and icons via a CDN to reduce Next.js server load.
-- **Load Balancing**: Use Nginx or ALB to distribute traffic between backend instances.
-- **CI/CD**: GitHub Actions for automated linting, testing, and Vercel/EC2 deployments.
+- **Stateless JWT**: Secure token authentication with expiration validation.
+- **Password Protection**: Cryptographic BCrypt password hashing.
+- **Account Lockout**: 3-strike brute-force protection locking accounts for 15 minutes.
+- **Session Timeout**: 30-minute inactivity session expiration.
+- **Audit Logs**: Administrative action audit logging stored permanently.
 
 ---
-*Created by: Ridoy Baidya*
+
+## 6. Containerization & Deployment
+
+Single-command deployment using Docker Compose:
+
+```bash
+docker compose up --build
+```

@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { ReservationService } from './reservation.service';
-import type { Reservation, CancelResponse } from '../../common/types';
+import type { Reservation, CancelResponse, CheckOutResponse } from '../../common/types';
 import {
   Calendar, Clock, CheckCircle, XCircle, AlertTriangle,
-  RotateCcw, ChevronRight, Ban
+  RotateCcw, ChevronRight, Ban, LogIn, LogOut, Receipt, X
 } from 'lucide-react';
-
 
 const STATUS_STYLES: Record<string, string> = {
   PENDING:   'bg-yellow-50  border-yellow-200  text-yellow-700',
@@ -23,31 +22,146 @@ const STATUS_ICONS: Record<string, React.ReactNode> = {
   NO_SHOW:   <XCircle className="h-3.5 w-3.5" />,
 };
 
+interface ReceiptModalProps {
+  receipt: CheckOutResponse;
+  onClose: () => void;
+}
+
+const ReceiptModal: React.FC<ReceiptModalProps> = ({ receipt, onClose }) => (
+  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
+    <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-orange-100 space-y-5 animate-scale-up">
+      <div className="flex items-center justify-between border-b border-orange-100 pb-4">
+        <div className="flex items-center gap-2 text-orange-600 font-bold">
+          <Receipt className="h-5 w-5" />
+          <span>Digital Payment Receipt</span>
+        </div>
+        <button onClick={onClose} className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-orange-50">
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+
+      <div className="space-y-3 text-sm">
+        <div className="flex justify-between text-gray-500">
+          <span>Receipt ID</span>
+          <span className="font-mono font-semibold text-gray-800">#TXN-{receipt.transactionId}</span>
+        </div>
+        <div className="flex justify-between text-gray-500">
+          <span>Parking Lot / Slot</span>
+          <span className="font-semibold text-gray-800">{receipt.lotName} (Slot {receipt.slotNumber})</span>
+        </div>
+        <div className="flex justify-between text-gray-500">
+          <span>Vehicle Type</span>
+          <span className="font-semibold text-gray-800">{receipt.vehicleType}</span>
+        </div>
+
+        <div className="border-t border-dashed border-gray-200 my-2 pt-2 space-y-1 text-xs">
+          <div className="flex justify-between">
+            <span className="text-gray-500">Check-In</span>
+            <span>{new Date(receipt.checkInTime).toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-500">Check-Out</span>
+            <span>{new Date(receipt.checkOutTime).toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-500">Billed Duration</span>
+            <span>{receipt.durationMinutes} min ({receipt.billedHours} hr{receipt.billedHours > 1 ? 's' : ''})</span>
+          </div>
+        </div>
+
+        <div className="bg-orange-50/70 p-3.5 rounded-xl border border-orange-100 space-y-1.5 text-xs">
+          <div className="flex justify-between text-gray-600">
+            <span>Base Hourly Rate</span>
+            <span>৳{receipt.baseRate.toFixed(2)}/hr</span>
+          </div>
+          <div className="flex justify-between text-gray-600">
+            <span>Extended Rate</span>
+            <span>৳{receipt.extendedRate.toFixed(2)}/hr</span>
+          </div>
+          <div className="flex justify-between text-gray-600">
+            <span>Vehicle Multiplier</span>
+            <span>{receipt.vehicleMultiplier}x</span>
+          </div>
+          <div className="flex justify-between text-gray-600">
+            <span>Subtotal</span>
+            <span>৳{receipt.subtotal.toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between text-gray-600">
+            <span>Daily Max Cap</span>
+            <span>৳{receipt.dailyCap.toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between text-sm font-bold text-gray-900 pt-2 border-t border-orange-200">
+            <span>Total Paid</span>
+            <span className="text-orange-600">৳{receipt.totalFee.toFixed(2)}</span>
+          </div>
+        </div>
+      </div>
+
+      <button
+        onClick={onClose}
+        className="w-full btn-primary py-2.5 text-sm"
+      >
+        Close Receipt
+      </button>
+    </div>
+  </div>
+);
 
 interface ReservationCardProps {
   reservation: Reservation;
   onCancelled: (id: number, response: CancelResponse) => void;
+  onUpdated: () => void;
+  onReceipt: (receipt: CheckOutResponse) => void;
 }
 
-const ReservationCard: React.FC<ReservationCardProps> = ({ reservation, onCancelled }) => {
-  const [cancelling, setCancelling] = useState(false);
-  const [feeWarning,  setFeeWarning]  = useState<string | null>(null);
+const ReservationCard: React.FC<ReservationCardProps> = ({
+  reservation, onCancelled, onUpdated, onReceipt
+}) => {
+  const [loading, setLoading] = useState(false);
+  const [feeWarning, setFeeWarning] = useState<string | null>(null);
 
   const isActive = reservation.status === 'PENDING' || reservation.status === 'CONFIRMED';
+  const canCheckIn = reservation.status === 'PENDING' && !reservation.checkInTime;
+  const canCheckOut = reservation.status === 'CONFIRMED' && !!reservation.checkInTime;
+
+  const handleCheckIn = async () => {
+    setLoading(true);
+    try {
+      await ReservationService.checkIn(reservation.id);
+      onUpdated();
+    } catch (err: any) {
+      alert(err.message || 'Failed to check in.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCheckOut = async () => {
+    setLoading(true);
+    try {
+      const resp = await ReservationService.checkOut(reservation.id);
+      onReceipt(resp);
+      onUpdated();
+    } catch (err: any) {
+      alert(err.message || 'Failed to check out.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCancel = async () => {
     if (!confirm('Are you sure you want to cancel this reservation?')) return;
-    setCancelling(true);
+    setLoading(true);
     try {
       const cancelResp = await ReservationService.cancel(reservation.id);
       if (cancelResp.feeApplied) {
-        setFeeWarning('A late-cancellation fee has been flagged and will be applied by our billing team.');
+        setFeeWarning('A 50% cancellation fee has been applied per policy.');
       }
       onCancelled(reservation.id, cancelResp);
     } catch (err: any) {
       alert(err.message || 'Failed to cancel reservation.');
     } finally {
-      setCancelling(false);
+      setLoading(false);
     }
   };
 
@@ -59,10 +173,10 @@ const ReservationCard: React.FC<ReservationCardProps> = ({ reservation, onCancel
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-center group-hover:border-orange-300 transition-colors">
-            <span className="text-orange-500 font-bold text-sm">#{reservation.slotId}</span>
+            <span className="text-orange-500 font-bold text-sm">#{reservation.slotNumber}</span>
           </div>
           <div>
-            <p className="font-semibold text-gray-800 text-sm">Slot {reservation.slotId}</p>
+            <p className="font-semibold text-gray-800 text-sm">Slot {reservation.slotNumber} ({reservation.lotName})</p>
             <p className="text-xs text-gray-400">Reservation #{reservation.id}</p>
           </div>
         </div>
@@ -88,8 +202,16 @@ const ReservationCard: React.FC<ReservationCardProps> = ({ reservation, onCancel
       </div>
 
       {reservation.checkInTime && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 mb-4 text-xs text-blue-700">
-          <span className="font-medium">Checked in:</span> {fmt(reservation.checkInTime)}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 mb-3 text-xs text-blue-700 flex items-center justify-between">
+          <span><span className="font-medium">Checked in:</span> {fmt(reservation.checkInTime)}</span>
+          {reservation.checkOutTime && <span><span className="font-medium">Out:</span> {fmt(reservation.checkOutTime)}</span>}
+        </div>
+      )}
+
+      {reservation.totalFee !== null && reservation.totalFee !== undefined && (
+        <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 mb-3 text-xs text-green-700 font-semibold flex justify-between items-center">
+          <span>Total Paid</span>
+          <span className="text-sm font-bold">৳{Number(reservation.totalFee).toFixed(2)}</span>
         </div>
       )}
 
@@ -100,34 +222,46 @@ const ReservationCard: React.FC<ReservationCardProps> = ({ reservation, onCancel
         </div>
       )}
 
-      {isActive && (
-        <button
-          id={`cancel-reservation-${reservation.id}`}
-          onClick={handleCancel}
-          disabled={cancelling}
-          className="btn-secondary w-full text-sm mt-2 border-red-200 text-red-500 hover:bg-red-50 hover:border-red-300"
-        >
-          {cancelling ? (
-            <span className="flex items-center gap-2">
-              <span className="h-3.5 w-3.5 border-2 border-red-300 border-t-red-500 rounded-full animate-spin" />
-              Cancelling...
-            </span>
-          ) : (
-            <span className="flex items-center gap-2">
-              <XCircle className="h-4 w-4" /> Cancel Reservation
-            </span>
-          )}
-        </button>
-      )}
+      <div className="flex gap-2 mt-2">
+        {canCheckIn && (
+          <button
+            onClick={handleCheckIn}
+            disabled={loading}
+            className="btn-primary flex-1 text-xs py-2 gap-1.5"
+          >
+            <LogIn className="h-3.5 w-3.5" /> Check In
+          </button>
+        )}
+
+        {canCheckOut && (
+          <button
+            onClick={handleCheckOut}
+            disabled={loading}
+            className="btn-primary flex-1 text-xs py-2 gap-1.5 bg-emerald-600 hover:bg-emerald-700"
+          >
+            <LogOut className="h-3.5 w-3.5" /> Check Out & Pay
+          </button>
+        )}
+
+        {isActive && (
+          <button
+            onClick={handleCancel}
+            disabled={loading}
+            className="btn-secondary text-xs border-red-200 text-red-500 hover:bg-red-50 hover:border-red-300"
+          >
+            <XCircle className="h-3.5 w-3.5" /> Cancel
+          </button>
+        )}
+      </div>
     </div>
   );
 };
 
-
 const MyReservationsPage: React.FC = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [loading,      setLoading]      = useState(true);
-  const [error,        setError]        = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeReceipt, setActiveReceipt] = useState<CheckOutResponse | null>(null);
 
   const fetchReservations = useCallback(async () => {
     try {
@@ -152,7 +286,6 @@ const MyReservationsPage: React.FC = () => {
   const upcoming = reservations.filter((r) => r.status === 'PENDING' || r.status === 'CONFIRMED');
   const history  = reservations.filter((r) => r.status !== 'PENDING' && r.status !== 'CONFIRMED');
 
-
   if (loading) {
     return (
       <div className="flex items-center justify-center py-24">
@@ -176,13 +309,16 @@ const MyReservationsPage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-10">
 
+      {activeReceipt && (
+        <ReceiptModal receipt={activeReceipt} onClose={() => setActiveReceipt(null)} />
+      )}
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">My Reservations</h1>
           <p className="text-gray-500 text-sm mt-1">{reservations.length} total reservation{reservations.length !== 1 ? 's' : ''}</p>
         </div>
         <button
-          id="refresh-reservations"
           onClick={fetchReservations}
           className="btn-secondary flex items-center gap-2 text-sm"
         >
@@ -193,7 +329,7 @@ const MyReservationsPage: React.FC = () => {
       <section>
         <div className="flex items-center gap-3 mb-4">
           <Calendar className="h-5 w-5 text-orange-500" />
-          <h2 className="text-lg font-semibold text-gray-900">Upcoming</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Active / Upcoming</h2>
           <span className="badge bg-orange-50 border-orange-200 text-orange-600">{upcoming.length}</span>
         </div>
         {upcoming.length === 0 ? (
@@ -207,12 +343,15 @@ const MyReservationsPage: React.FC = () => {
               <ReservationCard
                 key={r.id}
                 reservation={r}
-                onCancelled={(id) => handleCancelled(id)}
+                onCancelled={handleCancelled}
+                onUpdated={fetchReservations}
+                onReceipt={setActiveReceipt}
               />
             ))}
           </div>
         )}
       </section>
+
       <section>
         <div className="flex items-center gap-3 mb-4">
           <Clock className="h-5 w-5 text-gray-400" />
@@ -230,7 +369,9 @@ const MyReservationsPage: React.FC = () => {
               <ReservationCard
                 key={r.id}
                 reservation={r}
-                onCancelled={(id) => handleCancelled(id)}
+                onCancelled={handleCancelled}
+                onUpdated={fetchReservations}
+                onReceipt={setActiveReceipt}
               />
             ))}
           </div>

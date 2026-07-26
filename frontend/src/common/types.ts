@@ -1,13 +1,9 @@
-// ─── Domain enums (mirror com.spms.common.enums) ─────────────
-
 export type VehicleType   = 'STANDARD' | 'MOTORCYCLE' | 'LARGE';
 export type SlotStatus    = 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'OUT_OF_SERVICE';
 export type ReservationStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW';
 export type Role          = 'USER' | 'ADMIN';
 export type AccountStatus = 'ACTIVE' | 'INACTIVE' | 'LOCKED';
 export type PaymentStatus = 'PAID' | 'PENDING' | 'FAILED' | 'REFUNDED';
-
-// ─── Auth / User ──────────────────────────────────────────────
 
 export interface User {
   id:             number;
@@ -19,8 +15,6 @@ export interface User {
   vehicleNumber?: string;
   accountStatus:  AccountStatus;
 }
-
-// ─── Auth API shapes ──────────────────────────────────────────
 
 export interface RegisterPayload {
   username:       string;
@@ -38,8 +32,8 @@ export interface LoginPayload {
 
 export interface AuthResponse {
   token:     string;
-  tokenType: string;   // "Bearer"
-  expiresIn: number;   // seconds
+  tokenType: string;
+  expiresIn: number;
   user:      User;
 }
 
@@ -56,24 +50,18 @@ export interface ChangePasswordPayload {
   confirmPassword: string;
 }
 
-// ─── Error envelope (backend: { error, message }) ────────────
-
 export interface ApiError {
   error:   string;
   message: string;
 }
 
-// ─── Paginated response wrapper ───────────────────────────────
-
 export interface Page<T> {
   content:       T[];
   totalElements: number;
   totalPages:    number;
-  number:        number;   // current page (0-indexed)
+  number:        number;
   size:          number;
 }
-
-// ─── Parking Module ───────────────────────────────────────────
 
 export interface ParkingLot {
   id:            number;
@@ -91,7 +79,6 @@ export interface ParkingSlot {
   status:     SlotStatus;
 }
 
-// Payload types for admin parking management
 export interface CreateParkingLotPayload {
   lotName:       string;
   location:      string;
@@ -113,19 +100,20 @@ export interface UpdateSlotStatusPayload {
   status: SlotStatus;
 }
 
-// ─── Reservation Module ──────────────────────────────────────
-
 export interface Reservation {
   id:             number;
   userId:         number;
   slotId:         number;
   slotNumber:     string;
   lotName:        string;
-  startTime:      string;   // ISO 8601
+  startTime:      string;
   endTime:        string;
   checkInTime?:   string | null;
+  checkOutTime?:  string | null;
   status:         ReservationStatus;
   vehicleNumber?: string;
+  vehicleType?:   VehicleType;
+  totalFee?:      number | null;
   createdDate:    string;
 }
 
@@ -141,8 +129,69 @@ export interface CancelResponse {
   feeApplied: boolean;
 }
 
+export interface CheckOutResponse {
+  reservationId:     number;
+  transactionId:     number;
+  slotNumber:        string;
+  lotName:           string;
+  vehicleNumber?:    string;
+  vehicleType:       string;
+  checkInTime:       string;
+  checkOutTime:      string;
+  durationMinutes:   number;
+  billedHours:       number;
+  baseRate:          number;
+  extendedRate:      number;
+  vehicleMultiplier: number;
+  subtotal:          number;
+  dailyCap:          number;
+  totalFee:          number;
+  currency:          string;
+}
 
-// ─── Admin User Management ───────────────────────────────────
+export interface PricingConfig {
+  id:                   number;
+  baseHourlyRate:       number;
+  extendedHourlyRate:   number;
+  baseHoursThreshold:   number;
+  dailyMaxCap:          number;
+  motorcycleMultiplier: number;
+  standardMultiplier:   number;
+  largeMultiplier:      number;
+}
+
+export interface AuditLog {
+  id:            number;
+  adminId:       number;
+  adminUsername: string;
+  actionType:    string;
+  targetEntity:  string;
+  details:       string;
+  timestamp:     string;
+}
+
+export interface UtilizationReport {
+  totalReservations:     number;
+  completedReservations: number;
+  cancelledReservations: number;
+  noShowReservations:    number;
+  avgDurationMinutes:    number;
+  occupancyRatePercent:  number;
+}
+
+export interface RevenueReport {
+  totalRevenue:        number;
+  totalTransactions:   number;
+  avgTransactionValue: number;
+  dailyRevenue:        Record<string, number>;
+}
+
+export interface PeakHoursReport {
+  hourlyDistribution:     Record<number, number>;
+  dayOfWeekDistribution: Record<string, number>;
+  peakHour:               number;
+  peakDay:                string;
+}
 
 export interface AdminResetPasswordPayload {
   newPassword: string;
