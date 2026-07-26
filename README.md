@@ -1,5 +1,7 @@
 # SPMS - Smart Parking Management System
 
+🚀 **Live Demo:** [https://spms-smart-parking-management-syste.vercel.app/](https://spms-smart-parking-management-syste.vercel.app/)
+
 A full-stack parking management platform featuring real-time slot tracking, advance reservations, check-in and check-out processing, tiered fee billing in Bangladeshi Taka (BDT ৳), administrative pricing configuration, audit logging, and reporting analytics.
 
 ---
