@@ -108,5 +108,10 @@ public class User implements UserDetails {
 
     @Override public boolean isCredentialsNonExpired()  { return true; }
 
-    @Override public boolean isEnabled()                { return accountStatus == AccountStatus.ACTIVE; }
+    @Override public boolean isEnabled() {
+        if (accountStatus == AccountStatus.LOCKED) {
+            return lockedUntil != null && LocalDateTime.now().isAfter(lockedUntil);
+        }
+        return accountStatus == AccountStatus.ACTIVE;
+    }
 }

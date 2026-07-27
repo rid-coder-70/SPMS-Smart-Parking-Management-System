@@ -79,7 +79,7 @@ public class JwtUtil {
 
     /** Returns the userId claim (Long) embedded in the token. */
     public Long getUserIdFromToken(String token) {
-        Number id = extractClaim(token, claims -> claims.get("userId", Integer.class));
+        Number id = extractClaim(token, claims -> claims.get("userId", Long.class));
         return id == null ? null : id.longValue();
     }
 
