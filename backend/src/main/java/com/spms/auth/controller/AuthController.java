@@ -1,12 +1,18 @@
 package com.spms.auth.controller;
 
-import com.spms.auth.dto.*;
+import com.spms.auth.dto.AuthResponse;
+import com.spms.auth.dto.LoginRequest;
+import com.spms.auth.dto.RegisterRequest;
+import com.spms.auth.dto.UserSummaryDto;
 import com.spms.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * POST /api/v1/auth/register  — open (no auth required)

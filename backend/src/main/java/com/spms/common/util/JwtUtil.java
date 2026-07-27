@@ -1,7 +1,13 @@
 package com.spms.common.util;
 
 import com.spms.auth.entity.User;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +62,7 @@ public class JwtUtil {
      */
     public boolean validateToken(String token) {
         try {
-            extractAllClaims(token);   // throws on invalid signature / expiry
+            extractAllClaims(token);
             return !isTokenExpired(token);
         } catch (JwtException | IllegalArgumentException e) {
             log.warn("JWT validation failed: {}", e.getMessage());

@@ -1,6 +1,10 @@
 package com.spms.auth.service;
 
-import com.spms.auth.dto.*;
+import com.spms.auth.dto.AdminResetPasswordRequest;
+import com.spms.auth.dto.ChangePasswordRequest;
+import com.spms.auth.dto.UpdateProfileRequest;
+import com.spms.auth.dto.UserMapper;
+import com.spms.auth.dto.UserSummaryDto;
 import com.spms.auth.entity.User;
 import com.spms.auth.repository.UserRepository;
 import com.spms.common.enums.AccountStatus;
@@ -26,20 +30,15 @@ public class UserService {
     private final UserRepository  userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // --- GET /me ---
-
     @Transactional(readOnly = true)
     public UserSummaryDto getMe(String username) {
         return UserMapper.toSummary(findByUsername(username));
     }
 
-    // --- PUT /me ---
-
     @Transactional
     public UserSummaryDto updateProfile(String username, UpdateProfileRequest req) {
         User user = findByUsername(username);
 
-        // Update email if provided
         if (req.getEmail() != null && !req.getEmail().isBlank()) {
             ValidationUtils.validateEmail(req.getEmail());
             if (!req.getEmail().equals(user.getEmail())
@@ -49,20 +48,16 @@ public class UserService {
             user.setEmail(req.getEmail());
         }
 
-        // Update phone if provided
         if (req.getPhone() != null && !req.getPhone().isBlank()) {
             ValidationUtils.validatePhone(req.getPhone());
             user.setPhone(req.getPhone());
         }
 
-        // Update vehicle info if provided
         if (req.getVehicleType() != null)   user.setVehicleType(req.getVehicleType());
         if (req.getVehicleNumber() != null) user.setVehicleNumber(req.getVehicleNumber());
 
         return UserMapper.toSummary(userRepository.save(user));
     }
-
-    // --- PUT /me/password ---
 
     @Transactional
     public void changePassword(String username, ChangePasswordRequest req) {
@@ -79,14 +74,10 @@ public class UserService {
         log.info("Password changed for user '{}'", username);
     }
 
-    // --- GET / (Admin, paginated) ---
-
     @Transactional(readOnly = true)
     public Page<UserSummaryDto> listAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable).map(UserMapper::toSummary);
     }
-
-    // --- PUT /{id}/activate ---
 
     @Transactional
     public UserSummaryDto activateUser(Long id) {
@@ -98,8 +89,6 @@ public class UserService {
         return UserMapper.toSummary(userRepository.save(user));
     }
 
-    // --- PUT /{id}/deactivate ---
-
     @Transactional
     public UserSummaryDto deactivateUser(Long id) {
         User user = findById(id);
@@ -107,8 +96,6 @@ public class UserService {
         log.info("Admin deactivated user id={}", id);
         return UserMapper.toSummary(userRepository.save(user));
     }
-
-    // --- PUT /{id}/reset-password (Admin) ---
 
     @Transactional
     public void adminResetPassword(Long id, AdminResetPasswordRequest req) {
@@ -121,8 +108,6 @@ public class UserService {
         userRepository.save(user);
         log.info("Admin reset password for user id={}", id);
     }
-
-    // --- Helpers ---
 
     private User findByUsername(String username) {
         return userRepository.findByUsername(username)

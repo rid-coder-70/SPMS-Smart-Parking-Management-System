@@ -29,9 +29,7 @@ export const Cta4 = ({
       border: "1px solid #fed7aa",
       boxShadow: "0 20px 60px rgba(249,115,22,0.12), 0 4px 20px rgba(249,115,22,0.08)"
     }}
-  >{
-    /* Decorative blobs */
-  }<div
+  ><div
     className="pointer-events-none absolute -top-16 -right-16 h-64 w-64 rounded-full"
     style={{
       background: "radial-gradient(circle, rgba(251,146,60,0.22) 0%, transparent 70%)"
@@ -41,12 +39,8 @@ export const Cta4 = ({
     style={{
       background: "radial-gradient(circle, rgba(250,204,21,0.20) 0%, transparent 70%)"
     }}
-  />{
-    /* Left: text + CTA */
-  }<div className="relative md:w-1/2"><span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-orange-100 border border-orange-200 px-3 py-1 text-xs font-bold uppercase tracking-wider text-orange-600"><Rocket className="h-3.5 w-3.5" /> Get Started Today
-                </span><h4 className="mb-3 text-2xl font-black text-gray-900 md:text-3xl leading-tight">{title}</h4><p className="text-sm text-gray-500 leading-relaxed">{description}</p><div className="mt-7 flex flex-col sm:flex-row gap-3">{href ? <Button asChild size="lg"><a href={href} target="_blank" rel="noopener noreferrer">{buttonText} <ArrowRight className="size-4" /></a></Button> : <Button asChild size="lg"><Link to={to}>{buttonText} <ArrowRight className="size-4" /></Link></Button>}{showSecondaryButton && <Button variant="outline" size="lg" asChild><Link to="/login">Sign In</Link></Button>}</div></div>{
-    /* Right: checklist */
-  }<div className="relative md:w-5/12"><p className="mb-4 text-xs font-bold uppercase tracking-widest text-orange-500">
+  /><div className="relative md:w-1/2"><span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-orange-100 border border-orange-200 px-3 py-1 text-xs font-bold uppercase tracking-wider text-orange-600"><Rocket className="h-3.5 w-3.5" /> Get Started Today
+                </span><h4 className="mb-3 text-2xl font-black text-gray-900 md:text-3xl leading-tight">{title}</h4><p className="text-sm text-gray-500 leading-relaxed">{description}</p><div className="mt-7 flex flex-col sm:flex-row gap-3">{href ? <Button asChild size="lg"><a href={href} target="_blank" rel="noopener noreferrer">{buttonText} <ArrowRight className="size-4" /></a></Button> : <Button asChild size="lg"><Link to={to}>{buttonText} <ArrowRight className="size-4" /></Link></Button>}{showSecondaryButton && <Button variant="outline" size="lg" asChild><Link to="/login">Sign In</Link></Button>}</div></div><div className="relative md:w-5/12"><p className="mb-4 text-xs font-bold uppercase tracking-widest text-orange-500">
                   What's included
                 </p><ul className="flex flex-col space-y-3 text-sm font-medium text-gray-700">{items.map((item, idx) => <motion.li
     key={idx}

@@ -1,37 +1,45 @@
-# SPMS - Smart Parking Management System
+# Smart Parking Management System (SPMS)
 
- **Live Demo:** [https://spms-smart-parking-management-syste.vercel.app/](https://spms-smart-parking-management-syste.vercel.app)
+**Live Demo:** [https://spms-smart-parking-management-syste.vercel.app](https://spms-smart-parking-management-syste.vercel.app)
 
-A full-stack parking management platform featuring real-time slot tracking, advance reservations, check-in and check-out processing, tiered fee billing in Bangladeshi Taka (BDT ৳), administrative pricing configuration, audit logging, and reporting analytics.
+Welcome to **SPMS (Smart Parking Management System)** — a full-stack, enterprise-ready parking management platform built to streamline facility operations, real-time slot tracking, advance reservations, check-in/check-out processing, dynamic fee calculation in Bangladeshi Taka (BDT), and administrative analytics.
 
 ---
 
-## Architecture Overview
+## Key Features
+
+- **Interactive Parking Grid**: Real-time slot status tracking (`AVAILABLE`, `RESERVED`, `OCCUPIED`, `OUT_OF_SERVICE`).
+- **Advance Reservations**: Reserve parking slots up to 30 days ahead with automatic conflict prevention and no-show expiration.
+- **Automated Billing Engine**: Dynamic fee calculation considering base rates, extended rates, vehicle type multipliers (Motorcycle, Standard, Large), and 24-hour daily caps.
+- **Digital POS & Receipt Generation**: Itemized breakdowns generated instantly upon vehicle checkout.
+- **Security & Access Control**: JWT stateless authentication, BCrypt password hashing, 3-strike brute-force account lockout (15-minute window), and session inactivity auto-logout.
+- **Admin Command Center**: Complete management of parking lots, slots, user permissions, dynamic pricing rules, revenue/utilization analytics, and audit logging.
+
+---
+
+## System Architecture & Directory Structure
 
 ```text
-SPMS/
-├── backend/          # Spring Boot 3 REST API (Java 17)
-│   └── src/main/java/com/spms/
-│       ├── audit/        # Admin action audit logging
-│       ├── auth/         # Authentication and user management
-│       ├── billing/      # Fee calculation engine and transactions
-│       ├── common/       # Security, CORS, and shared utilities
-│       ├── parking/      # Parking lots and slots management
-│       ├── report/       # Utilization, revenue, and peak hours analytics
-│       └── reservation/  # Reservation lifecycle, check-in, check-out
+SPMS-Smart-Parking-Management-System/
+├── backend/                  # Spring Boot 3 REST API (Java 17)
+│   ├── src/main/java/com/spms/
+│   │   ├── audit/            # Admin action audit logging
+│   │   ├── auth/             # JWT authentication & account management
+│   │   ├── billing/          # Fee engine, pricing rules & transactions
+│   │   ├── common/           # Security, CORS, utilities & error handling
+│   │   ├── parking/          # Lots & slot grid management
+│   │   ├── report/           # Utilization, revenue & peak hours analytics
+│   │   └── reservation/      # Reservation lifecycle & check-in/out processing
+│   └── src/main/resources/  # Database profiles & application config
 │
-└── frontend/         # Vite + React 18 + TypeScript
-    └── src/
-        ├── common/        # Dashboard layout, types, and API client
-        └── features/
-            ├── admin/         # Admin management, users, and audit logs
-            ├── auth/          # Authentication and user profile
-            ├── billing/       # Admin pricing configuration
-            ├── dashboard/     # User dashboard interface
-            ├── landing/       # Landing page view
-            ├── parking/       # Parking map and lot/slot controls
-            ├── reports/       # Analytics dashboard and charts
-            └── reservations/  # Booking, check-in/out, and receipt modal
+├── frontend/                 # Vite + React 18 + TypeScript + Tailwind CSS
+│   └── src/
+│       ├── common/           # Dashboard layouts, routes & API client
+│       ├── components/ui/    # Reusable UI components & animations
+│       └── features/         # Modular feature views (auth, parking, admin, etc.)
+│
+├── docker-compose.yml        # Orchestration manifest for multi-container deployment
+└── docs/                     # SRS specification & architectural documentation
 ```
 
 ---
@@ -41,197 +49,202 @@ SPMS/
 ### Backend
 | Technology | Purpose |
 |---|---|
-| Spring Boot 3 | REST API framework (Java 17) |
-| Spring Security | JWT authentication & role-based authorization |
-| Spring Data JPA | Relational database ORM |
-| H2 / MySQL | In-memory development and persistent production databases |
-| Maven | Dependency management and build tool |
+| **Java 17** | Core backend runtime |
+| **Spring Boot 3** | Application framework & REST API engine |
+| **Spring Security** | JWT stateless auth & Role-Based Access Control (RBAC) |
+| **Spring Data JPA** | Relational ORM & persistence abstraction |
+| **H2 / MySQL** | Fast in-memory development & persistent production storage |
+| **Lombok & SLF4J** | Boilerplate reduction & structured logging |
 
 ### Frontend
 | Technology | Purpose |
 |---|---|
-| React 18 + TypeScript | Component-based user interface |
-| Vite 5 | Fast build tool and dev server |
-| Tailwind CSS 3 | Modern utility-first styling |
-| Framer Motion | Smooth UI transitions and micro-animations |
-| Axios | HTTP API client |
-| React Router v6 | Client-side application routing |
+| **React 18 + TypeScript** | Declarative, type-safe user interface |
+| **Vite 5** | High-performance build tool & dev server |
+| **Tailwind CSS 3** | Modern utility-first styling |
+| **Framer Motion** | Smooth micro-animations & transitions |
+| **Axios** | HTTP client with automatic JWT bearer headers |
+| **React Router v6** | Client-side routing and protected navigation |
 
 ---
 
-## Quick Start (Single Command with Docker)
+## Deployment & How to Run
 
-The recommended way to run the complete SPMS application (backend, frontend, and database) is using Docker Compose.
+You can run SPMS using **Docker Compose** (recommended for single-command setup) or manually as a **Dockerless Local Environment**.
 
-### Prerequisites
-- Docker Desktop or Docker Engine with Docker Compose plugin
+---
 
-### Execution Command
-First, clone the repository and navigate into the project directory:
+### Option A: Quick Start with Docker (Recommended)
+
+Run the full system (Backend, Frontend, and Database) with a single command.
+
+#### 1. Prerequisites
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) or Docker Engine with the Docker Compose plugin.
+
+#### 2. Launch Containers
+Clone the repository and start the services in detached mode (`-d`):
 
 ```bash
 git clone https://github.com/rid-coder-70/SPMS-Smart-Parking-Management-System.git
 cd SPMS-Smart-Parking-Management-System
-```
-
-Then, run the following single command (the `-d` flag runs it in the background):
-
-```bash
 sudo docker compose up --build -d
 ```
 
-*To stop the application later, run:* `sudo docker compose down`
+#### 3. Access Applications
+- **Frontend App**: [http://localhost](http://localhost) (or [http://localhost:3000](http://localhost:3000))
+- **Backend REST API**: [http://localhost:8080/api/v1](http://localhost:8080/api/v1)
+- **H2 Database Console**: [http://localhost:8080/api/v1/h2-console](http://localhost:8080/api/v1/h2-console)
 
-### Application URLs
-- Frontend Web App: `http://localhost` (or `http://localhost:3000`)
-- Backend REST API: `http://localhost:8080/api/v1`
-- H2 Database Console: `http://localhost:8080/api/v1/h2-console`
+#### 4. Stop Containers
+```bash
+sudo docker compose down
+```
 
 ---
 
-## Local Development Setup (Without Docker)
+### Option B: Local Manual Setup (Dockerless Run)
 
-### Prerequisites
-- Java 17 or higher
-- Node.js 18 or higher and npm
-- Maven 3.8 or higher
+If you prefer running the backend and frontend services directly on your host machine:
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/rid-coder-70/SPMS-Smart-Parking-Management-System.git
-cd SPMS-Smart-Parking-Management-System
-```
+#### 1. Prerequisites
+- **Java 17 SDK** or higher (`java -version`)
+- **Node.js 18** or higher and npm (`node -v`, `npm -v`)
+- **Maven 3.8+** (or use the included `./mvnw` wrapper)
 
-### 2. Start the Backend
-Navigate to the `backend` directory and start the Spring Boot application:
+#### 2. Start the Backend Server
 ```bash
 cd backend
+
+# Make Maven wrapper executable (Linux/macOS)
+chmod +x mvnw
+
+# Start Spring Boot backend using the default H2 profile
 ./mvnw spring-boot:run
 ```
-The backend server starts at `http://localhost:8080/api/v1`.
+*The backend server will start at `http://localhost:8080/api/v1`.*
 
-### 3. Start the Frontend
-Open a new terminal window, navigate to the `frontend` directory, install dependencies, and start Vite:
+#### 3. Start the Frontend Web App
+Open a second terminal window:
+
 ```bash
 cd frontend
+
+# Install node dependencies
 npm install
+
+# Start Vite development server
 npm run dev
 ```
-The frontend web application runs at `http://localhost:5173`.
+*The frontend web application will start at `http://localhost:5173`.*
 
 ---
 
-## Default Administrator Credentials
+## Default Credentials & Initial Data
 
-Upon first startup, the backend automatically seeds a default administrative account and initial BDT pricing rules.
+Upon startup, SPMS seeds an administrator account and initial Bangladesh Taka (BDT) pricing configuration.
 
 | Role | Username | Password | Default Pricing Rules |
 |---|---|---|---|
-| Admin | admin | admin123 | Base: ৳40/hr (first 3h) • Extended: ৳30/hr • Daily Cap: ৳300 |
+| **Admin** | `admin` | `admin123` | Base: **40 BDT/hr** (first 3h) • Extended: **30 BDT/hr** • Daily Cap: **300 BDT** |
 
-Additional user accounts can be registered through the registration page.
+> **Note:** You can register new driver/user accounts directly through the `/register` page in the web app.
 
 ---
 
-## Fee Calculation & Pricing Rules (BDT ৳)
+## Dynamic Fee Calculation Rules (BDT)
 
-The system applies automated fee calculation upon check-out based on the following business rules:
-- **Base Rate**: ৳40.00 per hour for the first 3 hours.
-- **Extended Rate**: ৳30.00 per hour for any additional time beyond 3 hours.
+The system automatically calculates parking charges at check-out based on configurable business rules:
+
+- **Base Hourly Rate**: 40.00 BDT / hour for the first 3 hours.
+- **Extended Hourly Rate**: 30.00 BDT / hour for every hour beyond 3 hours.
 - **Vehicle Type Multipliers**:
-  - Standard Vehicle: 1.0x (100%)
-  - Motorcycle: 0.5x (50%)
-  - Large Vehicle (SUV/Truck/Van): 1.5x (150%)
-- **Partial Hour Rounding**: Any fraction of an hour is rounded up to the next full hour.
-- **Daily Cap**: Maximum charge is capped at ৳300.00 per continuous 24-hour period.
-
-### Payment Processing & Checkout
-
-The system currently simulates a physical "Cash counter" or "Point of Sale (POS)" checkout at the parking facility's exit. When a vehicle checks out, the backend automatically calculates the tiered fee, records the transaction, and immediately marks it as `PAID`. **There is no external digital payment gateway (e.g., Stripe, PayPal, bKash) integrated by default.**
+  - `MOTORCYCLE`: 0.5x (50%)
+  - `STANDARD`: 1.0x (100%)
+  - `LARGE` (SUV / Truck / Van): 1.5x (150%)
+- **Partial Hour Policy**: Fractions of an hour are rounded up to the next full hour.
+- **Daily Max Cap**: Total fee per continuous 24-hour window is capped at 300.00 BDT (adjusted by vehicle multiplier).
 
 ---
 
-## API Reference
+## Configuration & Profiles
 
-All REST endpoints are prefixed with `/api/v1`.
+### Spring Boot Database Profiles
+Backend configuration files reside in `backend/src/main/resources/`:
+- `application-h2.properties`: Active by default. Uses an in-memory database with H2 console enabled at `/api/v1/h2-console` (JDBC URL: `jdbc:h2:mem:spmsdb`, Username: `sa`, Password: *empty*).
+- `application-mysql.properties`: Production profile configured for MySQL connectivity.
 
-### Authentication & Users
+To run with MySQL locally:
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=mysql
+```
+
+---
+
+## API Reference Overview
+
+All backend endpoints are prefixed with `/api/v1`.
+
+### Authentication & Account Management
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| POST | `/auth/register` | Public | Register a new user account |
-| POST | `/auth/login` | Public | Authenticate and obtain JWT token |
-| GET | `/users/me` | Authenticated | Retrieve current user profile |
-| PUT | `/users/me` | Authenticated | Update user profile details |
-| PUT | `/users/me/password` | Authenticated | Change account password |
-| GET | `/users` | Admin | List all registered user accounts |
-| PUT | `/users/{id}/activate` | Admin | Activate a user account |
-| PUT | `/users/{id}/deactivate` | Admin | Deactivate a user account |
-| PUT | `/users/{id}/reset-password` | Admin | Administrative password reset |
+| `POST` | `/auth/register` | Public | Register a new user account |
+| `POST` | `/auth/login` | Public | Authenticate user & receive JWT token |
+| `GET` | `/users/me` | User | Fetch current authenticated profile |
+| `PUT` | `/users/me` | User | Update personal profile details |
+| `PUT` | `/users/me/password` | User | Change account password |
+| `GET` | `/users` | Admin | List all registered users (paginated) |
+| `PUT` | `/users/{id}/activate` | Admin | Activate account |
+| `PUT` | `/users/{id}/deactivate` | Admin | Deactivate account |
+| `PUT` | `/users/{id}/reset-password` | Admin | Administrative password reset |
 
 ### Parking Lots & Slots
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| GET | `/lots` | Public | List all active parking lots |
-| POST | `/lots` | Admin | Create a new parking lot |
-| PUT | `/lots/{id}` | Admin | Update parking lot details |
-| PUT | `/lots/{id}/deactivate` | Admin | Deactivate a parking lot |
-| GET | `/lots/{lotId}/slots` | Public | List slots in a parking lot |
-| POST | `/lots/{lotId}/slots` | Admin | Add a slot to a parking lot |
-| POST | `/lots/{lotId}/slots/bulk` | Admin | Bulk create parking slots |
-| PUT | `/slots/{id}/out-of-service` | Admin | Mark a slot out of service |
+| `GET` | `/lots` | Public | List active parking lots |
+| `POST` | `/lots` | Admin | Create a new parking lot |
+| `PUT` | `/lots/{id}` | Admin | Update lot details |
+| `PUT` | `/lots/{id}/deactivate` | Admin | Deactivate lot |
+| `GET` | `/lots/{lotId}/slots` | Public | List slots in a lot |
+| `POST` | `/lots/{lotId}/slots` | Admin | Add a single parking slot |
+| `POST` | `/lots/{lotId}/slots/bulk` | Admin | Bulk create parking slots |
+| `PUT` | `/slots/{id}/out-of-service` | Admin | Mark slot out of service |
 
-### Reservations & Check-In/Out
+### Reservations & Billing
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| POST | `/reservations` | Authenticated | Create a new parking slot reservation |
-| GET | `/reservations/me` | Authenticated | List reservations for current user |
-| GET | `/reservations/{id}` | Authenticated | Get reservation details |
-| PUT | `/reservations/{id}/check-in` | Authenticated | Check in vehicle arrival |
-| PUT | `/reservations/{id}/check-out` | Authenticated | Check out vehicle, calculate fee, & generate receipt |
-| PUT | `/reservations/{id}/cancel` | Authenticated | Cancel a reservation |
-| DELETE | `/reservations/{id}/admin` | Admin | Administrative cancellation |
+| `POST` | `/reservations` | User | Reserve a parking slot |
+| `GET` | `/reservations/me` | User | List reservation history for current user |
+| `GET` | `/reservations/{id}` | User | Fetch reservation details |
+| `PUT` | `/reservations/{id}/check-in` | User | Check in vehicle arrival |
+| `PUT` | `/reservations/{id}/check-out` | User | Check out vehicle, calculate fee & generate receipt |
+| `PUT` | `/reservations/{id}/cancel` | User | Cancel active reservation |
+| `DELETE` | `/reservations/{id}/admin` | Admin | Administrative cancellation |
 
-### Admin Controls, Pricing & Reports
+### Admin Pricing & Analytics
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| GET | `/admin/pricing` | Admin | Fetch dynamic pricing configuration |
-| PUT | `/admin/pricing` | Admin | Update BDT rates, multipliers, and daily cap |
-| GET | `/reports/utilization` | Admin | Retrieve slot utilization statistics |
-| GET | `/reports/revenue` | Admin | Retrieve revenue distribution analytics |
-| GET | `/reports/peak-hours` | Admin | Retrieve 24-hour peak usage patterns |
-| GET | `/admin/audit-logs` | Admin | Retrieve administrative audit log trail |
+| `GET` | `/admin/pricing` | Admin | View current dynamic pricing configuration |
+| `PUT` | `/admin/pricing` | Admin | Update rates, thresholds & multipliers |
+| `GET` | `/reports/utilization` | Admin | Fetch slot utilization metrics |
+| `GET` | `/reports/revenue` | Admin | Fetch revenue analytics & daily breakdowns |
+| `GET` | `/reports/peak-hours` | Admin | Fetch 24-hour occupancy peak analysis |
+| `GET` | `/admin/audit-logs` | Admin | View audit trail of admin operations |
 
 ---
 
-## Frontend Navigation Routes
+## Troubleshooting Guide
 
-| Route | Access | Purpose |
+| Issue | Possible Cause | Solution |
 |---|---|---|
-| `/` | Public | Landing Page |
-| `/login` | Public | Login Page |
-| `/register` | Public | Registration Page |
-| `/dashboard` | Authenticated | User Dashboard Overview |
-| `/parking` | Authenticated | Interactive Parking Slot Map |
-| `/reservations` | Authenticated | My Reservations & Check-In/Out |
-| `/profile` | Authenticated | User Account & Vehicle Profile |
-| `/admin` | Admin | Admin Dashboard Overview |
-| `/admin/lots` | Admin | Manage Parking Lots |
-| `/admin/slots` | Admin | Manage Parking Slots |
-| `/admin/users` | Admin | Manage User Accounts |
-| `/admin/pricing` | Admin | Dynamic BDT Pricing Config |
-| `/admin/reports` | Admin | Reporting & Analytics Dashboard |
-| `/admin/audit` | Admin | Administrative Audit Log Viewer |
+| `Port 8080 already in use` | Another process is listening on port 8080 | Stop the conflicting process or change `server.port` in `application.properties`. |
+| `./mvnw: Permission denied` | Script lacks execution permissions | Run `chmod +x backend/mvnw` in terminal. |
+| `vite: command not found` | Frontend dependencies not installed | Run `cd frontend && npm install` before running `npm run dev`. |
+| CORS Error on API calls | Frontend origin not whitelisted | Ensure `cors.allowed-origins` in `application.properties` includes `http://localhost:5173`. |
 
 ---
 
-## Security Specifications
+## License & Software Architecture Documentation
 
-- Passwords stored strictly as cryptographic BCrypt hashes.
-- Stateless authentication using JWT tokens passed via Authorization headers.
-- 3-strike brute-force account lock mechanism (15-minute lock after 3 consecutive failed logins).
-- 30-minute automatic inactivity session timeout.
-- Role-Based Access Control (RBAC) enforced on backend controllers and frontend routes.
-- Parameterized JPA database queries to prevent SQL injection.
-
-
----
+- **Principles & Patterns**: See [SWE_Principles_And_Patterns.md](SWE_Principles_And_Patterns.md) for a detailed breakdown of SOLID principles and Gang of Four (GoF) design patterns applied across SPMS.
+- **Testing Guide**: See [TESTING_GUIDE.md](TESTING_GUIDE.md) for step-by-step test scenarios and verification instructions.
+- **License**: Released under the [MIT License](LICENSE).

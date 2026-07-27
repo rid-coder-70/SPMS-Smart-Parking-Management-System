@@ -10,10 +10,11 @@ import com.spms.parking.entity.ParkingLot;
 import com.spms.parking.entity.ParkingSlot;
 import com.spms.parking.repository.ParkingSlotRepository;
 import com.spms.parking.service.ParkingSlotService;
-import com.spms.reservation.dto.*;
+import com.spms.reservation.dto.CancelResponse;
+import com.spms.reservation.dto.CreateReservationRequest;
+import com.spms.reservation.dto.ReservationDto;
 import com.spms.reservation.entity.Reservation;
 import com.spms.reservation.repository.ReservationRepository;
-import com.spms.reservation.service.ReservationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,6 @@ class ReservationServiceTest {
     @Mock private com.spms.billing.repository.TransactionRepository transactionRepository;
     @Mock private com.spms.billing.repository.PaymentRepository     paymentRepository;
     @Mock private com.spms.billing.service.BillingService          billingService;
-
 
     @InjectMocks
     private ReservationService reservationService;
@@ -184,6 +184,4 @@ class ReservationServiceTest {
         assertThat(response.isCancelled()).isTrue();
         assertThat(response.isFeeApplied()).isTrue();
     }
-
-
 }
