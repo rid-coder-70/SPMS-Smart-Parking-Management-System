@@ -29,7 +29,6 @@ public class ParkingLotServiceTest {
 
     @Test
     void getOccupancyRate_ReturnsCorrectPercentage() {
-        // Arrange
         Long lotId = 1L;
         ParkingLot lot = ParkingLot.builder()
                 .id(lotId)
@@ -45,19 +44,13 @@ public class ParkingLotServiceTest {
 
         when(parkingLotRepository.findById(lotId)).thenReturn(Optional.of(lot));
 
-        // Act
         double occupancyRate = parkingLotService.getOccupancyRate(lotId);
 
-        // Assert
-        // Total Capacity = 10
-        // Non-Available Slots = OCCUPIED(1) + RESERVED(1) + OUT_OF_SERVICE(1) = 3
-        // Occupancy Rate = (3.0 / 10) * 100 = 30.0%
         assertEquals(30.0, occupancyRate);
     }
 
     @Test
     void deactivateLot_UpdatesStatusWithoutDeletingSlots() {
-        // Arrange
         Long lotId = 1L;
         ParkingLot lot = ParkingLot.builder()
                 .id(lotId)
@@ -67,12 +60,10 @@ public class ParkingLotServiceTest {
 
         when(parkingLotRepository.findById(lotId)).thenReturn(Optional.of(lot));
 
-        // Act
         parkingLotService.deactivateLot(lotId);
 
-        // Assert
         assertEquals(LotStatus.INACTIVE, lot.getStatus());
-        assertEquals(1, lot.getSlots().size()); // Slots are untouched
+        assertEquals(1, lot.getSlots().size());
         verify(parkingLotRepository).save(lot);
     }
 }

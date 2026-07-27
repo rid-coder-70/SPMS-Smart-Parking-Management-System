@@ -33,7 +33,6 @@ public class ParkingSlotServiceTest {
 
     @Test
     void addSlot_DuplicateSlotNumber_ThrowsConflictException() {
-        // Arrange
         Long lotId = 1L;
         CreateSlotRequest request = CreateSlotRequest.builder()
                 .slotNumber("A-101")
@@ -45,7 +44,6 @@ public class ParkingSlotServiceTest {
         when(parkingLotRepository.findById(lotId)).thenReturn(Optional.of(lot));
         when(parkingSlotRepository.existsByParkingLotIdAndSlotNumber(lotId, "A-101")).thenReturn(true);
 
-        // Act & Assert
         SpmsException exception = assertThrows(SpmsException.class, () -> parkingSlotService.addSlot(lotId, request));
         assertEquals("Slot number already exists in this parking lot.", exception.getMessage());
         assertEquals(HttpStatus.CONFLICT, exception.getStatus());

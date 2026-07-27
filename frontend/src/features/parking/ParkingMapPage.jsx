@@ -17,7 +17,7 @@ export default function ParkingMapPage() {
     if (slot.status !== "AVAILABLE") return;
     setSelectedSlot(slot);
     setMsg(null);
-    const now = /* @__PURE__ */ new Date();
+    const now = new Date();
     now.setMinutes(now.getMinutes() + 5);
     const end = new Date(now);
     end.setHours(end.getHours() + 2);

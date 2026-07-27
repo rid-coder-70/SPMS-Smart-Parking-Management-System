@@ -70,7 +70,7 @@ const ReservationForm = ({ onSuccess }) => {
       setSubmitting(false);
     }
   };
-  const minDate = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+  const minDate = new Date().toISOString().split("T")[0];
   const maxDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1e3).toISOString().split("T")[0];
   return <div className="space-y-8">{success && <div className="alert-success animate-fade-in"><CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" /><div><p className="font-semibold text-green-700">Reservation Created!</p><p className="text-xs mt-0.5 text-green-600">
               Slot #{success.slotId} · {new Date(success.startTime).toLocaleString()} →{" "}{new Date(success.endTime).toLocaleString()}</p></div></div>}{error && <div className="alert-error animate-fade-in"><AlertCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" /><p>{error}</p></div>}<form onSubmit={handleSubmit} className="space-y-6"><div className="card"><div className="flex items-center gap-3 mb-4"><div className="w-8 h-8 rounded-full bg-orange-100 border border-orange-200 flex items-center justify-center text-orange-600 font-bold text-sm">1</div><h3 className="font-semibold text-gray-900">Select a Parking Lot</h3></div><LotSelector

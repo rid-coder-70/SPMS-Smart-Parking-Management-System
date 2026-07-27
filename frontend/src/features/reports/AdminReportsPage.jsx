@@ -5,7 +5,7 @@ import { BarChart3, TrendingUp, Clock, Filter, RefreshCcw } from "lucide-react";
 export default function AdminReportsPage() {
   const [lots, setLots] = useState([]);
   const [selectedLot, setSelectedLot] = useState(void 0);
-  const now = /* @__PURE__ */ new Date();
+  const now = new Date();
   const offset = now.getTimezoneOffset() * 6e4;
   const localNow = new Date(now.getTime() - offset);
   const localThirtyDaysAgo = new Date(localNow.getTime() - 30 * 24 * 60 * 60 * 1e3);

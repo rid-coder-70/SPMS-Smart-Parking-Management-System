@@ -75,9 +75,9 @@ const ctaItems = [
 ];
 export default function LandingPage() {
   const { user, logout } = useAuth();
-  const [time, setTime] = useState(/* @__PURE__ */ new Date());
+  const [time, setTime] = useState(new Date());
   useEffect(() => {
-    const t = setInterval(() => setTime(/* @__PURE__ */ new Date()), 1e3);
+    const t = setInterval(() => setTime(new Date()), 1e3);
     return () => clearInterval(t);
   }, []);
   const formattedTime = time.toLocaleTimeString([], {
@@ -88,34 +88,22 @@ export default function LandingPage() {
   return <div
     className="min-h-screen overflow-hidden relative"
     style={{ background: "#FFFFFF" }}
-  >{
-    /* Animated network particle background */
-  }<ParticleBackground />{
-    /* Top warm glow */
-  }<div
+  ><ParticleBackground /><div
     className="fixed inset-0 pointer-events-none"
     style={{
       background: "radial-gradient(ellipse 90% 50% at 50% -10%, rgba(251,146,60,0.18) 0%, transparent 60%)"
     }}
-  />{
-    /* ── Navbar ──────────────────────────────────────────────────── */
-  }<nav
+  /><nav
     className="relative z-20 border-b border-orange-100"
     style={{
       background: "rgba(255,255,255,0.92)",
       backdropFilter: "blur(20px)"
     }}
-  ><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="flex justify-between items-center h-16">{
-    /* Logo */
-  }<div className="flex items-center gap-2.5"><div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-400/30"><ParkingCircle className="h-4 w-4 text-white" /></div><span className="text-base font-black text-gray-900 tracking-tight">
+  ><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="flex justify-between items-center h-16"><div className="flex items-center gap-2.5"><div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-400/30"><ParkingCircle className="h-4 w-4 text-white" /></div><span className="text-base font-black text-gray-900 tracking-tight">
                 SPMS
               </span><span className="hidden sm:block ml-1 px-2 py-0.5 rounded-full bg-orange-50 border border-orange-200 text-[10px] font-bold text-orange-600 uppercase tracking-wider">
                 Beta
-              </span></div>{
-    /* Center: live clock */
-  }<div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-orange-100 bg-orange-50/60 font-mono text-xs text-orange-500"><span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />{formattedTime}</div>{
-    /* Right: nav actions */
-  }<div className="flex items-center gap-2">{user ? <><Link
+              </span></div><div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-orange-100 bg-orange-50/60 font-mono text-xs text-orange-500"><span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />{formattedTime}</div><div className="flex items-center gap-2">{user ? <><Link
     to="/dashboard"
     className="hidden sm:flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-orange-600 transition-colors px-3 py-1.5"
   >
@@ -132,19 +120,13 @@ export default function LandingPage() {
   >
                     Sign In
                   </Link><Button asChild size="sm"><Link to="/register">
-                      Get Started <ArrowRight className="h-3.5 w-3.5" /></Link></Button></>}</div></div></div></nav>{
-    /* ── Hero (above fold) ────────────────────────────────────────── */
-  }<main className="relative z-10"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-0"><div className="text-center max-w-4xl mx-auto">{
-    /* Badge */
-  }<motion.div
+                      Get Started <ArrowRight className="h-3.5 w-3.5" /></Link></Button></>}</div></div></div></nav><main className="relative z-10"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-0"><div className="text-center max-w-4xl mx-auto"><motion.div
     initial={{ opacity: 0, y: 12 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5 }}
   ><span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-50 border border-orange-200 text-orange-600 text-xs font-bold mb-8 uppercase tracking-wider shadow-sm"><span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
                 Smart Parking Management System
-              </span></motion.div>{
-    /* Headline */
-  }<motion.h1
+              </span></motion.div><motion.h1
     initial={{ opacity: 0, y: 16 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.55, delay: 0.1 }}
@@ -159,9 +141,7 @@ export default function LandingPage() {
     }}
   >
                 Not Harder.
-              </span></motion.h1>{
-    /* Subtitle */
-  }<motion.p
+              </span></motion.h1><motion.p
     initial={{ opacity: 0, y: 16 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.55, delay: 0.2 }}
@@ -169,9 +149,7 @@ export default function LandingPage() {
   >
               A seamless, automated platform for real-time parking reservations,
               check-in/out, and billing. Built for enterprises and campuses alike.
-            </motion.p>{
-    /* Perks row */
-  }<motion.div
+            </motion.p><motion.div
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, delay: 0.28 }}
@@ -179,9 +157,7 @@ export default function LandingPage() {
   >{perks.map((p) => <span
     key={p}
     className="flex items-center gap-1.5 text-xs font-semibold text-gray-500"
-  ><CheckCircle2 className="h-3.5 w-3.5 text-orange-400" />{p}</span>)}</motion.div>{
-    /* Hero CTAs — using Button component */
-  }<motion.div
+  ><CheckCircle2 className="h-3.5 w-3.5 text-orange-400" />{p}</span>)}</motion.div><motion.div
     initial={{ opacity: 0, y: 16 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.55, delay: 0.3 }}
@@ -190,9 +166,7 @@ export default function LandingPage() {
                     Go to Dashboard
                     <ArrowRight className="h-4 w-4" /></Link></Button> : <><Button asChild size="lg"><Link to="/register">
                       Start for Free
-                      <ArrowRight className="h-4 w-4" /></Link></Button><Button asChild size="lg" variant="outline"><Link to="/login">Sign In</Link></Button></>}</motion.div></div></div>{
-    /* ── Stats strip ──────────────────────────────────────────── */
-  }<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 pb-24"><motion.div
+                      <ArrowRight className="h-4 w-4" /></Link></Button><Button asChild size="lg" variant="outline"><Link to="/login">Sign In</Link></Button></>}</motion.div></div></div><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 pb-24"><motion.div
     initial={{ opacity: 0, y: 24 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.6, delay: 0.5 }}
@@ -201,9 +175,7 @@ export default function LandingPage() {
   >{stats.map((s, i) => <div
     key={i}
     className="flex flex-col items-center py-8 px-4 text-center hover:bg-orange-50 transition-colors bg-white"
-  ><span className="text-3xl sm:text-4xl font-black text-orange-500 mb-1">{s.value}</span><span className="text-xs text-gray-400 font-semibold uppercase tracking-wider">{s.label}</span></div>)}</motion.div>{
-    /* ── Features grid ──────────────────────────────────────── */
-  }<motion.div
+  ><span className="text-3xl sm:text-4xl font-black text-orange-500 mb-1">{s.value}</span><span className="text-xs text-gray-400 font-semibold uppercase tracking-wider">{s.label}</span></div>)}</motion.div><motion.div
     initial={{ opacity: 0, y: 32 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.7, delay: 0.65 }}
@@ -222,9 +194,7 @@ export default function LandingPage() {
     viewport={{ once: true, margin: "-50px" }}
     transition={{ duration: 0.5, delay: i * 0.1 }}
     className="group relative overflow-hidden rounded-3xl border border-gray-200/60 bg-white/60 p-8 shadow-sm backdrop-blur-md transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-100 cursor-default"
-  ><div className={`absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-10 ${f.bg.split(" ")[0]}`} /><div className="relative z-10"><div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-md border border-gray-100 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">{f.icon}</div><h3 className="mb-3 text-lg font-bold text-gray-900 tracking-tight">{f.title}</h3><p className="text-sm leading-relaxed text-gray-500">{f.description}</p></div></motion.div>)}</div></motion.div>{
-    /* ── CTA-4 Section ──────────────────────────────────────── */
-  }<div className="mt-16">{user ? <Cta4
+  ><div className={`absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-10 ${f.bg.split(" ")[0]}`} /><div className="relative z-10"><div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-md border border-gray-100 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">{f.icon}</div><h3 className="mb-3 text-lg font-bold text-gray-900 tracking-tight">{f.title}</h3><p className="text-sm leading-relaxed text-gray-500">{f.description}</p></div></motion.div>)}</div></motion.div><div className="mt-16">{user ? <Cta4
     title="Welcome back! Manage your parking."
     description="Head to your dashboard to view reservations, check slot availability, and manage your account."
     buttonText="Open Dashboard"
@@ -237,9 +207,7 @@ export default function LandingPage() {
     buttonText="Create Free Account"
     to="/register"
     items={ctaItems}
-  />}</div></div></main>{
-    /* ── Footer ──────────────────────────────────────────────────── */
-  }<footer className="relative z-10 border-t border-orange-100 py-8 bg-white"><div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4"><div className="flex items-center gap-2"><div className="w-6 h-6 rounded-md bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow"><ParkingCircle className="h-3.5 w-3.5 text-white" /></div><span className="text-sm font-black text-gray-700">SPMS</span></div><p className="text-xs text-gray-400">
+  />}</div></div></main><footer className="relative z-10 border-t border-orange-100 py-8 bg-white"><div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4"><div className="flex items-center gap-2"><div className="w-6 h-6 rounded-md bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow"><ParkingCircle className="h-3.5 w-3.5 text-white" /></div><span className="text-sm font-black text-gray-700">SPMS</span></div><p className="text-xs text-gray-400">
             Smart Parking Management System · Built with Spring Boot + React
           </p></div></footer></div>;
 }
