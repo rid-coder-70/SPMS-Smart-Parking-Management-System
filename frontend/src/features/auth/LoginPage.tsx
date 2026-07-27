@@ -1,7 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-import { Eye, EyeOff, AlertCircle, ParkingCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, ParkingCircle, ArrowRight, CheckCircle2, Home } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function LoginPage() {
@@ -105,6 +105,18 @@ export default function LoginPage() {
           transition={{ duration: 0.45 }}
           className="w-full max-w-sm"
         >
+          {/* Back to Home */}
+          <div className="flex justify-start mb-6">
+            <Link
+              to="/"
+              id="login-back-home"
+              className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-orange-500 transition-colors group"
+            >
+              <Home className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
+              Back to Home
+            </Link>
+          </div>
+
           {/* Mobile logo */}
           <div className="flex lg:hidden items-center gap-2 mb-8">
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
