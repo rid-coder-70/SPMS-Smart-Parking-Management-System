@@ -23,7 +23,11 @@
 hs_err_pid*
 replay_pid*
 backend/target/
+backend/data/
+*.mv.db
+*.trace.db
 frontend/node_modules/
 frontend/dist/
 .idea/
 *.log
+
