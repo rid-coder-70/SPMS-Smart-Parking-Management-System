@@ -74,21 +74,43 @@ You can run SPMS using **Docker Compose** (recommended for single-command setup)
 
 ---
 
+### Operating System Command Matrix (Windows vs. macOS vs. Ubuntu/Linux)
+
+Before running the commands below, please review the exact command syntax for your OS:
+
+| Operation | Windows (CMD / PowerShell) | macOS / Linux (Ubuntu) |
+|---|---|---|
+| **Docker Compose** | `docker compose up --build -d` | `sudo docker compose up --build -d` *(or without `sudo` if in docker group)* |
+| **Backend Run Wrapper** | `mvnw.cmd spring-boot:run` | `chmod +x mvnw && ./mvnw spring-boot:run` |
+| **MySQL Profile Run** | `mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=mysql` | `./mvnw spring-boot:run -Dspring-boot.run.profiles=mysql` |
+| **Frontend Run** | `npm install` then `npm run dev` | `npm install` then `npm run dev` |
+| **Path Separators** | Backslash `\` (e.g. `cd backend`) | Forward slash `/` (e.g. `cd backend`) |
+
+---
+
 ### Option A: Quick Start with Docker (Recommended)
 
 Run the full system (Backend, Frontend, and Database) with a single command.
 
 #### 1. Prerequisites
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) or Docker Engine with the Docker Compose plugin.
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows/macOS) or Docker Engine with Docker Compose plugin (Ubuntu/Linux).
 
 #### 2. Launch Containers
-Clone the repository and start the services in detached mode (`-d`):
+Clone the repository and start the services:
 
-```bash
-git clone https://github.com/rid-coder-70/SPMS-Smart-Parking-Management-System.git
-cd SPMS-Smart-Parking-Management-System
-sudo docker compose up --build -d
-```
+- **Windows (PowerShell / CMD / Git Bash):**
+  ```cmd
+  git clone https://github.com/rid-coder-70/SPMS-Smart-Parking-Management-System.git
+  cd SPMS-Smart-Parking-Management-System
+  docker compose up --build -d
+  ```
+
+- **macOS / Ubuntu (Linux):**
+  ```bash
+  git clone https://github.com/rid-coder-70/SPMS-Smart-Parking-Management-System.git
+  cd SPMS-Smart-Parking-Management-System
+  sudo docker compose up --build -d
+  ```
 
 #### 3. Access Applications
 - **Frontend App**: [http://localhost](http://localhost) (or [http://localhost:3000](http://localhost:3000))
@@ -96,9 +118,8 @@ sudo docker compose up --build -d
 - **H2 Database Console**: [http://localhost:8080/api/v1/h2-console](http://localhost:8080/api/v1/h2-console)
 
 #### 4. Stop Containers
-```bash
-sudo docker compose down
-```
+- **Windows:** `docker compose down`
+- **macOS / Linux:** `sudo docker compose down`
 
 ---
 
@@ -109,32 +130,39 @@ If you prefer running the backend and frontend services directly on your host ma
 #### 1. Prerequisites
 - **Java 17 SDK** or higher (`java -version`)
 - **Node.js 18** or higher and npm (`node -v`, `npm -v`)
-- **Maven 3.8+** (or use the included `./mvnw` wrapper)
+- **Maven 3.8+** (or use the included wrapper: `mvnw.cmd` on Windows, `./mvnw` on macOS/Linux)
 
 #### 2. Start the Backend Server
-```bash
-cd backend
 
-# Make Maven wrapper executable (Linux/macOS)
-chmod +x mvnw
+- **Windows (Command Prompt or PowerShell):**
+  ```cmd
+  cd backend
+  mvnw.cmd spring-boot:run
+  ```
+  *(Note: If using Git Bash on Windows, run `./mvnw spring-boot:run`)*
 
-# Start Spring Boot backend using the default H2 profile
-./mvnw spring-boot:run
-```
+- **macOS / Ubuntu (Linux):**
+  ```bash
+  cd backend
+  chmod +x mvnw
+  ./mvnw spring-boot:run
+  ```
+
 *The backend server will start at `http://localhost:8080/api/v1`.*
 
 #### 3. Start the Frontend Web App
 Open a second terminal window:
 
-```bash
-cd frontend
+- **All Platforms (Windows, macOS, Ubuntu/Linux):**
+  ```bash
+  cd frontend
 
-# Install node dependencies
-npm install
+  # Install node dependencies
+  npm install
 
-# Start Vite development server
-npm run dev
-```
+  # Start Vite development server
+  npm run dev
+  ```
 *The frontend web application will start at `http://localhost:5173`.*
 
 ---
@@ -174,9 +202,8 @@ Backend configuration files reside in `backend/src/main/resources/`:
 - `application-mysql.properties`: Production profile configured for MySQL connectivity.
 
 To run with MySQL locally:
-```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=mysql
-```
+- **Windows:** `mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=mysql`
+- **macOS / Linux:** `./mvnw spring-boot:run -Dspring-boot.run.profiles=mysql`
 
 ---
 
@@ -234,12 +261,15 @@ All backend endpoints are prefixed with `/api/v1`.
 
 ## Troubleshooting Guide
 
-| Issue | Possible Cause | Solution |
-|---|---|---|
-| `Port 8080 already in use` | Another process is listening on port 8080 | Stop the conflicting process or change `server.port` in `application.properties`. |
-| `./mvnw: Permission denied` | Script lacks execution permissions | Run `chmod +x backend/mvnw` in terminal. |
-| `vite: command not found` | Frontend dependencies not installed | Run `cd frontend && npm install` before running `npm run dev`. |
-| CORS Error on API calls | Frontend origin not whitelisted | Ensure `cors.allowed-origins` in `application.properties` includes `http://localhost:5173`. |
+| Issue | OS / Platform | Possible Cause | Solution |
+|---|---|---|---|
+| `Port 8080 already in use` | All | Another process is listening on port 8080 | Stop the conflicting process or change `server.port` in `application.properties`. |
+| `'mvnw' is not recognized` | Windows | Executing bash script in CMD/PowerShell | Use `mvnw.cmd` instead of `./mvnw` on Windows Command Prompt/PowerShell. |
+| `./mvnw: Permission denied` | macOS / Linux | Script lacks execution permissions | Run `chmod +x backend/mvnw` in terminal. |
+| `\r: command not found` | Windows (WSL/Git Bash) | CRLF line endings in shell script | Convert `mvnw` line endings to LF via `dos2unix mvnw` or Git configuration. |
+| `Permission denied (docker)` | Ubuntu / Linux | User not added to docker group | Run with `sudo docker compose ...` or add user to group: `sudo usermod -aG docker $USER`. |
+| `vite: command not found` | All | Frontend dependencies not installed | Run `cd frontend && npm install` before running `npm run dev`. |
+| CORS Error on API calls | All | Frontend origin not whitelisted | Ensure `cors.allowed-origins` in `application.properties` includes `http://localhost:5173`. |
 
 ---
 
